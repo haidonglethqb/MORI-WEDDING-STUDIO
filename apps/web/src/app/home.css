@@ -1,0 +1,175 @@
+body {
+  margin: 0;
+  background: #f5f4ec;
+  min-height: 100vh;
+}
+
+.home {
+  background: #f5f4ec;
+  color: #252a24;
+  font-family: "Be Vietnam Pro", "Segoe UI", sans-serif;
+  margin: 0;
+  min-height: 100vh;
+}
+
+.home a {
+  color: inherit;
+}
+
+.home-quiet {
+  font-size: 14px;
+  line-height: 20px;
+  text-decoration: none;
+}
+
+.home-cta {
+  align-items: center;
+  background: #55634f;
+  border-radius: 8px;
+  color: #f5f4ec;
+  display: inline-flex;
+  font-size: 14px;
+  line-height: 20px;
+  min-height: 44px;
+  padding: 0 16px;
+  text-decoration: none;
+}
+
+.home-cta:focus-visible,
+.home a:focus-visible {
+  outline: 2px solid #32462f;
+  outline-offset: 3px;
+}
+
+.home-hero,
+.home-band,
+.home-steps,
+.home-footer {
+  margin: 0 auto;
+  max-width: 1280px;
+  padding: 48px 32px;
+}
+
+.home-hero {
+  align-items: center;
+  display: grid;
+  gap: 48px;
+  grid-template-columns: 7fr 5fr;
+}
+
+.home-hero h1 {
+  font-family: Lora, Georgia, serif;
+  font-size: 64px;
+  font-weight: 500;
+  line-height: 68px;
+  margin: 0 0 16px;
+}
+
+.home-hero p,
+.home-band p,
+.home-steps p {
+  font-size: 16px;
+  line-height: 26px;
+  margin: 0 0 24px;
+}
+
+.home-actions {
+  align-items: center;
+  display: flex;
+  gap: 24px;
+}
+
+.home-panel {
+  background: #d5dbc9;
+  min-height: 420px;
+}
+
+.home-band h2,
+.home-steps h2 {
+  font-family: Lora, Georgia, serif;
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 36px;
+  margin: 0 0 24px;
+}
+
+.home-grid {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(4, 1fr);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.home-grid a {
+  display: block;
+  text-decoration: none;
+}
+
+.home-swatch {
+  background: #ecece4;
+  border: 1px solid #d8d7ce;
+  min-height: 220px;
+}
+
+.home-grid h3 {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 26px;
+  margin: 12px 0 4px;
+}
+
+.home-grid p,
+.home-caption {
+  color: #5f675c;
+  font-size: 12px;
+  line-height: 18px;
+  margin: 0;
+}
+
+.home-material {
+  background: #d0c8b7;
+  min-height: 280px;
+}
+
+.home-steps ol {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(3, 1fr);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.home-steps li {
+  border-top: 1px solid #d8d7ce;
+  padding-top: 16px;
+}
+
+.home-footer {
+  border-top: 1px solid #d8d7ce;
+  color: #5f675c;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+@media (max-width: 800px) {
+  .home-hero,
+  .home-band,
+  .home-steps,
+  .home-footer {
+    padding: 32px 20px;
+  }
+
+  .home-hero,
+  .home-grid,
+  .home-steps ol {
+    grid-template-columns: 1fr;
+  }
+
+  .home-hero h1 {
+    font-size: 40px;
+    line-height: 44px;
+  }
+}

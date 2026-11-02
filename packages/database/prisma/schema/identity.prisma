@@ -1,0 +1,95 @@
+enum UserRole {
+  CUSTOMER
+  STUDIO
+  ADMIN
+}
+
+enum UserStatus {
+  PENDING_VERIFICATION
+  ACTIVE
+  DISABLED
+}
+
+enum AuthTokenPurpose {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+}
+
+model User {
+  id              String     @id @default(uuid()) @db.Uuid
+  normalizedEmail String     @unique
+  displayName     String
+  role            UserRole   @default(CUSTOMER)
+  status          UserStatus @default(PENDING_VERIFICATION)
+  verifiedAt      DateTime?  @db.Timestamptz
+  invitationQuota Int        @default(1)
+  version         Int        @default(0)
+  createdAt       DateTime   @default(now()) @db.Timestamptz
+  updatedAt       DateTime   @updatedAt @db.Timestamptz
+
+  credential Credential?
+  sessions   Session[]
+  authTokens AuthToken[]
+  addresses  Address[]
+  projects    WeddingProject[]
+  assignments StaffAssignment[]
+  notifications Notification[]
+
+  @@map("users")
+}
+
+model Credential {
+  userId            String   @id @db.Uuid
+  passwordHash      String
+  passwordChangedAt DateTime @default(now()) @db.Timestamptz
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("credentials")
+}
+
+model Session {
+  id                 String    @id @default(uuid()) @db.Uuid
+  tokenDigest        String    @unique
+  userId             String    @db.Uuid
+  createdAt          DateTime  @default(now()) @db.Timestamptz
+  idleExpiresAt      DateTime  @db.Timestamptz
+  absoluteExpiresAt  DateTime  @db.Timestamptz
+  revokedAt          DateTime? @db.Timestamptz
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+model AuthToken {
+  id        String           @id @default(uuid()) @db.Uuid
+  digest    String           @unique
+  userId    String           @db.Uuid
+  purpose   AuthTokenPurpose
+  expiresAt DateTime         @db.Timestamptz
+  usedAt    DateTime?        @db.Timestamptz
+  createdAt DateTime         @default(now()) @db.Timestamptz
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, purpose])
+  @@map("auth_tokens")
+}
+
+model Address {
+  id            String    @id @default(uuid()) @db.Uuid
+  ownerUserId   String    @db.Uuid
+  recipientName String
+  phone         String
+  addressLines  String
+  locality      String
+  province      String
+  countryCode   String
+  archivedAt    DateTime? @db.Timestamptz
+  version       Int       @default(0)
+  createdAt     DateTime  @default(now()) @db.Timestamptz
+  updatedAt     DateTime  @updatedAt @db.Timestamptz
+  owner         User      @relation(fields: [ownerUserId], references: [id], onDelete: Cascade)
+
+  @@index([ownerUserId])
+  @@map("addresses")
+}

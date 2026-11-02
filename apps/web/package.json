@@ -1,0 +1,27 @@
+{
+  "name": "@mori/web",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "next build",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "dev": "next dev",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@mori/contracts": "workspace:*",
+    "@mori/domain": "workspace:*",
+    "@mori/invitation-renderer": "workspace:*",
+    "next": "16.4.3",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "three": "0.180.0"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.6",
+    "@types/react": "19.1.8",
+    "@types/react-dom": "19.1.6",
+    "@types/three": "0.180.0",
+    "typescript": "5.9.3"
+  }
+}

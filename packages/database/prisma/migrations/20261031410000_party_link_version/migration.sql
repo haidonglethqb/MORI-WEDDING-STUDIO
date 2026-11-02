@@ -1,0 +1,3 @@
+ALTER TABLE "guest_parties" ADD COLUMN "linkVersion" INTEGER NOT NULL DEFAULT 0;
+
+ALTER TABLE "guest_grants" ADD COLUMN "partyLinkVersion" INTEGER NOT NULL DEFAULT 0;

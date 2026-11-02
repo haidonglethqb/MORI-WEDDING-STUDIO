@@ -1,0 +1,61 @@
+body {
+  background: #f5f4ec;
+  color: #252a24;
+  font-family: "Be Vietnam Pro", "Segoe UI", sans-serif;
+  margin: 0;
+  min-height: 100vh;
+}
+
+.editor {
+  margin: 0 auto;
+  max-width: 720px;
+  padding: 48px 20px;
+}
+
+.editor h1 {
+  font-family: Lora, Georgia, serif;
+  font-size: 36px;
+  font-weight: 500;
+  line-height: 44px;
+  margin: 0 0 24px;
+}
+
+.editor label {
+  display: block;
+  font-size: 14px;
+  line-height: 20px;
+  margin: 0 0 16px;
+}
+
+.editor input,
+.editor textarea {
+  box-sizing: border-box;
+  display: block;
+  font: inherit;
+  margin-top: 8px;
+  min-height: 44px;
+  padding: 8px 12px;
+  width: 100%;
+}
+
+.editor textarea {
+  min-height: 120px;
+}
+
+.editor button {
+  background: #55634f;
+  border: 0;
+  border-radius: 8px;
+  color: #f5f4ec;
+  font-size: 14px;
+  line-height: 20px;
+  min-height: 44px;
+  padding: 0 16px;
+}
+
+.editor button:focus-visible,
+.editor input:focus-visible,
+.editor textarea:focus-visible {
+  outline: 2px solid #32462f;
+  outline-offset: 3px;
+}

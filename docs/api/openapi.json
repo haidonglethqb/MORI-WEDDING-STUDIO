@@ -1,0 +1,444 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "MORI Wedding Studio API",
+    "version": "0.0.0",
+    "description": "Internal API — auto-generated from Zod contracts. Do not edit by hand."
+  },
+  "servers": [
+    {
+      "url": "/api/v1",
+      "description": "Current environment"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "CreateSpikeCheckRequest": {
+        "type": "object",
+        "properties": {
+          "note": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "note"
+        ],
+        "additionalProperties": false
+      },
+      "SpikeCheckResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "note": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "note",
+          "createdAt"
+        ]
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "format": "uri",
+            "description": "A URI reference that identifies the problem type"
+          },
+          "title": {
+            "type": "string",
+            "description": "Short, human-readable summary of the problem"
+          },
+          "status": {
+            "type": "integer",
+            "description": "HTTP status code"
+          },
+          "detail": {
+            "type": "string",
+            "description": "Human-readable explanation specific to this occurrence"
+          },
+          "instance": {
+            "type": "string",
+            "description": "A URI reference to this specific occurrence"
+          },
+          "violations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "field": {
+                  "type": "string"
+                },
+                "message": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "field",
+                "message"
+              ]
+            },
+            "description": "Validation violation list"
+          }
+        },
+        "required": [
+          "type",
+          "title",
+          "status"
+        ]
+      }
+    },
+    "parameters": {}
+  },
+  "paths": {
+    "/api/v1/health/live": {
+      "get": {
+        "summary": "Liveness probe",
+        "description": "Returns 200 when the process is running. No dependency checks.",
+        "tags": [
+          "Health"
+        ],
+        "responses": {
+          "200": {
+            "description": "Process is alive",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ok"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "status"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/health/ready": {
+      "get": {
+        "summary": "Readiness probe",
+        "description": "Returns 200 when all required dependencies (DB) are reachable.",
+        "tags": [
+          "Health"
+        ],
+        "responses": {
+          "200": {
+            "description": "All required dependencies are reachable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ok"
+                      ]
+                    },
+                    "checks": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "checks"
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "One or more required dependencies are unavailable",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "format": "uri",
+                      "description": "A URI reference that identifies the problem type"
+                    },
+                    "title": {
+                      "type": "string",
+                      "description": "Short, human-readable summary of the problem"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "HTTP status code"
+                    },
+                    "detail": {
+                      "type": "string",
+                      "description": "Human-readable explanation specific to this occurrence"
+                    },
+                    "instance": {
+                      "type": "string",
+                      "description": "A URI reference to this specific occurrence"
+                    },
+                    "violations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "field": {
+                            "type": "string"
+                          },
+                          "message": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "field",
+                          "message"
+                        ]
+                      },
+                      "description": "Validation violation list"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "title",
+                    "status"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/spike-checks": {
+      "post": {
+        "summary": "Create a spike check record",
+        "description": "Validates the request body with Zod and persists to PostgreSQL.",
+        "tags": [
+          "Spike"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "note": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
+                  }
+                },
+                "required": [
+                  "note"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Record created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "note": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "note",
+                    "createdAt"
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error — unknown keys or constraint violations",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "format": "uri",
+                      "description": "A URI reference that identifies the problem type"
+                    },
+                    "title": {
+                      "type": "string",
+                      "description": "Short, human-readable summary of the problem"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "HTTP status code"
+                    },
+                    "detail": {
+                      "type": "string",
+                      "description": "Human-readable explanation specific to this occurrence"
+                    },
+                    "instance": {
+                      "type": "string",
+                      "description": "A URI reference to this specific occurrence"
+                    },
+                    "violations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "field": {
+                            "type": "string"
+                          },
+                          "message": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "field",
+                          "message"
+                        ]
+                      },
+                      "description": "Validation violation list"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "title",
+                    "status"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pricing/estimate": {
+      "post": {
+        "summary": "Indicative price estimate",
+        "description": "Server calculates the amount. The client cannot supply a total.",
+        "tags": [
+          "Pricing"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "variantId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "quantity": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 10000
+                  }
+                },
+                "required": [
+                  "variantId",
+                  "quantity"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Estimate or quote-required result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "currency": {
+                      "type": "string",
+                      "enum": [
+                        "VND"
+                      ]
+                    },
+                    "quantity": {
+                      "type": "integer"
+                    },
+                    "merchandiseVnd": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "shippingVnd": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "taxVnd": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "totalVnd": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "unresolved": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "quoteRequired": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "currency",
+                    "quantity",
+                    "merchandiseVnd",
+                    "shippingVnd",
+                    "taxVnd",
+                    "totalVnd",
+                    "unresolved",
+                    "quoteRequired"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

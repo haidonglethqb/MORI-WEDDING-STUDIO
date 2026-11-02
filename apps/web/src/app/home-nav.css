@@ -1,0 +1,47 @@
+.home-nav {
+  align-items: center;
+  display: flex;
+  gap: 24px;
+  height: 76px;
+  margin: 0 auto;
+  max-width: 1280px;
+  padding: 0 32px;
+}
+
+.home-mark {
+  font-family: Lora, Georgia, serif;
+  font-size: 20px;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+}
+
+.home-nav nav {
+  display: flex;
+  gap: 24px;
+}
+
+.home-nav nav a {
+  font-size: 14px;
+  line-height: 20px;
+  text-decoration: none;
+}
+
+.home-nav-end {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  margin-left: auto;
+}
+
+@media (max-width: 800px) {
+  .home-nav {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    height: auto;
+    padding: 16px 20px;
+  }
+
+  .home-nav-end {
+    margin-left: 0;
+  }
+}

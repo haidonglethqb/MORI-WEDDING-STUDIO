@@ -1,0 +1,14 @@
+// ─── Generator ───────────────────────────────────────────────────────────────
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ─── Datasource ───────────────────────────────────────────────────────────────
+// NOTE: Prisma 7 removes `url` from schema files.
+// Connection configuration belongs in prisma.config.ts (adapter / migrate URL).
+// See https://pris.ly/d/config-datasource
+
+datasource db {
+  provider = "postgresql"
+}

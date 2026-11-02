@@ -1,0 +1,9 @@
+// ─── Spike Check (P00 test model; remove in P01) ────────────────────────────
+
+model SpikeCheck {
+  id        String   @id @default(uuid()) @db.Uuid
+  note      String
+  createdAt DateTime @default(now()) @db.Timestamptz
+
+  @@map("spike_checks")
+}

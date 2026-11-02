@@ -1,0 +1,26 @@
+body {
+  background: #f5f4ec;
+  color: #252a24;
+  font-family: Lora, Georgia, serif;
+  margin: 0;
+  min-height: 100vh;
+}
+
+.guest {
+  margin: 0 auto;
+  max-width: 720px;
+  padding: 64px 20px;
+}
+
+.guest h1 {
+  font-size: 40px;
+  font-weight: 500;
+  line-height: 48px;
+  margin: 0 0 16px;
+}
+
+.guest p {
+  font-family: "Be Vietnam Pro", "Segoe UI", sans-serif;
+  font-size: 16px;
+  line-height: 26px;
+}

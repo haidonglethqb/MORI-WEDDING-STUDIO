@@ -1,0 +1,37 @@
+{
+  "name": "mori-wedding-studio",
+  "private": true,
+  "version": "0.0.0",
+  "description": "MORI Wedding Studio monorepo",
+  "packageManager": "pnpm@12.16.1",
+  "engines": {
+    "node": ">=24.14.0",
+    "pnpm": ">=12"
+  },
+  "scripts": {
+    "dev": "echo 'Use: docker compose -f compose.yaml -f compose.dev.yaml up'",
+    "build": "pnpm -r --filter './apps/*' build",
+    "lint": "eslint .",
+    "typecheck": "pnpm -r typecheck",
+    "test:unit": "corepack pnpm -r test:unit",
+    "test:integration": "node scripts/not-implemented.mjs test:integration",
+    "test:e2e": "node scripts/not-implemented.mjs test:e2e",
+    "test:security": "node scripts/not-implemented.mjs test:security",
+    "test:performance": "node scripts/not-implemented.mjs test:performance",
+    "check:boundaries": "node scripts/check-import-boundaries.mjs",
+    "db:generate": "pnpm --filter @mori/database exec prisma generate",
+    "db:migrate:dev": "pnpm --filter @mori/database exec prisma migrate dev",
+    "db:seed:dev": "node scripts/not-implemented.mjs db:seed:dev",
+    "api:generate": "pnpm --filter @mori/api run api:generate",
+    "api:check-drift": "pnpm --filter @mori/api run api:check-drift"
+  },
+  "devDependencies": {
+    "eslint": "10.14.0",
+    "eslint-config-prettier": "10.1.8",
+    "prettier": "3.9.10",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.72.1",
+    "@types/node": "26.6.6",
+    "dependency-cruiser": "17.4.3"
+  }
+}

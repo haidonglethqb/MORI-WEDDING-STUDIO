@@ -1,0 +1,268 @@
+enum InvitationStatus {
+  DRAFT
+  PUBLISHED
+  UNPUBLISHED
+  EXPIRED
+}
+
+enum ModerationState {
+  ACTIVE
+  SUSPENDED
+}
+
+enum InvitationAccessMode {
+  LINK
+  PASSCODE
+}
+
+enum RsvpMode {
+  OFF
+  OPEN
+  GUEST_LIST
+}
+
+model WeddingProject {
+  id            String   @id @default(uuid()) @db.Uuid
+  ownerUserId   String   @db.Uuid
+  internalTitle String
+  version       Int      @default(0)
+  createdAt     DateTime @default(now()) @db.Timestamptz
+  updatedAt     DateTime @updatedAt @db.Timestamptz
+  owner         User     @relation(fields: [ownerUserId], references: [id])
+  invitations   Invitation[]
+  serviceRequests ServiceRequest[]
+  mediaAssets   MediaAsset[]
+  uploadSessions MediaUploadSession[]
+  assignments   StaffAssignment[]
+
+  @@index([ownerUserId])
+  @@map("wedding_projects")
+}
+
+model Invitation {
+  id                   String                 @id @default(uuid()) @db.Uuid
+  projectId            String                 @db.Uuid
+  status               InvitationStatus       @default(DRAFT)
+  draftVersion         Int                    @default(0)
+  publishedRevisionId  String?                @unique
+  accessMode           InvitationAccessMode   @default(LINK)
+  passcodeHash         String?
+  accessEpoch          Int                    @default(0)
+  rsvpMode             RsvpMode               @default(OPEN)
+  rsvpDeadlineAt       DateTime?              @db.Timestamptz
+  moderationState      ModerationState        @default(ACTIVE)
+  expiresAt            DateTime?              @db.Timestamptz
+  project              WeddingProject         @relation(fields: [projectId], references: [id])
+  draft                InvitationDraft?
+  revisions            InvitationRevision[]   @relation("InvitationHistory")
+  publishedRevision    InvitationRevision?    @relation("LivePublication", fields: [publishedRevisionId], references: [id])
+  handles              InvitationHandle[]
+  events               InvitationEvent[]
+  parties              GuestParty[]
+  grants               GuestGrant[]
+  policyAudits         RsvpPolicyAudit[]
+  modeAudits           RsvpModeAudit[]
+  exportAudits         RsvpExportAudit[]
+
+  @@index([projectId])
+  @@map("invitations")
+}
+
+model InvitationHandle {
+  id           String    @id @default(uuid()) @db.Uuid
+  invitationId String    @db.Uuid
+  slug         String    @unique
+  revokedAt    DateTime? @db.Timestamptz
+  invitation   Invitation @relation(fields: [invitationId], references: [id])
+
+  @@index([invitationId])
+  @@map("invitation_handles")
+}
+
+enum GuestGrantKind {
+  LINK
+  SESSION
+}
+
+model GuestGrant {
+  id            String         @id @default(uuid()) @db.Uuid
+  invitationId  String         @db.Uuid
+  partyId       String?        @db.Uuid
+  kind          GuestGrantKind @default(SESSION)
+  tokenDigest   String         @unique
+  accessEpoch       Int
+  partyLinkVersion  Int            @default(0)
+  expiresAt         DateTime       @db.Timestamptz
+  invitation    Invitation  @relation(fields: [invitationId], references: [id])
+  party         GuestParty? @relation(fields: [partyId], references: [id])
+
+  @@index([invitationId])
+  @@map("guest_grants")
+}
+
+model InvitationDraft {
+  invitationId  String     @id @db.Uuid
+  schemaVersion Int        @default(1)
+  payload       Json
+  version       Int        @default(0)
+  invitation    Invitation @relation(fields: [invitationId], references: [id])
+
+  @@map("invitation_drafts")
+}
+
+model InvitationRevision {
+  id            String   @id @default(uuid()) @db.Uuid
+  invitationId  String   @db.Uuid
+  sequence      Int
+  schemaVersion Int
+  payload       Json
+  contentHash   String
+  publishedAt   DateTime @default(now()) @db.Timestamptz
+  invitation    Invitation @relation("InvitationHistory", fields: [invitationId], references: [id])
+  liveFor       Invitation? @relation("LivePublication")
+
+  @@unique([invitationId, sequence])
+  @@map("invitation_revisions")
+}
+
+model InvitationEvent {
+  id              String    @id @default(uuid()) @db.Uuid
+  invitationId    String    @db.Uuid
+  stableEventKey  String
+  title            String
+  localStart       String?
+  timeZone         String?
+  calendarSequence Int       @default(0)
+  capacity         Int?
+  retiredAt       DateTime? @db.Timestamptz
+  invitation      Invitation @relation(fields: [invitationId], references: [id])
+  answers         RsvpEventAnswer[]
+  allowances      PartyEventAllowance[]
+  ownerEdits      RsvpOwnerEdit[]
+
+  @@unique([invitationId, stableEventKey])
+  @@map("invitation_events")
+}
+
+enum GuestPartySource {
+  ROSTER
+  OPEN
+}
+
+enum RsvpAnswerStatus {
+  ATTENDING
+  DECLINED
+  UNANSWERED
+}
+
+model GuestParty {
+  id            String           @id @default(uuid()) @db.Uuid
+  invitationId  String           @db.Uuid
+  source        GuestPartySource
+  displayName     String
+  excludedAt      DateTime?        @db.Timestamptz
+  exclusionReason String?
+  linkVersion     Int              @default(0)
+  invitation    Invitation       @relation(fields: [invitationId], references: [id])
+  response      RsvpResponse?
+  grants        GuestGrant[]
+  allowances    PartyEventAllowance[]
+  ownerEdits    RsvpOwnerEdit[]
+
+  @@index([invitationId])
+  @@map("guest_parties")
+}
+
+model PartyEventAllowance {
+  id           String         @id @default(uuid()) @db.Uuid
+  partyId      String         @db.Uuid
+  eventId      String         @db.Uuid
+  maxAttendees Int
+  party        GuestParty     @relation(fields: [partyId], references: [id])
+  event        InvitationEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([partyId, eventId])
+  @@map("party_event_allowances")
+}
+
+model RsvpOwnerEdit {
+  id             String           @id @default(uuid()) @db.Uuid
+  partyId        String           @db.Uuid
+  eventId        String           @db.Uuid
+  ownerUserId    String           @db.Uuid
+  reason         String
+  previousStatus RsvpAnswerStatus
+  previousCount  Int
+  nextStatus     RsvpAnswerStatus
+  nextCount      Int
+  createdAt      DateTime         @default(now()) @db.Timestamptz
+  party          GuestParty       @relation(fields: [partyId], references: [id])
+  event          InvitationEvent  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([partyId])
+  @@map("rsvp_owner_edits")
+}
+
+model RsvpResponse {
+  id            String   @id @default(uuid()) @db.Uuid
+  partyId       String   @unique @db.Uuid
+  invitationId  String   @db.Uuid
+  version       Int      @default(0)
+  party         GuestParty @relation(fields: [partyId], references: [id])
+  answers       RsvpEventAnswer[]
+
+  @@map("rsvp_responses")
+}
+
+model RsvpEventAnswer {
+  id             String           @id @default(uuid()) @db.Uuid
+  responseId     String           @db.Uuid
+  eventId        String           @db.Uuid
+  status               RsvpAnswerStatus
+  attendeeCount        Int
+  needsReconfirmation  Boolean          @default(false)
+  response       RsvpResponse     @relation(fields: [responseId], references: [id])
+  event          InvitationEvent  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([responseId, eventId])
+  @@map("rsvp_event_answers")
+}
+
+model RsvpPolicyAudit {
+  id               String      @id @default(uuid()) @db.Uuid
+  invitationId     String      @db.Uuid
+  ownerUserId      String      @db.Uuid
+  action           String
+  previousDeadline DateTime?   @db.Timestamptz
+  nextDeadline     DateTime    @db.Timestamptz
+  createdAt        DateTime    @default(now()) @db.Timestamptz
+  invitation       Invitation  @relation(fields: [invitationId], references: [id])
+
+  @@index([invitationId])
+  @@map("rsvp_policy_audits")
+}
+
+model RsvpModeAudit {
+  id           String     @id @default(uuid()) @db.Uuid
+  invitationId String     @db.Uuid
+  ownerUserId  String     @db.Uuid
+  previousMode RsvpMode
+  nextMode     RsvpMode
+  createdAt    DateTime   @default(now()) @db.Timestamptz
+  invitation   Invitation @relation(fields: [invitationId], references: [id])
+
+  @@index([invitationId])
+  @@map("rsvp_mode_audits")
+}
+
+model RsvpExportAudit {
+  id            String     @id @default(uuid()) @db.Uuid
+  invitationId  String     @db.Uuid
+  actorUserId   String     @db.Uuid
+  rowCount      Int
+  createdAt     DateTime   @default(now()) @db.Timestamptz
+  invitation    Invitation @relation(fields: [invitationId], references: [id])
+
+  @@index([invitationId])
+  @@map("rsvp_export_audits")
+}

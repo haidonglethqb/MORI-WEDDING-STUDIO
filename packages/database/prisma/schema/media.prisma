@@ -1,0 +1,54 @@
+enum MediaAssetState {
+  READY
+  REJECTED
+}
+
+model MediaAsset {
+  id          String          @id @default(uuid()) @db.Uuid
+  ownerUserId String          @db.Uuid
+  projectId   String          @db.Uuid
+  purpose     String
+  checksum    String
+  byteSize    BigInt          @default(0)
+  state       MediaAssetState @default(READY)
+  isFixture   Boolean         @default(false)
+  project     WeddingProject  @relation(fields: [projectId], references: [id])
+  revisions   DesignRevision[]
+  upload      MediaUploadSession?
+  derivatives MediaDerivative[]
+
+  @@index([ownerUserId])
+  @@map("media_assets")
+}
+
+model MediaUploadSession {
+  id            String      @id @default(uuid()) @db.Uuid
+  ownerUserId   String      @db.Uuid
+  projectId     String      @db.Uuid
+  purpose       String
+  stagingKey    String      @unique
+  expectedBytes Int
+  declaredMime  String
+  expiresAt     DateTime    @db.Timestamptz
+  completedAt   DateTime?   @db.Timestamptz
+  assetId       String?     @unique @db.Uuid
+  project       WeddingProject @relation(fields: [projectId], references: [id])
+  asset         MediaAsset? @relation(fields: [assetId], references: [id])
+
+  @@index([ownerUserId])
+  @@map("media_upload_sessions")
+}
+
+model MediaDerivative {
+  id         String     @id @default(uuid()) @db.Uuid
+  assetId    String     @db.Uuid
+  profile    String
+  storageKey String
+  checksum   String
+  width      Int
+  height     Int
+  asset      MediaAsset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@unique([assetId, profile])
+  @@map("media_derivatives")
+}

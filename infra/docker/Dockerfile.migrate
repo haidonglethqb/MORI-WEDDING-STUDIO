@@ -1,0 +1,24 @@
+# One-shot migration container.
+# Runs `prisma migrate deploy` then exits.
+# In compose.yaml this runs as a service with restart: no.
+FROM node:24-alpine AS runtime
+
+RUN corepack enable && corepack prepare pnpm@12.16.1 --activate
+WORKDIR /app
+
+# Copy only what's needed for migrations
+COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
+COPY packages/database/package.json packages/database/
+
+RUN pnpm install --frozen-lockfile --filter @mori/database
+
+COPY packages/database/prisma packages/database/prisma/
+COPY packages/database/prisma.config.ts packages/database/
+# prisma.config.ts imports this resolver; Prisma CLI loads the .ts source.
+COPY packages/database/src/resolve-url.ts packages/database/src/resolve-url.ts
+
+# Generate does not connect, but loading prisma.config.ts requires a URL.
+ENV DATABASE_URL=postgresql://placeholder:placeholder@localhost:5432/placeholder
+
+# Run migration on container start. Compose overrides DATABASE_URL.
+CMD ["pnpm", "--filter", "@mori/database", "run", "db:migrate:deploy"]

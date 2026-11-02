@@ -1,0 +1,43 @@
+body {
+  background: #f5f4ec;
+  min-height: 100vh;
+}
+
+.collections {
+  background: #f5f4ec;
+  color: #252a24;
+  font-family: "Be Vietnam Pro", "Segoe UI", sans-serif;
+  margin: 0 auto;
+  max-width: 720px;
+  padding: 48px 20px;
+}
+
+.collections h1 {
+  font-size: 36px;
+  font-weight: 500;
+  line-height: 44px;
+  margin: 0 0 32px;
+}
+
+.collections h2 {
+  font-size: 24px;
+  font-weight: 500;
+  margin: 0 0 8px;
+}
+
+.collections ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.collections > ul > li {
+  border-top: 1px solid #d8d7ce;
+  padding: 24px 0;
+}
+
+.collections li li {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+}

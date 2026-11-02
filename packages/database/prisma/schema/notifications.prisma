@@ -1,0 +1,26 @@
+model Notification {
+  id              String   @id @default(uuid()) @db.Uuid
+  recipientUserId String   @db.Uuid
+  eventType       String
+  resourceRef     String
+  plainText       String
+  readAt          DateTime? @db.Timestamptz
+  createdAt       DateTime @default(now()) @db.Timestamptz
+  recipient       User     @relation(fields: [recipientUserId], references: [id], onDelete: Cascade)
+  deliveries      NotificationDelivery[]
+
+  @@index([recipientUserId, createdAt])
+  @@map("notifications")
+}
+
+model NotificationDelivery {
+  id             String       @id @default(uuid()) @db.Uuid
+  notificationId String       @db.Uuid
+  channel        String
+  state          String
+  attemptCount   Int          @default(0)
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+
+  @@index([notificationId])
+  @@map("notification_deliveries")
+}

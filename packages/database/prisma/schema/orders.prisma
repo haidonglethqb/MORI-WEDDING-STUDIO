@@ -1,0 +1,227 @@
+enum RequestKind {
+  PAPER
+  DIGITAL
+  BUNDLE
+}
+
+enum ServiceRequestStatus {
+  APPROVED
+  CONVERTED
+  CANCELLED
+}
+
+enum QuoteState {
+  ISSUED
+  ACCEPTED
+  WITHDRAWN
+  EXPIRED
+  SUPERSEDED
+}
+
+enum OrderStatus {
+  SUBMITTED
+  CONFIRMED
+  IN_FULFILLMENT
+  COMPLETED
+  CANCELLED
+}
+
+model ServiceRequest {
+  id          String               @id @default(uuid()) @db.Uuid
+  projectId   String               @db.Uuid
+  ownerUserId String               @db.Uuid
+  status      ServiceRequestStatus @default(APPROVED)
+  kind        RequestKind          @default(PAPER)
+  version          Int                  @default(0)
+  scopeFingerprint String?
+  isFixture        Boolean              @default(false)
+  project     WeddingProject       @relation(fields: [projectId], references: [id])
+  quotes      Quote[]
+  order       Order?
+  revisions   DesignRevision[]
+  messages    RequestMessage[]
+
+  @@index([ownerUserId])
+  @@map("service_requests")
+}
+
+enum MessageVisibility {
+  CUSTOMER
+  INTERNAL
+}
+
+model RequestMessage {
+  id           String            @id @default(uuid()) @db.Uuid
+  requestId    String            @db.Uuid
+  authorUserId String            @db.Uuid
+  visibility   MessageVisibility
+  plainText    String
+  createdAt    DateTime          @default(now()) @db.Timestamptz
+  request      ServiceRequest    @relation(fields: [requestId], references: [id])
+
+  @@index([requestId])
+  @@map("request_messages")
+}
+
+model Quote {
+  id                String         @id @default(uuid()) @db.Uuid
+  requestId         String         @db.Uuid
+  sequence          Int
+  state             QuoteState
+  totalAmountVnd      BigInt
+  shippingAmountVnd   BigInt?
+  taxAmountVnd        BigInt?
+  currency            String         @default("VND")
+  expiresAt         DateTime       @db.Timestamptz
+  scopeFingerprint  String
+  isFixture         Boolean        @default(false)
+  request           ServiceRequest @relation(fields: [requestId], references: [id])
+  order             Order?
+
+  @@unique([requestId, sequence])
+  @@map("quotes")
+}
+
+model IdempotencyRecord {
+  id           String @id @default(uuid()) @db.Uuid
+  principalId  String @db.Uuid
+  command      String
+  key          String
+  requestHash  String
+  resourceId   String
+
+  @@unique([principalId, command, key])
+  @@map("idempotency_records")
+}
+
+model Order {
+  id             String         @id @default(uuid()) @db.Uuid
+  requestId      String         @unique @db.Uuid
+  quoteId        String         @unique @db.Uuid
+  ownerUserId    String         @db.Uuid
+  status         OrderStatus    @default(SUBMITTED)
+  totalAmountVnd BigInt
+  currency       String         @default("VND")
+  acceptedAt     DateTime       @default(now()) @db.Timestamptz
+  isFixture      Boolean        @default(false)
+  shipRecipientName String?
+  shipPhone         String?
+  shipAddressLines  String?
+  shipLocality      String?
+  shipProvince      String?
+  shipCountryCode   String?
+  request        ServiceRequest @relation(fields: [requestId], references: [id])
+  quote          Quote          @relation(fields: [quoteId], references: [id])
+  physical       PhysicalFulfillment?
+  digital        DigitalFulfillment?
+  cancellations  CancellationRequest[]
+  productionIssues ProductionIssue[]
+  shipment       Shipment?
+
+  @@map("orders")
+}
+
+enum PhysicalStage {
+  PENDING
+  IN_PRODUCTION
+  QUALITY_CHECK
+  READY_TO_SHIP
+  SHIPPED
+  DELIVERED
+}
+
+enum DigitalStage {
+  PENDING
+  IN_PROGRESS
+  READY_FOR_HANDOVER
+  HANDED_OVER
+}
+
+model PhysicalFulfillment {
+  id              String          @id @default(uuid()) @db.Uuid
+  orderId         String          @unique @db.Uuid
+  stage           PhysicalStage   @default(PENDING)
+  proofRevisionId String?         @db.Uuid
+  onHold          Boolean         @default(false)
+  holdReason      String?
+  heldByUserId    String?         @db.Uuid
+  order           Order           @relation(fields: [orderId], references: [id])
+  proofRevision   DesignRevision? @relation(fields: [proofRevisionId], references: [id])
+
+  @@map("physical_fulfillments")
+}
+
+enum CancellationRequestState {
+  REQUESTED
+  APPROVED
+  DENIED
+}
+
+enum CancellationOutcome {
+  CANCELLED_BEFORE_WORK
+  EXCEPTION_AFTER_WORK
+  DENIED
+}
+
+model ProductionIssue {
+  id          String   @id @default(uuid()) @db.Uuid
+  orderId     String   @db.Uuid
+  staffUserId String   @db.Uuid
+  reason      String
+  createdAt   DateTime @default(now()) @db.Timestamptz
+  order       Order    @relation(fields: [orderId], references: [id])
+
+  @@index([orderId])
+  @@map("production_issues")
+}
+
+model CancellationRequest {
+  id             String                    @id @default(uuid()) @db.Uuid
+  orderId        String                    @db.Uuid
+  ownerUserId    String                    @db.Uuid
+  reason         String
+  state          CancellationRequestState  @default(REQUESTED)
+  outcome        CancellationOutcome?
+  decisionReason String?
+  createdAt      DateTime                  @default(now()) @db.Timestamptz
+  decidedAt      DateTime?                 @db.Timestamptz
+  order          Order                     @relation(fields: [orderId], references: [id])
+
+  @@index([orderId])
+  @@map("cancellation_requests")
+}
+
+model DigitalFulfillment {
+  id      String       @id @default(uuid()) @db.Uuid
+  orderId String       @unique @db.Uuid
+  stage   DigitalStage @default(PENDING)
+  order   Order        @relation(fields: [orderId], references: [id])
+
+  @@map("digital_fulfillments")
+}
+
+enum ShipmentEventKind {
+  EXCEPTION
+}
+
+model Shipment {
+  id      String          @id @default(uuid()) @db.Uuid
+  orderId String          @unique @db.Uuid
+  order   Order           @relation(fields: [orderId], references: [id])
+  events  ShipmentEvent[]
+
+  @@map("shipments")
+}
+
+model ShipmentEvent {
+  id          String            @id @default(uuid()) @db.Uuid
+  shipmentId  String            @db.Uuid
+  staffUserId String            @db.Uuid
+  kind        ShipmentEventKind
+  reason      String
+  createdAt   DateTime          @default(now()) @db.Timestamptz
+  shipment    Shipment          @relation(fields: [shipmentId], references: [id])
+
+  @@index([shipmentId])
+  @@map("shipment_events")
+}

@@ -1,0 +1,14 @@
+model BackgroundTask {
+  id           String    @id @default(uuid()) @db.Uuid
+  kind         String
+  resourceRef  String
+  state        String    @default("PENDING")
+  attemptCount Int       @default(0)
+  leaseUntil   DateTime? @db.Timestamptz
+  nextRunAt    DateTime  @default(now()) @db.Timestamptz
+  lastError    String?
+  createdAt    DateTime  @default(now()) @db.Timestamptz
+
+  @@index([state, nextRunAt])
+  @@map("background_tasks")
+}

@@ -1,0 +1,13 @@
+model StaffAssignment {
+  id          String    @id @default(uuid()) @db.Uuid
+  projectId   String    @db.Uuid
+  staffUserId String    @db.Uuid
+  rsvpAccess  Boolean   @default(false)
+  assignedAt  DateTime  @default(now()) @db.Timestamptz
+  revokedAt   DateTime? @db.Timestamptz
+  project     WeddingProject @relation(fields: [projectId], references: [id])
+  staff       User           @relation(fields: [staffUserId], references: [id])
+
+  @@index([staffUserId])
+  @@map("staff_assignments")
+}

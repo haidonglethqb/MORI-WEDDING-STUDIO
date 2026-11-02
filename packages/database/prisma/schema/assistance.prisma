@@ -1,0 +1,9 @@
+model AiUsageBucket {
+  id      String @id @default(uuid()) @db.Uuid
+  subject String
+  day     String
+  count   Int
+
+  @@unique([subject, day])
+  @@map("ai_usage_buckets")
+}

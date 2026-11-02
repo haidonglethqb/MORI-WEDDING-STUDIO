@@ -1,0 +1,83 @@
+enum ProductType {
+  PAPER
+  DIGITAL
+}
+
+enum ProductState {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum PaperShape {
+  FLAT
+  BIFOLD
+  TRIFOLD
+}
+
+enum VariantAvailability {
+  AVAILABLE
+  UNAVAILABLE
+  QUOTE_REQUIRED
+}
+
+enum PriceBookState {
+  DRAFT
+  PUBLISHED
+}
+
+model Product {
+  id          String       @id @default(uuid()) @db.Uuid
+  slug        String       @unique
+  name        String
+  type        ProductType
+  description String
+  state       ProductState @default(DRAFT)
+  isFixture   Boolean      @default(false)
+  styleTags   String[]
+  colourTags  String[]
+  createdAt   DateTime     @default(now()) @db.Timestamptz
+  updatedAt   DateTime     @updatedAt @db.Timestamptz
+  variants    ProductVariant[]
+
+  @@map("products")
+}
+
+model ProductVariant {
+  id           String              @id @default(uuid()) @db.Uuid
+  productId    String              @db.Uuid
+  shape        PaperShape
+  availability VariantAvailability
+  product      Product             @relation(fields: [productId], references: [id])
+  priceRules   PriceRule[]
+
+  @@index([productId])
+  @@map("product_variants")
+}
+
+model PriceBook {
+  id           String         @id @default(uuid()) @db.Uuid
+  versionLabel String
+  currency     String         @default("VND")
+  state        PriceBookState @default(DRAFT)
+  isFixture    Boolean        @default(false)
+  createdAt    DateTime       @default(now()) @db.Timestamptz
+  rules        PriceRule[]
+
+  @@map("price_books")
+}
+
+model PriceRule {
+  id              String     @id @default(uuid()) @db.Uuid
+  priceBookId     String     @db.Uuid
+  variantId       String     @db.Uuid
+  quantityMin     Int
+  quantityMax     Int
+  unitAmountVnd   BigInt
+  setupAmountVnd  BigInt
+  priceBook       PriceBook      @relation(fields: [priceBookId], references: [id])
+  variant         ProductVariant @relation(fields: [variantId], references: [id])
+
+  @@index([variantId])
+  @@map("price_rules")
+}

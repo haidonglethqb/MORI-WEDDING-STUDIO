@@ -1,0 +1,67 @@
+enum DesignRevisionState {
+  WORKING
+  IN_REVIEW
+  APPROVED
+  CHANGES_REQUESTED
+  SUPERSEDED
+}
+
+enum ProofRenderState {
+  PENDING
+  READY
+  FAILED
+}
+
+model DesignRevision {
+  id           String               @id @default(uuid()) @db.Uuid
+  requestId    String               @db.Uuid
+  sequence     Int
+  state        DesignRevisionState  @default(WORKING)
+  manifestHash    String
+  renderState     ProofRenderState     @default(PENDING)
+  faceMapComplete Boolean              @default(false)
+  fontsReady      Boolean              @default(false)
+  trimWidthMm     Int?
+  trimHeightMm    Int?
+  profileWidthMm  Int?
+  profileHeightMm Int?
+  isFixture       Boolean              @default(false)
+  mediaAssetId    String?              @db.Uuid
+  request      ServiceRequest       @relation(fields: [requestId], references: [id])
+  mediaAsset   MediaAsset?          @relation(fields: [mediaAssetId], references: [id])
+  approval     ProofApproval?
+  annotations  ProofAnnotation[]
+  printJobs    PhysicalFulfillment[]
+
+  @@unique([requestId, sequence])
+  @@map("design_revisions")
+}
+
+model ProofApproval {
+  id                     String         @id @default(uuid()) @db.Uuid
+  revisionId             String         @unique @db.Uuid
+  ownerUserId            String         @db.Uuid
+  manifestHash           String
+  scopeFingerprint       String?
+  acknowledgementVersion String
+  approvedAt             DateTime       @default(now()) @db.Timestamptz
+  revision               DesignRevision @relation(fields: [revisionId], references: [id])
+
+  @@map("proof_approvals")
+}
+
+model ProofAnnotation {
+  id           String          @id @default(uuid()) @db.Uuid
+  revisionId   String          @db.Uuid
+  authorUserId String          @db.Uuid
+  pageId       String
+  positionX    Int
+  positionY    Int
+  text         String
+  createdAt    DateTime        @default(now()) @db.Timestamptz
+  resolvedAt   DateTime?       @db.Timestamptz
+  revision     DesignRevision  @relation(fields: [revisionId], references: [id], onDelete: Cascade)
+
+  @@index([revisionId])
+  @@map("proof_annotations")
+}
