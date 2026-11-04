@@ -9,6 +9,7 @@
     "start": "node dist/main.js",
     "start:dev": "nest start --watch",
     "test:unit": "vitest run --passWithNoTests",
+    "db:seed:dev": "node --import tsx/esm scripts/seed-dev.ts",
     "api:generate": "node --import tsx/esm scripts/generate-openapi.ts --write",
     "api:check-drift": "node --import tsx/esm scripts/generate-openapi.ts --check"
   },

@@ -3,8 +3,9 @@ import 'reflect-metadata'
 
 import { NestFactory } from '@nestjs/core'
 import { WorkerModule } from './worker.module.js'
+import { TaskWorkerService } from './task-worker.service.js'
 import { loadEnv } from '@mori/config'
-import { getPrismaClient, disconnectPrismaClient, claimNotificationTasks } from '@mori/database'
+import { getPrismaClient, disconnectPrismaClient } from '@mori/database'
 
 async function bootstrap(): Promise<void> {
   const env = loadEnv()
@@ -24,22 +25,21 @@ async function bootstrap(): Promise<void> {
   const app = await NestFactory.createApplicationContext(WorkerModule, {
     logger: ['error', 'warn', 'log'],
   })
+  const taskWorker = app.get(TaskWorkerService)
 
   console.log('[worker] Ready — awaiting tasks')
 
-  let claiming = false
+  let running = false
   const claimTimer = setInterval(() => {
-    if (claiming) return
-    claiming = true
-    void claimNotificationTasks()
-      .then((count) => {
-        if (count > 0) console.log(`[worker] Closed ${count} notification task(s)`)
-      })
+    if (running) return
+    running = true
+    void taskWorker
+      .processTasks()
       .catch((err: unknown) => {
-        console.error('[worker] Notification task claim failed:', err)
+        console.error('[worker] Task worker error:', err)
       })
       .finally(() => {
-        claiming = false
+        running = false
       })
   }, 5_000)
 

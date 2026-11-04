@@ -1,5 +1,5 @@
 import { afterAll, describe, expect, it } from 'vitest'
-import { ConflictException, NotFoundException } from '@nestjs/common'
+import { NotFoundException } from '@nestjs/common'
 import { disconnectPrismaClient, getPrismaClient } from '@mori/database'
 import { EventCapacityService } from './event-capacity.service.js'
 import { InvitationService } from './invitation.service.js'

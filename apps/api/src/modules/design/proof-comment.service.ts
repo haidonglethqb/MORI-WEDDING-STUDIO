@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto'
-import { ConflictException, Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common'
+import { Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common'
 import { getPrismaClient } from '@mori/database'
 
 const COMMAND = 'proof-comment'

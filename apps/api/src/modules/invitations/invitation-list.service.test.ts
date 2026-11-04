@@ -30,15 +30,14 @@ describe('invitation list', () => {
     const created = await new InvitationService().createInvitation(owner.id, project.id)
 
     const mine = await list.forOwner(owner.id)
-    expect(mine).toEqual([
-      {
-        invitationId: created.id,
-        slug: expect.stringMatching(/^invite-/),
-        status: 'DRAFT',
-        eventTitle: 'Lễ cưới',
-        displayNames: ['Tên một', 'Tên hai'],
-      },
-    ])
+    expect(mine).toHaveLength(1)
+    expect(mine[0]).toMatchObject({
+      invitationId: created.id,
+      status: 'DRAFT',
+      eventTitle: 'Lễ cưới',
+      displayNames: ['Tên một', 'Tên hai'],
+    })
+    expect(mine[0]?.slug).toMatch(/^invite-/)
     expect(JSON.stringify(mine)).not.toContain('Private title')
     expect(await list.forOwner(other.id)).toEqual([])
 

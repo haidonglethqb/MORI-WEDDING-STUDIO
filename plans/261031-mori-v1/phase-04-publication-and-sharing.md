@@ -7,7 +7,7 @@
 
 ## Overview
 
-- Priority: P1 (digital lane). Status: Pending (needs P03).
+- Priority: P1 (digital lane). Status: Completed.
 - Immutable publications with atomic live pointer; guest host SSR with allowlisted DTO and policy-checked media; passcode grants, access epochs, handle rotation; share panel + QR + safe OG; calendar/directions/gallery/music; rollback/expiry/suspension coverage.
 - Exit gate: owner publishes; guest views; unpublish/revocation blocks fresh reads.
 
@@ -115,12 +115,12 @@ Create:
 
 ## Todo List
 
-- [ ] MORI-025 PublishInvitation + concurrency tests
-- [ ] MORI-026 guest host + DTO + gateway + cache tests
-- [ ] MORI-027 passcode/epoch/rotate/revoke
-- [ ] MORI-028 UI-13 + QR + OG
-- [ ] MORI-029 ics/directions/music/gallery
-- [ ] MORI-030 rollback/expiry/suspension + coverage run
+- [x] MORI-025 PublishInvitation + concurrency tests
+- [x] MORI-026 guest host + DTO + gateway + cache tests
+- [x] MORI-027 passcode/epoch/rotate/revoke
+- [x] MORI-028 UI-13 + QR + OG
+- [x] MORI-029 ics/directions/music/gallery
+- [x] MORI-030 rollback/expiry/suspension + coverage run
 
 ## Success Criteria
 

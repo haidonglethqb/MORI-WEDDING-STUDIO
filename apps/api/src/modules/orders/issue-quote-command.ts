@@ -20,9 +20,9 @@ export async function issueQuoteCommand(body: unknown) {
   })
 }
 
-export async function editIssuedQuote(body: unknown): Promise<never> {
+export function editIssuedQuote(body: unknown): Promise<never> {
   if (body && typeof body === 'object' && 'totalAmountVnd' in body) {
-    throw new UnprocessableEntityException('This command has fields that are not allowed')
+    return Promise.reject(new UnprocessableEntityException('This command has fields that are not allowed'))
   }
-  throw new ConflictException('An issued quote cannot be edited')
+  return Promise.reject(new ConflictException('An issued quote cannot be edited'))
 }

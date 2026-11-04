@@ -13,7 +13,6 @@ const staffEmail = `archived-staff-${Date.now()}@example.com`
 describe('archived product', () => {
   const catalogue = new CatalogueService()
   const recommendations = new RecommendationService()
-  const orders = new PlaceOrderService()
   const reader = new OrderReadService()
 
   afterAll(async () => {

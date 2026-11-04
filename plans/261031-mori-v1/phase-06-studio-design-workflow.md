@@ -7,7 +7,7 @@
 
 ## Overview
 
-- Priority: P1 (studio lane). Status: Pending (needs P02 + P03).
+- Priority: P1 (studio lane). Status: Completed.
 - Template and bespoke brief intake, request states, staff queue + thread with internal notes, immutable design revisions with sandboxed 2D proof rendering and manifest hashes, customer proof review/comments/approval bound to manifest + scope fingerprint.
 - Exit gate: customer and studio complete design/approval loop with stale-proof protection.
 
@@ -106,12 +106,12 @@ Create:
 
 ## Todo List
 
-- [ ] MORI-037 state machines + intake
-- [ ] MORI-038 queue + thread
-- [ ] MORI-039 revisions + sandboxed render
-- [ ] MORI-040 UI-10 + approval
-- [ ] MORI-041 race/stale tests
-- [ ] MORI-042 rehearsal report
+- [x] MORI-037 state machines + intake
+- [x] MORI-038 queue + thread
+- [x] MORI-039 revisions + sandboxed render
+- [x] MORI-040 UI-10 + approval
+- [x] MORI-041 race/stale tests
+- [x] MORI-042 rehearsal report
 
 ## Success Criteria
 

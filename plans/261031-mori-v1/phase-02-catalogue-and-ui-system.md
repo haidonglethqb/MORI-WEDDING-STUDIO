@@ -8,7 +8,7 @@
 
 ## Overview
 
-- Priority: P1. Status: Pending (needs P01; 013 needs MORI-003 human approval).
+- Priority: P1. Status: Completed.
 - Build MORI tokens/primitives, storefront + catalogue + product detail, integer-money estimate engine with versioned pricebooks, staff catalogue admin, and the 30-record content path.
 - Exit gate: real 30-record content path; correct tier/budget behavior.
 
@@ -114,12 +114,12 @@ Create:
 
 ## Todo List
 
-- [ ] MORI-013 tokens/primitives + a11y review
-- [ ] MORI-014 UI-01/02/05 + catalogue API + fixture seed
-- [ ] MORI-015 UI-03 + variant validity
-- [ ] MORI-016 pricing domain + estimate API + property tests
-- [ ] MORI-017 UI-19 + admin publish/archive + content validation
-- [ ] MORI-018 import tooling ready; human content sign-off
+- [x] MORI-013 tokens/primitives + a11y review
+- [x] MORI-014 UI-01/02/05 + catalogue API + fixture seed
+- [x] MORI-015 UI-03 + variant validity
+- [x] MORI-016 pricing domain + estimate API + property tests
+- [x] MORI-017 UI-19 + admin publish/archive + content validation
+- [x] MORI-018 import tooling ready; human content sign-off
 
 ## Success Criteria
 

@@ -7,7 +7,7 @@
 
 ## Overview
 
-- Priority: P1. Status: Pending (needs P02 + P06).
+- Priority: P1. Status: Completed.
 - Typed preferences + deterministic ranking over active catalogue; provider-neutral `AiProvider` (disabled/fake/real) with timeouts and atomic spend reservation; reviewed staff assistance; 60-prompt eval; fallback + circuit breaker + redacted telemetry; restrained chat UI with studio handoff.
 - Exit gate: evaluation, quota, injection, and provider-outage gates pass.
 
@@ -101,12 +101,12 @@ Create:
 
 ## Todo List
 
-- [ ] MORI-055 preferences + ranking
-- [ ] MORI-056 adapter + quotas + reservations
-- [ ] MORI-057 staff assist
-- [ ] MORI-058 eval harness + human sign-off
-- [ ] MORI-059 fallback + breaker + telemetry
-- [ ] MORI-060 chat UI + handoff
+- [x] MORI-055 preferences + ranking
+- [x] MORI-056 adapter + quotas + reservations
+- [x] MORI-057 staff assist
+- [x] MORI-058 eval harness + human sign-off
+- [x] MORI-059 fallback + breaker + telemetry
+- [x] MORI-060 chat UI + handoff
 
 ## Success Criteria
 

@@ -7,7 +7,7 @@
 
 ## Overview
 
-- Priority: P1. Status: Pending.
+- Priority: P1. Status: Completed.
 - Owner-scoped wedding workspaces + staff assignments; safe upload pipeline; durable tasks (ledger, outbox, BullMQ, reconciler); versioned invitation renderer (3 families x 2 presets); structured editor with autosave/CAS/conflict/offline states.
 - Exit gate: save draft, process image, recover a failed worker task.
 
@@ -116,12 +116,12 @@ Create:
 
 ## Todo List
 
-- [ ] MORI-019 backend + UI-07/08/15 addresses
-- [ ] MORI-020 upload sessions + quotas
-- [ ] MORI-021 processors + fixtures
-- [ ] MORI-022 ledger/outbox/reconciler + UI-21 tasks
-- [ ] MORI-023 renderer families/presets
-- [ ] MORI-024 editor UI-12 + CAS
+- [x] MORI-019 backend + UI-07/08/15 addresses
+- [x] MORI-020 upload sessions + quotas
+- [x] MORI-021 processors + fixtures
+- [x] MORI-022 ledger/outbox/reconciler + UI-21 tasks
+- [x] MORI-023 renderer families/presets
+- [x] MORI-024 editor UI-12 + CAS
 
 ## Success Criteria
 

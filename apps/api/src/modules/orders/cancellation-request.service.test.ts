@@ -10,7 +10,6 @@ const staffEmail = `cancel-staff-${Date.now()}@example.com`
 const otherEmail = `cancel-other-${Date.now()}@example.com`
 
 describe('CancellationRequestService', () => {
-  const orders = new PlaceOrderService()
   const fulfillment = new FulfillmentService()
   const cancellations = new CancellationRequestService()
 

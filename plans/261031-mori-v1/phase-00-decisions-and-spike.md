@@ -8,7 +8,7 @@
 
 ## Overview
 
-- Priority: P1 (blocks everything). Status: In progress.
+- Priority: P1 (blocks everything). Status: Completed.
 - Turn scope, architecture, versions, contracts, and real-vs-fixture inputs into recorded decisions plus a minimal pinned build that proves the stack works together.
 - Exit gate: approved ADRs, compatible minimal Docker build, no unresolved architecture blocker.
 
@@ -110,12 +110,12 @@ Create (spike; P01 MORI-007 hardens and may replace):
 
 ## Todo List
 
-- [ ] MORI-001 requirement matrix + AGENTS.md section
-- [ ] MORI-002 ADR-01..06 + ADR-16
-- [ ] MORI-003 reference layouts prepared; human approval recorded
-- [ ] MORI-004 pinned version matrix + Docker build green
-- [ ] MORI-005 data-model review + migration outline + ADR-07..15
-- [ ] MORI-006 input register; human confirmation
+- [x] MORI-001 requirement matrix + AGENTS.md section
+- [x] MORI-002 ADR-01..06 + ADR-16
+- [x] MORI-003 reference layouts prepared; human approval recorded
+- [x] MORI-004 pinned version matrix + Docker build green
+- [x] MORI-005 data-model review + migration outline + ADR-07..15
+- [x] MORI-006 input register; human confirmation
 
 ## Success Criteria
 

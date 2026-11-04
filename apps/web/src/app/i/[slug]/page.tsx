@@ -3,6 +3,7 @@ import { renderInvitationHtml } from '@mori/invitation-renderer'
 import { cookies } from 'next/headers'
 import { GuestFragment } from './guest-fragment'
 import { GuestRsvp } from './guest-rsvp'
+import { ReportInvitation } from './report-invitation'
 import './guest.css'
 
 export const dynamic = 'force-dynamic'
@@ -63,6 +64,7 @@ export default async function GuestInvitationPage({
       {guest ? <p>Xin chào, {guest.partyName}</p> : null}
       {guest ? <GuestRsvp slug={slug} /> : null}
       <article className="guest" dangerouslySetInnerHTML={{ __html: html }} />
+      <ReportInvitation slug={slug} />
     </>
   )
 }

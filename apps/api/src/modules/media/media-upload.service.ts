@@ -149,29 +149,26 @@ export class MediaUploadService {
   }
 }
 
+type Tx = Parameters<Parameters<ReturnType<typeof getPrismaClient>['$transaction']>[0]>[0]
+
 function requestHash(input: { projectId: string; purpose: string; expectedBytes: number; declaredMime: string }): string {
   return `${input.projectId}:${input.purpose}:${input.expectedBytes}:${input.declaredMime}`
 }
 
-async function reservedBytes(tx: { $queryRaw: Function }, ownerUserId: string): Promise<number> {
-  const assets = await tx.$queryRaw`
+async function reservedBytes(tx: Tx, ownerUserId: string): Promise<number> {
+  const assets = await tx.$queryRaw<{ total: bigint | null }[]>`
     SELECT COALESCE(SUM("byteSize"), 0) AS total
     FROM media_assets
     WHERE "ownerUserId" = ${ownerUserId}::uuid
   `
-  const sessions = await tx.$queryRaw`
+  const sessions = await tx.$queryRaw<{ total: bigint | null }[]>`
     SELECT COALESCE(SUM("expectedBytes"), 0) AS total
     FROM media_upload_sessions
     WHERE "ownerUserId" = ${ownerUserId}::uuid
       AND "completedAt" IS NULL
       AND "expiresAt" > NOW()
   `
-  return Number(readTotal(assets)) + Number(readTotal(sessions))
-}
-
-function readTotal(rows: unknown): bigint {
-  const first = Array.isArray(rows) ? (rows[0] as { total?: bigint } | undefined) : undefined
-  return first?.total ?? 0n
+  return Number(assets[0]?.total ?? 0n) + Number(sessions[0]?.total ?? 0n)
 }
 
 function sniff(bytes: Buffer): string | null {

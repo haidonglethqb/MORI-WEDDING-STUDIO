@@ -7,7 +7,7 @@
 
 ## Overview
 
-- Priority: P1. Status: Pending (needs P06; P07 for 053).
+- Priority: P1. Status: Completed.
 - Printer-approved production profiles; lazy flat + bi-fold 3D viewer bound to the exact revision textures with full 2D fallback; production preflight checklist and print-start artifact verification; physical sample sign-off.
 - Exit gate: correct geometry/artifact mapping and actual production sign-off.
 
@@ -98,12 +98,12 @@ Modify:
 
 ## Todo List
 
-- [ ] MORI-049 profile schema/admin + human approval
-- [ ] MORI-050 flat card + TC-097
-- [ ] MORI-051 bi-fold + TC-098
-- [ ] MORI-052 lazy/fallback/budgets + TC-099/100
-- [ ] MORI-053 preflight guard + TC-101/102
-- [ ] MORI-054 physical sample sign-off
+- [x] MORI-049 profile schema/admin + human approval
+- [x] MORI-050 flat card + TC-097
+- [x] MORI-051 bi-fold + TC-098
+- [x] MORI-052 lazy/fallback/budgets + TC-099/100
+- [x] MORI-053 preflight guard + TC-101/102
+- [x] MORI-054 physical sample sign-off
 
 ## Success Criteria
 

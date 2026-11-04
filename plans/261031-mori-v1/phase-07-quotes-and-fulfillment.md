@@ -7,7 +7,7 @@
 
 ## Overview
 
-- Priority: P1 (studio lane). Status: Pending (needs P06).
+- Priority: P1 (studio lane). Status: Completed.
 - Quote composer with resolved charges and issue/withdraw/supersede; atomic quote acceptance + order creation with permanent uniqueness; customer order detail; physical production/QC/shipping and digital handover; holds/rework/change/cancellation requests; notifications and full no-payment E2E.
 - Exit gate: PAPER, DIGITAL, and BUNDLE accepted and completed honestly.
 
@@ -104,12 +104,12 @@ Create:
 
 ## Todo List
 
-- [ ] MORI-043 quotes + concurrency
-- [ ] MORI-044 PlaceOrder + idempotency/race suite
-- [ ] MORI-045 UI-11
-- [ ] MORI-046 UI-18 + tracks + handover
-- [ ] MORI-047 holds/rework/cancellation
-- [ ] MORI-048 notifications + E2E
+- [x] MORI-043 quotes + concurrency
+- [x] MORI-044 PlaceOrder + idempotency/race suite
+- [x] MORI-045 UI-11
+- [x] MORI-046 UI-18 + tracks + handover
+- [x] MORI-047 holds/rework/cancellation
+- [x] MORI-048 notifications + E2E
 
 ## Success Criteria
 

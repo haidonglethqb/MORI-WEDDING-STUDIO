@@ -73,13 +73,14 @@ interface PrepareBody {
 }
 
 function parsePrepare(body: PrepareBody) {
-  const renderState = body.renderState === 'FAILED' ? 'FAILED' : body.renderState === 'READY' ? 'READY' : ''
+  const renderState: 'FAILED' | 'READY' | '' =
+    body.renderState === 'FAILED' ? 'FAILED' : body.renderState === 'READY' ? 'READY' : ''
   const millimetres = [body.trimWidthMm, body.trimHeightMm, body.profileWidthMm, body.profileHeightMm]
   if (!renderState || millimetres.some((value) => !Number.isInteger(value) || (value ?? 0) < 1)) {
     throw new UnprocessableEntityException('A proof needs a render state and fixture measurements')
   }
   return {
-    renderState: renderState as 'READY' | 'FAILED',
+    renderState,
     faceMapComplete: body.faceMapComplete === true,
     fontsReady: body.fontsReady === true,
     trimWidthMm: body.trimWidthMm ?? 0,

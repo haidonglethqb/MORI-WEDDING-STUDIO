@@ -12,6 +12,8 @@ export interface InvitationEditorDraft {
   greeting: string
   published: boolean
   rsvpMode: 'OFF' | 'OPEN' | 'GUEST_LIST'
+  moderationState: 'ACTIVE' | 'SUSPENDED'
+  moderationReason: string | null
 }
 
 @Injectable()
@@ -34,6 +36,8 @@ export class InvitationEditorService {
       greeting: content.greeting ?? '',
       published: invitation.status === 'PUBLISHED',
       rsvpMode: invitation.rsvpMode,
+      moderationState: invitation.moderationState,
+      moderationReason: invitation.moderationReason,
     }
   }
 

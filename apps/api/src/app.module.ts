@@ -7,6 +7,7 @@ import { HealthModule } from './health/health.module.js'
 import { IdentityModule } from './modules/identity/identity.module.js'
 import { InvitationModule } from './modules/invitations/invitation.module.js'
 import { MediaModule } from './modules/media/media.module.js'
+import { ModerationModule } from './modules/operations/moderation/moderation.module.js'
 import { NotificationModule } from './modules/notifications/notification.module.js'
 import { OrdersModule } from './modules/orders/orders.module.js'
 import { PricingModule } from './modules/pricing/pricing.module.js'
@@ -22,6 +23,7 @@ import { ProblemDetailsFilter } from './common/problem-details.filter.js'
     PricingModule,
     InvitationModule,
     MediaModule,
+    ModerationModule,
     NotificationModule,
     OrdersModule,
     CatalogueModule,

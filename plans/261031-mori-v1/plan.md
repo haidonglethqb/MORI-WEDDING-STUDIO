@@ -1,7 +1,7 @@
 ---
 title: "MORI v1 implementation"
 description: "Dependency-ordered delivery of MORI full v1 (66 tickets, P00-P10) from docs/MORI_PROJECT_PLAN.md with no payment subsystem."
-status: in-progress
+status: completed
 priority: P1
 effort: "unestimated (dependency-ordered; spec 19.1 forbids calendar promises)"
 branch: main
@@ -21,17 +21,17 @@ Path conventions: API `apps/api/src/modules/<m>/**`; web `apps/web/src/features/
 
 | # | Phase | Tickets | Status | Exit gate (spec 19.2) | Link |
 |---|-------|---------|--------|-----------------------|------|
-| P00 | Decisions and spike | 001-006 | In progress | ADRs approved; minimal pinned build | [phase-00](./phase-00-decisions-and-spike.md) |
-| P01 | Foundation | 007-012 | Pending | Clean-clone startup; cross-account denial | [phase-01](./phase-01-foundation.md) |
-| P02 | Catalogue and UI system | 013-018 | Pending | 30-record content path; tier/budget correct | [phase-02](./phase-02-catalogue-and-ui-system.md) |
-| P03 | Workspaces, media, editor | 019-024 | Pending | Save draft, process image, recover failed task | [phase-03](./phase-03-workspaces-media-editor.md) |
-| P04 | Publication and sharing | 025-030 | Pending | Publish; guest views; revocation blocks reads | [phase-04](./phase-04-publication-and-sharing.md) |
-| P05 | RSVP and digital pilot | 031-036 | Pending | Digital pilot incl. capacity races + privacy | [phase-05](./phase-05-rsvp-and-digital-pilot.md) |
-| P06 | Studio design workflow | 037-042 | Pending | Design/approval loop with stale-proof protection | [phase-06](./phase-06-studio-design-workflow.md) |
-| P07 | Quotes and fulfillment | 043-048 | Pending | PAPER/DIGITAL/BUNDLE completed honestly | [phase-07](./phase-07-quotes-and-fulfillment.md) |
-| P08 | 3D and manufacturing | 049-054 | Pending | Geometry/artifact mapping + production sign-off | [phase-08](./phase-08-3d-and-manufacturing.md) |
-| P09 | Grounded assistance | 055-060 | Pending | Eval, quota, injection, outage gates pass | [phase-09](./phase-09-grounded-assistance.md) |
-| P10 | Release gate | 061-066 | Pending | All full-v1 requirements + blockers pass | [phase-10](./phase-10-release-gate.md) |
+| P00 | Decisions and spike | 001-006 | Completed | ADRs approved; minimal pinned build | [phase-00](./phase-00-decisions-and-spike.md) |
+| P01 | Foundation | 007-012 | Completed | Clean-clone startup; cross-account denial | [phase-01](./phase-01-foundation.md) |
+| P02 | Catalogue and UI system | 013-018 | Completed | 30-record content path; tier/budget correct | [phase-02](./phase-02-catalogue-and-ui-system.md) |
+| P03 | Workspaces, media, editor | 019-024 | Completed | Save draft, process image, recover failed task | [phase-03](./phase-03-workspaces-media-editor.md) |
+| P04 | Publication and sharing | 025-030 | Completed | Publish; guest views; revocation blocks reads | [phase-04](./phase-04-publication-and-sharing.md) |
+| P05 | RSVP and digital pilot | 031-036 | Completed | Digital pilot incl. capacity races + privacy | [phase-05](./phase-05-rsvp-and-digital-pilot.md) |
+| P06 | Studio design workflow | 037-042 | Completed | Design/approval loop with stale-proof protection | [phase-06](./phase-06-studio-design-workflow.md) |
+| P07 | Quotes and fulfillment | 043-048 | Completed | PAPER/DIGITAL/BUNDLE completed honestly | [phase-07](./phase-07-quotes-and-fulfillment.md) |
+| P08 | 3D and manufacturing | 049-054 | Completed | Geometry/artifact mapping + production sign-off | [phase-08](./phase-08-3d-and-manufacturing.md) |
+| P09 | Grounded assistance | 055-060 | Completed | Eval, quota, injection, outage gates pass | [phase-09](./phase-09-grounded-assistance.md) |
+| P10 | Release gate | 061-066 | Completed | All full-v1 requirements + blockers pass | [phase-10](./phase-10-release-gate.md) |
 
 ## Dependency graph (spec 19.2)
 

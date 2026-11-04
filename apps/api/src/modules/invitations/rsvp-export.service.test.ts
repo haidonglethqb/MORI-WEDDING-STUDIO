@@ -79,5 +79,18 @@ describe('RsvpExportService', () => {
     const staffCsv = await exporter.exportCsv(staff.id, created.id)
     expect(staffCsv).toBe(csv)
     expect(await prisma.rsvpExportAudit.count({ where: { invitationId: created.id } })).toBe(2)
+
+    const formulaParty = await prisma.guestParty.create({
+      data: { invitationId: created.id, source: 'OPEN', displayName: '=SUM(1,2)' },
+    })
+    await rsvp.submit({
+      partyId: formulaParty.id,
+      eventId: event.id,
+      expectedVersion: 0,
+      status: 'DECLINED',
+      attendeeCount: 0,
+    })
+    const safeCsv = await exporter.exportCsv(owner.id, created.id)
+    expect(safeCsv).toContain('"\'=SUM(1,2)",DECLINED,0')
   })
 })

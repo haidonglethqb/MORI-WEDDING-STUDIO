@@ -21,7 +21,7 @@ export default tseslint.config(
   },
   // Typed lint for main source files
   {
-    files: ['apps/*/src/**/*.{ts,tsx}', 'packages/*/src/**/*.{ts,tsx}', 'apps/*/scripts/**/*.ts'],
+    files: ['apps/*/src/**/*.{ts,tsx}', 'packages/*/src/**/*.{ts,tsx}'],
     extends: [...tseslint.configs.recommendedTypeChecked, prettierConfig],
     languageOptions: {
       parserOptions: {
@@ -45,7 +45,6 @@ export default tseslint.config(
     ignores: [
       'apps/*/src/**/*.{ts,tsx}',
       'packages/*/src/**/*.{ts,tsx}',
-      'apps/*/scripts/**/*.ts',
     ],
     extends: [...tseslint.configs.recommended, prettierConfig],
     rules: {

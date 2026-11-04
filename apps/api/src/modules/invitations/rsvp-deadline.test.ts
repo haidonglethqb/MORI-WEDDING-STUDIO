@@ -1,5 +1,4 @@
 import { afterAll, describe, expect, it } from 'vitest'
-import { ConflictException } from '@nestjs/common'
 import { disconnectPrismaClient, getPrismaClient } from '@mori/database'
 import { InvitationService } from './invitation.service.js'
 import { RsvpService } from './rsvp.service.js'

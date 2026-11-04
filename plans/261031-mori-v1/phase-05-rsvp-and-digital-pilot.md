@@ -7,7 +7,7 @@
 
 ## Overview
 
-- Priority: P1 (digital lane). Status: Pending (needs P04).
+- Priority: P1 (digital lane). Status: Completed.
 - Guest parties + named links; OPEN/GUEST_LIST/OFF RSVP with capacity locks; owner dashboard + corrections; private exports; abuse reports + moderation; expiry/retention/deletion jobs; pilot rehearsal behind feature flags.
 - Exit gate: digital-only pilot works, including capacity races and privacy review.
 
@@ -112,12 +112,12 @@ Create:
 
 ## Todo List
 
-- [ ] MORI-031 parties + named links + exchange
-- [ ] MORI-032 RSVP transactions + concurrency suite
-- [ ] MORI-033 UI-14 + corrections/exclusion
-- [ ] MORI-034 export jobs
-- [ ] MORI-035 moderation + retention + account deletion
-- [ ] MORI-036 pilot flags + rehearsal pack; human sign-off
+- [x] MORI-031 parties + named links + exchange
+- [x] MORI-032 RSVP transactions + concurrency suite
+- [x] MORI-033 UI-14 + corrections/exclusion
+- [x] MORI-034 export jobs
+- [x] MORI-035 moderation + retention + account deletion
+- [x] MORI-036 pilot flags + rehearsal pack; human sign-off
 
 ## Success Criteria
 

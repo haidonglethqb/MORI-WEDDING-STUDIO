@@ -8,7 +8,7 @@
 
 ## Overview
 
-- Priority: P1. Status: Pending (needs MORI-004, 005).
+- Priority: P1. Status: Completed.
 - Deliver the hardened monorepo, dev Compose stack, identity + sessions, authorization/CSRF/MFA/trusted-host foundation, CI, request IDs, safe errors, audit, idempotency.
 - Exit gate: clean-clone startup (TC-103) and cross-account denial tests.
 
@@ -120,12 +120,12 @@ Create:
 
 ## Todo List
 
-- [ ] MORI-007 layout + boundaries
-- [ ] MORI-008 Compose + config + TC-103
-- [ ] MORI-009 identity + UI-06
-- [ ] MORI-010 policy/CSRF/MFA/trusted-host
-- [ ] MORI-011 CI gates proven
-- [ ] MORI-012 audit/idempotency/redaction/layouts
+- [x] MORI-007 layout + boundaries
+- [x] MORI-008 Compose + config + TC-103
+- [x] MORI-009 identity + UI-06
+- [x] MORI-010 policy/CSRF/MFA/trusted-host
+- [x] MORI-011 CI gates proven
+- [x] MORI-012 audit/idempotency/redaction/layouts
 
 ## Success Criteria
 

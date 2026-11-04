@@ -1,0 +1,40 @@
+enum ModerationReportState {
+  OPEN
+  REVIEWED
+}
+
+enum ModerationAction {
+  SUSPEND
+  RESTORE
+}
+
+model ModerationReport {
+  id               String                @id @default(uuid()) @db.Uuid
+  invitationId     String                @db.Uuid
+  reporterDigest   String
+  reason           String
+  state            ModerationReportState @default(OPEN)
+  createdAt        DateTime              @default(now()) @db.Timestamptz
+  reviewedAt       DateTime?             @db.Timestamptz
+  reviewedByUserId String?               @db.Uuid
+  invitation       Invitation            @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+
+  @@index([invitationId, state])
+  @@index([reporterDigest, createdAt])
+  @@map("moderation_reports")
+}
+
+model ModerationDecision {
+  id            String           @id @default(uuid()) @db.Uuid
+  invitationId  String           @db.Uuid
+  adminUserId   String           @db.Uuid
+  action        ModerationAction
+  previousState ModerationState
+  nextState     ModerationState
+  reason        String
+  createdAt     DateTime         @default(now()) @db.Timestamptz
+  invitation    Invitation       @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+
+  @@index([invitationId, createdAt])
+  @@map("moderation_decisions")
+}

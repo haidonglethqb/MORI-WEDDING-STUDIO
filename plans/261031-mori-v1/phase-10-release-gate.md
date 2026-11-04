@@ -8,7 +8,7 @@
 
 ## Overview
 
-- Priority: P1. Status: Pending (needs P05 + P07 + P08 + P09).
+- Priority: P1. Status: Completed.
 - Off-host backups + WAL + restore drill; independent security review; load/mobile/a11y/visual measurement; migration/deploy/rollback/incident rehearsal; real inputs + studio training; full launch rehearsal and requirement-by-requirement sign-off.
 - Exit gate: all full-v1 requirements and release blockers pass.
 
@@ -95,12 +95,12 @@ Create:
 
 ## Todo List
 
-- [ ] MORI-061 backups + restore drill + alerts
-- [ ] MORI-062 security pack + human review
-- [ ] MORI-063 load/perf/a11y/visual evidence
-- [ ] MORI-064 release workflow + rollback + runbooks
-- [ ] MORI-065 real inputs + training
-- [ ] MORI-066 launch rehearsal + sign-off
+- [x] MORI-061 backups + restore drill + alerts
+- [x] MORI-062 security pack + human review
+- [x] MORI-063 load/perf/a11y/visual evidence
+- [x] MORI-064 release workflow + rollback + runbooks
+- [x] MORI-065 real inputs + training
+- [x] MORI-066 launch rehearsal + sign-off
 
 ## Success Criteria
 

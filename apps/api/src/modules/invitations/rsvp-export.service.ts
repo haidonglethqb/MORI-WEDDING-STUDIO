@@ -24,6 +24,7 @@ function toCsv(rows: ListedRsvp[]): string {
 }
 
 function csvCell(value: string): string {
-  if (!/[",\n]/.test(value)) return value
-  return `"${value.replaceAll('"', '""')}"`
+  const safe = /^[=+\-@\t\r]/.test(value) ? `'${value}` : value
+  if (!/[",\n\r]/.test(safe)) return safe
+  return `"${safe.replaceAll('"', '""')}"`
 }

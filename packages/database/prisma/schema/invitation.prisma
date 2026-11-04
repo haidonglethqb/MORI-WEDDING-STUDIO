@@ -51,6 +51,8 @@ model Invitation {
   rsvpMode             RsvpMode               @default(OPEN)
   rsvpDeadlineAt       DateTime?              @db.Timestamptz
   moderationState      ModerationState        @default(ACTIVE)
+  moderationReason     String?
+  moderationVersion    Int                    @default(0)
   expiresAt            DateTime?              @db.Timestamptz
   project              WeddingProject         @relation(fields: [projectId], references: [id])
   draft                InvitationDraft?
@@ -63,6 +65,8 @@ model Invitation {
   policyAudits         RsvpPolicyAudit[]
   modeAudits           RsvpModeAudit[]
   exportAudits         RsvpExportAudit[]
+  moderationReports    ModerationReport[]
+  moderationDecisions  ModerationDecision[]
 
   @@index([projectId])
   @@map("invitations")

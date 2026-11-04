@@ -16,6 +16,8 @@ export interface EditorDraft {
   greeting: string
   published: boolean
   rsvpMode: 'OFF' | 'OPEN' | 'GUEST_LIST'
+  moderationState?: 'ACTIVE' | 'SUSPENDED'
+  moderationReason?: string | null
 }
 
 export function EditorForm({ draft }: { draft: EditorDraft }) {
@@ -91,6 +93,13 @@ export function EditorForm({ draft }: { draft: EditorDraft }) {
       }}
     >
       <h1>Soạn thiệp</h1>
+      {draft.moderationState === 'SUSPENDED' ? (
+        <p role="alert">
+          Thiệp đang tạm ngưng hiển thị
+          {draft.moderationReason ? `: ${draft.moderationReason}` : ''}. Liên hệ hỗ trợ tại{' '}
+          <a href="/workspace">Khu vực của bạn</a>.
+        </p>
+      ) : null}
       <RotateHandle
         invitationId={draft.invitationId}
         slug={slug}
