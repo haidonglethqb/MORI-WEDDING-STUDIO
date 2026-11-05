@@ -1,4 +1,5 @@
 import type { BespokeProductProfile } from '../../app/collections/collection-catalog-data'
+import { drawMotifVectorFull } from './motif-3d-drawers'
 
 export function drawCardCover(
   ctx: CanvasRenderingContext2D,
@@ -47,8 +48,8 @@ export function drawCardCover(
   ctx.font = '500 17px -apple-system, sans-serif'
   ctx.fillText('MORI WEDDING ATELIER', 512, 175)
 
-  // Motif Drawing
-  drawMotifVector(ctx, profile.motifType, gold, isDark)
+  // Motif Drawing using full vector engine for 30 models
+  drawMotifVectorFull(ctx, profile.motifType, gold, isDark)
 
   // Couple Names
   ctx.fillStyle = textColor
@@ -77,68 +78,4 @@ export function drawCardCover(
   ctx.font = 'italic 19px Georgia, serif'
   ctx.fillStyle = subtextColor
   ctx.fillText('Giấy bã mía sinh thái 350gsm · Ép kim nhiệt cao', 512, 1260)
-}
-
-function drawMotifVector(
-  ctx: CanvasRenderingContext2D,
-  motif: string,
-  gold: string,
-  isDark: boolean,
-): void {
-  ctx.save()
-  ctx.textAlign = 'center'
-  ctx.textBaseline = 'middle'
-
-  if (motif === 'phoenix-gold') {
-    ctx.strokeStyle = gold
-    ctx.lineWidth = 2.5
-    ctx.beginPath()
-    ctx.arc(512, 360, 84, 0, Math.PI * 2)
-    ctx.stroke()
-    ctx.fillStyle = gold
-    ctx.font = 'bold 72px "Noto Serif SC", serif'
-    ctx.fillText('鳳', 512, 355)
-    ctx.font = '600 16px -apple-system, sans-serif'
-    ctx.fillText('PHỤNG VŨ LOAN TƯỜNG', 512, 475)
-  } else if (motif === 'palace-joy') {
-    ctx.fillStyle = gold
-    ctx.font = 'bold 88px serif'
-    ctx.fillText('囍', 512, 360)
-    ctx.font = '600 16px -apple-system, sans-serif'
-    ctx.fillText('HOÀNG GIA ĐẠI LỄ', 512, 475)
-  } else if (motif === 'zen-enso') {
-    ctx.strokeStyle = gold
-    ctx.lineWidth = 5
-    ctx.beginPath()
-    ctx.arc(512, 360, 68, 0.2, Math.PI * 1.9)
-    ctx.stroke()
-    ctx.fillStyle = '#b33939'
-    ctx.fillRect(492, 340, 40, 40)
-    ctx.fillStyle = '#ffffff'
-    ctx.font = 'bold 24px serif'
-    ctx.fillText('森', 512, 360)
-  } else if (motif.includes('arch')) {
-    ctx.strokeStyle = gold
-    ctx.lineWidth = 2
-    ctx.beginPath()
-    ctx.arc(512, 350, 70, Math.PI, 0)
-    ctx.lineTo(582, 430)
-    ctx.lineTo(442, 430)
-    ctx.closePath()
-    ctx.stroke()
-    ctx.fillStyle = gold
-    ctx.font = '500 15px -apple-system, sans-serif'
-    ctx.fillText('PARIS ATELIER', 512, 460)
-  } else {
-    // Default Monogram Crest
-    ctx.strokeStyle = gold
-    ctx.lineWidth = 2
-    ctx.beginPath()
-    ctx.arc(512, 360, 70, 0, Math.PI * 2)
-    ctx.stroke()
-    ctx.fillStyle = gold
-    ctx.font = 'italic 44px "Lora", Georgia, serif'
-    ctx.fillText(isDark ? '囍' : 'M · S', 512, 362)
-  }
-  ctx.restore()
 }

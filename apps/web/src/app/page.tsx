@@ -1,8 +1,15 @@
 import type { CatalogueProduct } from '@mori/contracts'
 import { HomeNav } from './home-nav'
 import { HeroShowcase } from './hero-showcase'
-import { CraftBento } from './craft-bento'
+import { HeroTrustBar } from './hero-trust-bar'
+import { CraftMaterials } from './craft-materials'
 import { SampleShowcase, type ShowcaseProduct } from './sample-showcase'
+import { DigitalRsvpShowcase } from './digital-rsvp-showcase'
+import { WeddingEstimator } from './wedding-estimator'
+import { HomeSteps } from './home-steps'
+import { HomeStories } from './home-stories'
+import { HomeFaq } from './home-faq'
+import { HomeFooter } from './home-footer'
 import './home.css'
 import './collections/collections.css'
 
@@ -16,8 +23,8 @@ function resolveStyleCategory(slug: string): string {
   if (slug.includes('editorial')) return 'Editorial Vogue'
   if (slug.includes('floral')) return 'Floral Botanical'
   if (slug.includes('minimalist')) return 'Minimalist Japandi'
-  if (slug.includes('typography')) return 'Modern Calligraphy'
-  if (slug.includes('traditional')) return 'Heritage Á Đông'
+  if (slug.includes('typography') || slug.includes('calligraphy')) return 'Modern Calligraphy'
+  if (slug.includes('traditional') || slug.includes('heritage')) return 'Heritage Á Đông'
   return 'Artisan Bespoke'
 }
 
@@ -32,7 +39,7 @@ async function loadProducts(): Promise<ShowcaseProduct[]> {
       .map((p) => {
         const orderable = p.variants.filter((v) => v.availability !== 'UNAVAILABLE')
         const bifold = orderable.some((v) => v.shape === 'BIFOLD')
-        const minPrice = orderable.find((v) => v.unitAmountVnd !== null)?.unitAmountVnd ?? '45000'
+        const minPrice = orderable.find((v) => v.unitAmountVnd !== null)?.unitAmountVnd ?? '35000'
         return {
           slug: p.slug,
           name: p.name,
@@ -57,20 +64,25 @@ export default async function HomePage() {
       {/* Hero Section */}
       <section className="home-hero">
         <div className="hero-content">
-          <span className="hero-eyebrow">✦ Atelier Thiệp Cưới Cao Cấp ✦</span>
+          <div className="hero-eyebrow-pill">
+            <span className="shimmer-dot">✦</span>
+            <span>ATELIER THIỆP CƯỚI NGHỆ NHÂN CAO CẤP</span>
+            <span className="shimmer-dot">✦</span>
+          </div>
           <h1>Thiệp cưới in trên giấy ngà, sắp riêng từng cặp đôi.</h1>
-          <p>
-            Khởi đầu hành trình hạnh phúc bằng xúc cảm tự nhiên từ sợi bã mía 350gsm, kỹ thuật ép kim chìm nhiệt độ cao
-            và trang thiệp cưới số tương tác RSVP đồng bộ độc bản.
+          <p className="hero-lead-text">
+            Khởi đầu hành trình chung đôi bằng xúc cảm tự nhiên từ sợi bã mía 350gsm, kỹ thuật ép kim chìm nhiệt cao
+            và trang thiệp cưới số tương tác RSVP đồng bộ độc bản cho từng vị khách quý.
           </p>
           <div className="home-actions">
             <a className="home-cta" href="/collections">
               Khám phá bộ sưu tập 2026
             </a>
             <a className="home-quiet" href="#thiep-so">
-              Thiệp cưới số tương tác &rarr;
+              Trải nghiệm thiệp số &rarr;
             </a>
           </div>
+          <HeroTrustBar />
         </div>
 
         <HeroShowcase />
@@ -79,80 +91,77 @@ export default async function HomePage() {
       {/* Collection Gallery */}
       <section className="home-band" id="bo-suu-tap">
         <div className="section-title-wrap">
-          <span className="section-eyebrow">Catalogue 2026</span>
-          <h2>Các mẫu thiết kế sẵn sàng may đo</h2>
+          <span className="section-eyebrow">Catalogue Atelier 2026</span>
+          <h2>Các thiết kế sẵn sàng may đo</h2>
           <p className="section-subtitle">
-            Mỗi thiết kế đều hỗ trợ xem mô hình 3D tương tác đa chiều trước khi duyệt in và hoàn thiện thủ công.
+            Mỗi tác phẩm đều có thể xoay mô hình 3D tương tác đa chiều trước khi duyệt in và hoàn thiện thủ công.
           </p>
         </div>
         <SampleShowcase products={showcaseProducts} />
       </section>
 
-      {/* Artisanal Bento Grid */}
+      {/* Material & Craftsmanship Explorer */}
       <section className="home-band" id="che-tac">
         <div className="section-title-wrap">
-          <span className="section-eyebrow">Nghệ thuật Thủ công</span>
-          <h2>Xúc cảm sợi giấy &amp; Dấu ấn độc bản</h2>
+          <span className="section-eyebrow">Nghệ thuật Sợi giấy &amp; Dập kim</span>
+          <h2>Xúc cảm thủ công &amp; Dấu ấn độc bản</h2>
           <p className="section-subtitle">
-            Chúng tôi tỉ mỉ trong từng đường ép nhiệt, thớ giấy thực vật và trải nghiệm số tiện lợi của khách mời.
+            Khám phá 4 kỹ nghệ tinh hoa tạo nên sự sang trọng và giá trị lưu niệm vượt thời gian của MORI.
           </p>
         </div>
-        <CraftBento />
+        <CraftMaterials />
       </section>
 
-      {/* 3 Steps */}
-      <section className="home-steps">
+      {/* Digital RSVP Interactive Smartphone Showcase */}
+      <section className="home-band-dark" id="thiep-so">
+        <div className="band-dark-inner">
+          <DigitalRsvpShowcase />
+        </div>
+      </section>
+
+      {/* Wedding Suite Cost Estimator */}
+      <section className="home-band" id="du-toan">
+        <div className="section-title-wrap">
+          <span className="section-eyebrow">Minh bạch &amp; Chu đáo</span>
+          <h2>Dự toán chi phí bộ thiệp cưới</h2>
+          <p className="section-subtitle">
+            Ước tính ngân sách nhanh chóng theo số lượng và quy cách hoàn thiện thực tế của bạn.
+          </p>
+        </div>
+        <WeddingEstimator />
+      </section>
+
+      {/* 4 Steps Journey */}
+      <section className="home-steps" id="quy-trinh">
         <div className="section-title-wrap">
           <span className="section-eyebrow">Hành trình trải nghiệm</span>
-          <h2>Ba bước đặt thiệp cùng MORI</h2>
-          <p className="section-subtitle">Quy trình rõ ràng, minh bạch giúp cô dâu chú rể an tâm tuyệt đối.</p>
+          <h2>Bốn bước may đo cùng MORI</h2>
+          <p className="section-subtitle">Quy trình rõ ràng giúp cô dâu chú rể an tâm trong từng khoảnh khắc chuẩn bị.</p>
         </div>
-        <ul className="steps-list">
-          <li className="step-item">
-            <span className="step-num">01</span>
-            <h3>Chọn mẫu hoặc gửi ý tưởng</h3>
-            <p>Chọn từ bộ sưu tập có sẵn hoặc gửi phác thảo thiết kế riêng theo phong cách hôn lễ của bạn.</p>
-          </li>
-          <li className="step-item">
-            <span className="step-num">02</span>
-            <h3>Duyệt mô hình 3D &amp; Bản in thử</h3>
-            <p>Kiểm tra chính xác tên, ngày giờ, địa điểm và hình dung tấm thiệp thật qua không gian 3D trực quan.</p>
-          </li>
-          <li className="step-item">
-            <span className="step-num">03</span>
-            <h3>Chế tác &amp; Bàn giao trọn vẹn</h3>
-            <p>Xưởng tiến hành ép kim, gia công mép xé thủ công và kích hoạt trang thiệp số RSVP đồng bộ.</p>
-          </li>
-        </ul>
+        <HomeSteps />
       </section>
 
-      {/* Digital RSVP Banner */}
-      <section className="home-band" id="thiep-so">
-        <div className="digital-hero-band">
-          <div className="digital-hero-info">
-            <h2>Thiệp cưới số tương tác đa chiều</h2>
-            <p>
-              Tặng kèm trang thiệp số riêng biệt cho từng cặp đôi: khách mời nhận thiệp qua điện thoại, xác nhận tham dự (RSVP),
-              xem bản đồ chỉ đường và gửi lời chúc mừng trực tiếp đến cô dâu chú rể.
-            </p>
-          </div>
-          <div>
-            <a href="/collections" className="digital-btn">
-              Khám phá mẫu thiệp số &rarr;
-            </a>
-          </div>
+      {/* Real Love Stories */}
+      <section className="home-band" id="cau-chuyen">
+        <div className="section-title-wrap">
+          <span className="section-eyebrow">Hạnh phúc lan tỏa</span>
+          <h2>Lời nhắn gửi từ những cặp đôi</h2>
+          <p className="section-subtitle">Những trải nghiệm chân thật từ các cô dâu chú rể đã đồng hành cùng MORI.</p>
         </div>
+        <HomeStories />
       </section>
 
-      {/* Footer */}
-      <footer className="home-footer">
-        <p style={{ margin: '0 0 8px', fontWeight: 600, color: '#3e4a39', letterSpacing: '0.05em' }}>
-          MORI WEDDING ATELIER · XƯỞNG THIỆP CƯỚI GIẤY NGÀ SINH THÁI
-        </p>
-        <p style={{ margin: 0, fontSize: '12px' }}>
-          Tất cả sản phẩm sử dụng 100% giấy bã mía không tẩy trắng, mực in gốc khoáng thân thiện môi trường.
-        </p>
-      </footer>
+      {/* Atelier FAQ */}
+      <section className="home-band" id="faq">
+        <div className="section-title-wrap">
+          <span className="section-eyebrow">Giải đáp thắc mắc</span>
+          <h2>Những câu hỏi thường gặp</h2>
+          <p className="section-subtitle">Tất cả những điều bạn cần biết trước khi đặt may đo thiệp cưới tại MORI.</p>
+        </div>
+        <HomeFaq />
+      </section>
+
+      <HomeFooter />
     </div>
   )
 }

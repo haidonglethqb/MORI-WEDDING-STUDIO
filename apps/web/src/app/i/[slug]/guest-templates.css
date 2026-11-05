@@ -1,0 +1,1400 @@
+/* MORI 6 Bespoke Wedding Atelier Template Families */
+
+/* Common Card Base for Templates */
+.template-editorial-vogue,
+.template-heritage-asian,
+.template-floral-botanical,
+.template-minimalist-zen,
+.template-calligraphy-artisan,
+.template-modern-arch {
+  width: 100%;
+  box-sizing: border-box;
+  position: relative;
+  border: 1.5px solid;
+  padding: 44px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 20px;
+  box-shadow: 0 20px 54px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+/* ====================================================
+   1. EDITORIAL VOGUE TEMPLATE
+   ==================================================== */
+.template-editorial-vogue {
+  border-radius: 190px 190px 24px 24px;
+  padding-top: 60px;
+}
+
+.vogue-arch-frame {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  border: 1px solid;
+  border-radius: 178px 178px 16px 16px;
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.vogue-header-strip {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+}
+
+.vogue-edition-tag {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.vogue-roman-date {
+  font-family: var(--font-serif, "Lora", serif);
+  font-size: 14px;
+  letter-spacing: 0.18em;
+  font-weight: 600;
+}
+
+.vogue-guest-pill {
+  font-size: 13px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid;
+  padding: 6px 18px;
+  border-radius: 999px;
+  backdrop-filter: blur(4px);
+}
+
+.vogue-hero-title {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.vogue-pre-title {
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.vogue-names {
+  font-family: var(--font-serif, "Lora", Georgia, serif);
+  font-size: clamp(34px, 5.2vw, 46px);
+  font-weight: 500;
+  line-height: 1.15;
+  margin: 4px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.vogue-ampersand {
+  font-style: italic;
+  font-weight: 400;
+  font-size: 0.85em;
+}
+
+.vogue-event-subtitle {
+  font-size: 15px;
+  opacity: 0.75;
+  margin: 0;
+}
+
+.vogue-vellum-sash {
+  width: 100%;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.4);
+  border-top: 1px solid rgba(179, 142, 70, 0.3);
+  border-bottom: 1px solid rgba(179, 142, 70, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin: 4px 0;
+}
+
+.vogue-wax-seal-emblem {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #c8a765;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.vogue-parents-block {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
+  max-width: 440px;
+  padding: 10px 0;
+}
+
+.vogue-parent-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.vogue-parent-col .col-label {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 700;
+  opacity: 0.7;
+}
+
+.vogue-parent-col p {
+  font-size: 13px;
+  line-height: 1.45;
+  margin: 0;
+  font-weight: 500;
+}
+
+.vogue-parent-divider {
+  width: 1px;
+  height: 36px;
+  opacity: 0.4;
+}
+
+.vogue-schedule-grid {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 440px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+  border: 1px solid rgba(179, 142, 70, 0.2);
+}
+
+.vogue-schedule-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.vogue-schedule-item .time-digit {
+  font-family: var(--font-serif, serif);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.vogue-schedule-item .time-sub {
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  opacity: 0.7;
+}
+
+.vogue-venue-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.vogue-calendar-badge {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.vogue-venue-line {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.vogue-venue-address {
+  font-size: 12px;
+  opacity: 0.75;
+  font-style: normal;
+  margin: 0;
+}
+
+.vogue-quote-box {
+  max-width: 460px;
+  padding: 8px 0;
+}
+
+.vogue-french-quote {
+  font-family: var(--font-serif, "Lora", serif);
+  font-style: italic;
+  font-size: 15px;
+  margin: 0 0 4px;
+}
+
+.vogue-viet-quote {
+  font-size: 13px;
+  opacity: 0.8;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.vogue-countdown-bar {
+  display: flex;
+  gap: 18px;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 8px 24px;
+  border-radius: 999px;
+  border: 1px solid;
+}
+
+.vogue-count-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.vogue-count-col strong {
+  font-family: var(--font-serif, serif);
+  font-size: 16px;
+}
+
+.vogue-count-col small {
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  opacity: 0.7;
+}
+
+.vogue-card-footer {
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  opacity: 0.65;
+  text-transform: uppercase;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(179, 142, 70, 0.3);
+  width: 100%;
+}
+
+/* ====================================================
+   2. HERITAGE ASIAN TEMPLATE (SONG HỶ HOÀNG GIA)
+   ==================================================== */
+.template-heritage-asian {
+  border-radius: 20px;
+  background: radial-gradient(circle at 50% 15%, #7a1b19 0%, #460e0d 100%) !important;
+  color: #fff8eb !important;
+  box-shadow: 0 24px 60px rgba(70, 14, 13, 0.35);
+}
+
+.heritage-corner-pattern {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border-color: #d4af37;
+  border-style: solid;
+  pointer-events: none;
+}
+.heritage-corner-pattern.c-tl { top: 12px; left: 12px; border-width: 2px 0 0 2px; }
+.heritage-corner-pattern.c-tr { top: 12px; right: 12px; border-width: 2px 2px 0 0; }
+.heritage-corner-pattern.c-bl { bottom: 12px; left: 12px; border-width: 0 0 2px 2px; }
+.heritage-corner-pattern.c-br { bottom: 12px; right: 12px; border-width: 0 2px 2px 0; }
+
+.heritage-inner-frame {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 12px;
+  pointer-events: none;
+}
+
+.heritage-joy-crest {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin-top: 4px;
+}
+
+.imperial-joy-symbol {
+  font-size: 54px;
+  line-height: 1;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
+.heritage-banner-txt {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  font-weight: 700;
+  color: #f7d36d;
+}
+
+.heritage-guest-pill {
+  font-size: 13px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid;
+  padding: 6px 18px;
+  border-radius: 999px;
+  color: #fff8eb;
+}
+
+.heritage-parents-grid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  max-width: 440px;
+  padding: 12px 0;
+  border-top: 1px dashed rgba(212, 175, 55, 0.4);
+  border-bottom: 1px dashed rgba(212, 175, 55, 0.4);
+}
+
+.heritage-family-box {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.family-side-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.family-head {
+  font-size: 13px;
+}
+
+.family-origin {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.heritage-center-seal {
+  font-size: 18px;
+}
+
+.heritage-ceremony-lead {
+  font-size: 13px;
+  opacity: 0.85;
+  margin: -4px 0 0;
+  font-style: italic;
+}
+
+.heritage-couple-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.heritage-bridegroom {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.role-tag {
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+}
+
+.name-bold {
+  font-family: var(--font-serif, "Lora", serif);
+  font-size: clamp(28px, 4.4vw, 36px);
+  margin: 0;
+  color: #ffffff;
+}
+
+.heritage-duo-knot {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  font-weight: 700;
+  margin: 4px 0;
+}
+
+.heritage-event-name {
+  font-size: 16px;
+  color: #f7d36d;
+  margin: 0;
+  font-weight: 600;
+}
+
+.heritage-auspicious-card {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1.5px solid;
+  border-radius: 14px;
+  padding: 18px 22px;
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+}
+
+.auspicious-ribbon {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  padding: 2px 12px;
+  border-radius: 999px;
+}
+
+.auspicious-solar-date {
+  font-size: 14px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.auspicious-lunar-date {
+  font-size: 12px;
+  font-style: italic;
+}
+
+.auspicious-hour-line,
+.auspicious-venue-line {
+  font-size: 13px;
+}
+
+.auspicious-street-line {
+  font-size: 12px;
+  opacity: 0.75;
+  font-style: normal;
+}
+
+.heritage-blessing-note {
+  max-width: 440px;
+  font-size: 13px;
+  line-height: 1.6;
+  opacity: 0.9;
+  font-style: italic;
+}
+
+.heritage-blessing-note p {
+  margin: 0;
+}
+
+.heritage-countdown-strip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid;
+  padding: 6px 18px;
+  border-radius: 999px;
+}
+
+.h-count-unit {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.h-count-unit strong {
+  color: #ffd700;
+  font-size: 15px;
+}
+
+.h-count-unit small {
+  font-size: 10px;
+  opacity: 0.8;
+}
+
+.heritage-footer-seal {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  font-weight: 700;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(212, 175, 55, 0.4);
+  width: 100%;
+}
+
+/* ====================================================
+   3. FLORAL BOTANICAL TEMPLATE
+   ==================================================== */
+.template-floral-botanical {
+  border-radius: 20px;
+  background: radial-gradient(circle at 50% 10%, #fbfaf6 0%, #edf3eb 100%) !important;
+}
+
+.floral-deckle-border {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  border: 1.5px dashed;
+  border-radius: 14px;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.floral-header-spray {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.floral-svg-branch {
+  width: 110px;
+  height: 26px;
+}
+
+.floral-garden-tag {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.floral-guest-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid;
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+}
+
+.floral-parents-row {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  max-width: 440px;
+  padding: 8px 0;
+}
+
+.floral-family-side .side-caption {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.floral-family-side p {
+  font-size: 13px;
+  margin: 3px 0 0;
+  line-height: 1.4;
+}
+
+.floral-wreath-center {
+  font-size: 20px;
+}
+
+.floral-couple-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.floral-invite-line {
+  font-size: 12px;
+  font-style: italic;
+}
+
+.floral-script-title {
+  font-family: var(--font-serif, "Lora", serif);
+  font-size: clamp(32px, 5vw, 44px);
+  margin: 2px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.floral-amp {
+  font-style: italic;
+  font-size: 0.85em;
+}
+
+.floral-event-sub {
+  font-size: 14px;
+  opacity: 0.75;
+  margin: 0;
+}
+
+.floral-details-card {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid;
+  border-radius: 14px;
+  padding: 16px 20px;
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.floral-calendar-top {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.floral-lunar-date {
+  font-size: 12px;
+  font-style: italic;
+  opacity: 0.8;
+  margin: -4px 0 4px;
+}
+
+.floral-itinerary {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 8px 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.itinerary-slot {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.itinerary-slot strong {
+  font-size: 14px;
+}
+
+.itinerary-slot small {
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  opacity: 0.7;
+}
+
+.floral-venue-box {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.floral-hall {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.floral-address {
+  font-size: 12px;
+  font-style: normal;
+  opacity: 0.75;
+}
+
+.floral-message-box {
+  max-width: 440px;
+  font-size: 13px;
+  line-height: 1.6;
+  font-style: italic;
+  opacity: 0.85;
+}
+
+.floral-message-box p {
+  margin: 0;
+}
+
+.floral-countdown-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid;
+  padding: 6px 18px;
+  border-radius: 999px;
+}
+
+.f-count strong {
+  font-size: 14px;
+  font-family: var(--font-serif, serif);
+}
+
+.f-count small {
+  font-size: 9px;
+  opacity: 0.7;
+  margin-left: 2px;
+}
+
+.floral-footer-spray {
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  font-weight: 700;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(85, 99, 79, 0.25);
+  width: 100%;
+}
+
+/* ====================================================
+   4. MINIMALIST ZEN TEMPLATE
+   ==================================================== */
+.template-minimalist-zen {
+  border-radius: 16px;
+  background: #f7f5ed !important;
+  padding: 50px 30px;
+}
+
+.zen-subtle-frame {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  border: 1px solid;
+  border-radius: 10px;
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.zen-enso-seal-strip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.zen-brush-enso {
+  width: 42px;
+  height: 42px;
+  border: 2px solid;
+  border-radius: 50%;
+  border-right-color: transparent !important;
+  transform: rotate(-35deg);
+}
+
+.zen-hanko-stamp {
+  width: 24px;
+  height: 24px;
+  background: #963529;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 3px;
+}
+
+.zen-sub-concept {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  font-weight: 700;
+}
+
+.zen-guest-pill {
+  font-size: 12px;
+  padding: 4px 14px;
+  border-radius: 999px;
+  border: 1px solid;
+}
+
+.zen-names-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.zen-couple-title {
+  font-family: var(--font-serif, "Lora", serif);
+  font-size: clamp(30px, 4.8vw, 42px);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.zen-kanji-knot {
+  font-size: 0.7em;
+  opacity: 0.8;
+}
+
+.zen-event-headline {
+  font-size: 14px;
+  opacity: 0.7;
+  margin: 0;
+}
+
+.zen-parents-strip {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 12px;
+}
+
+.zen-parent-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.zen-parent-item small {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.zen-schedule-panel {
+  border: 1px solid;
+  border-radius: 12px;
+  padding: 16px 20px;
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.zen-date-line {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.zen-time-columns {
+  display: flex;
+  justify-content: space-around;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 8px 0;
+}
+
+.zen-time-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.zen-time-val {
+  font-family: var(--font-serif, serif);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.zen-time-lbl {
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  opacity: 0.7;
+}
+
+.zen-location-text p {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.zen-location-text small {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.zen-quote-section {
+  max-width: 420px;
+}
+
+.zen-haiku-quote {
+  font-family: var(--font-serif, serif);
+  font-style: italic;
+  font-size: 14px;
+  margin: 0 0 4px;
+}
+
+.zen-personal-msg {
+  font-size: 12px;
+  opacity: 0.75;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.zen-countdown-box {
+  font-size: 12px;
+  padding: 6px 16px;
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 999px;
+}
+
+.zen-bottom-mark {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  opacity: 0.6;
+}
+
+/* ====================================================
+   5. MODERN CALLIGRAPHY TEMPLATE
+   ==================================================== */
+.template-calligraphy-artisan {
+  border-radius: 18px;
+  background: radial-gradient(circle at 50% 10%, #fdfbf7 0%, #f4ede1 100%) !important;
+  box-shadow: 0 16px 44px rgba(70, 40, 20, 0.06);
+}
+
+.calligraphy-deckle-edge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  border: 1px solid rgba(138, 97, 56, 0.35);
+  border-radius: 12px;
+  pointer-events: none;
+}
+
+.calligraphy-wax-ribbon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  width: 100%;
+}
+
+.silk-ribbon-line {
+  width: 2px;
+  height: 24px;
+  opacity: 0.6;
+}
+
+.hand-wax-seal {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1.5px solid;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.seal-quill {
+  font-size: 12px;
+}
+
+.seal-initials {
+  font-family: var(--font-serif, serif);
+  font-size: 10px;
+  font-style: italic;
+  font-weight: 700;
+}
+
+.calligraphy-badge-tag {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  font-weight: 700;
+}
+
+.calligraphy-guest-pill {
+  font-size: 13px;
+  padding: 6px 18px;
+  border-radius: 999px;
+  border: 1px solid;
+  background: #ffffff;
+}
+
+.calligraphy-parents-block {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  max-width: 440px;
+}
+
+.c-tag {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.c-family-col p {
+  font-size: 13px;
+  margin: 2px 0 0;
+  line-height: 1.4;
+}
+
+.c-amp-sep {
+  font-size: 16px;
+}
+
+.calligraphy-lead-line {
+  font-size: 12px;
+  font-style: italic;
+  opacity: 0.8;
+  margin: 0;
+}
+
+.calligraphy-hero-names {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.flourished-name-script {
+  font-family: var(--font-serif, "Lora", Georgia, serif);
+  font-size: clamp(34px, 5.2vw, 48px);
+  font-style: italic;
+  font-weight: 500;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.calligraphy-swash {
+  font-size: 0.85em;
+}
+
+.calligraphy-event-title {
+  font-size: 14px;
+  opacity: 0.75;
+  margin: 0;
+}
+
+.calligraphy-press-card {
+  background: #ffffff;
+  border: 1px solid;
+  border-radius: 14px;
+  padding: 18px 22px;
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.press-date-header {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.press-lunar-sub {
+  font-size: 12px;
+  font-style: italic;
+  opacity: 0.75;
+  margin: -4px 0 4px;
+}
+
+.press-timeline-row {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 8px 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.press-time-unit {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.press-time-unit .p-hour {
+  font-family: var(--font-serif, serif);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.press-time-unit small {
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  opacity: 0.7;
+}
+
+.press-venue-info strong {
+  font-size: 13px;
+  display: block;
+}
+
+.press-venue-info address {
+  font-size: 12px;
+  opacity: 0.75;
+  font-style: normal;
+}
+
+.calligraphy-letter-note {
+  max-width: 440px;
+  font-size: 13px;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+.calligraphy-letter-note p {
+  margin: 0;
+}
+
+.calligraphy-countdown-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #ffffff;
+  border: 1px solid;
+  padding: 6px 20px;
+  border-radius: 999px;
+}
+
+.c-count-unit strong {
+  font-family: var(--font-serif, serif);
+  font-size: 15px;
+}
+
+.c-count-unit small {
+  font-size: 9px;
+  margin-left: 2px;
+  opacity: 0.7;
+}
+
+.calligraphy-footer-sign {
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  font-weight: 700;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(138, 97, 56, 0.3);
+  width: 100%;
+}
+
+/* ====================================================
+   6. ARCHITECTURAL MODERN TEMPLATE
+   ==================================================== */
+.template-modern-arch {
+  border-radius: 170px 170px 18px 18px;
+  background: radial-gradient(circle at 50% 12%, #fcfbf8 0%, #ede8de 100%) !important;
+  padding-top: 56px;
+}
+
+.modern-dual-arch-frame {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  border: 1px solid;
+  border-radius: 156px 156px 12px 12px;
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.modern-celestial-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.celestial-halo-symbol {
+  font-size: 16px;
+  letter-spacing: 0.2em;
+}
+
+.modern-atelier-code {
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  font-weight: 700;
+  opacity: 0.7;
+}
+
+.modern-guest-tag {
+  font-size: 13px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid;
+  padding: 6px 18px;
+  border-radius: 999px;
+}
+
+.modern-headline-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.modern-prehead {
+  font-size: 9px;
+  letter-spacing: 0.25em;
+  font-weight: 700;
+}
+
+.modern-names-title {
+  font-family: var(--font-serif, "Lora", serif);
+  font-size: clamp(32px, 5vw, 44px);
+  margin: 4px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+
+.modern-arch-slash {
+  font-weight: 300;
+  font-size: 0.8em;
+}
+
+.modern-event-desc {
+  font-size: 14px;
+  opacity: 0.75;
+  margin: 0;
+}
+
+.modern-parents-grid {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
+  max-width: 420px;
+}
+
+.modern-family-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.modern-family-cell small {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.modern-family-cell strong {
+  font-size: 13px;
+}
+
+.modern-grid-sep {
+  width: 1px;
+  height: 32px;
+  opacity: 0.5;
+}
+
+.modern-schedule-block {
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid;
+  border-radius: 14px;
+  padding: 16px 20px;
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.modern-date-badge {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.modern-lunar-line {
+  font-size: 11px;
+  opacity: 0.75;
+  margin: -4px 0 4px;
+}
+
+.modern-timeline-strip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.m-step {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.m-time {
+  font-family: var(--font-serif, serif);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.m-label {
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  opacity: 0.7;
+}
+
+.m-divider {
+  font-size: 10px;
+  opacity: 0.3;
+}
+
+.modern-venue-info strong {
+  font-size: 13px;
+  display: block;
+}
+
+.modern-venue-info address {
+  font-size: 12px;
+  opacity: 0.75;
+  font-style: normal;
+}
+
+.modern-quote-box {
+  max-width: 440px;
+  font-size: 13px;
+  line-height: 1.6;
+  opacity: 0.85;
+}
+
+.modern-quote-box p {
+  margin: 0;
+}
+
+.modern-countdown-line {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid;
+  padding: 6px 22px;
+  border-radius: 999px;
+}
+
+.m-count-col strong {
+  font-family: var(--font-serif, serif);
+  font-size: 15px;
+}
+
+.m-count-col small {
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  margin-left: 2px;
+  opacity: 0.7;
+}
+
+.modern-card-footer {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  font-weight: 700;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(0, 0, 0, 0.1);
+  width: 100%;
+}

@@ -13,10 +13,61 @@ export interface ShowcaseProduct {
   badge: string
 }
 
+const FALLBACK_PRODUCTS: ShowcaseProduct[] = [
+  {
+    slug: 'editorial-bifold-01',
+    name: "L'Amour Vogue No. 1",
+    styleCategory: 'Editorial Vogue',
+    shape: 'BIFOLD',
+    priceVnd: '45000',
+    badge: 'Gấp đôi',
+  },
+  {
+    slug: 'editorial-flat-01',
+    name: 'Haute Couture Élysée',
+    styleCategory: 'Editorial Vogue',
+    shape: 'FLAT',
+    priceVnd: '32000',
+    badge: 'Dạng phẳng',
+  },
+  {
+    slug: 'floral-bifold-01',
+    name: 'Jardin Botanique No. 1',
+    styleCategory: 'Floral Botanical',
+    shape: 'BIFOLD',
+    priceVnd: '42000',
+    badge: 'Gấp đôi',
+  },
+  {
+    slug: 'traditional-flat-01',
+    name: 'Hoàng Kim Hỷ Sự No. 1',
+    styleCategory: 'Heritage Á Đông',
+    shape: 'FLAT',
+    priceVnd: '35000',
+    badge: 'Dạng phẳng',
+  },
+  {
+    slug: 'minimalist-bifold-01',
+    name: 'Wabi-Sabi Kyoto No. 1',
+    styleCategory: 'Minimalist Japandi',
+    shape: 'BIFOLD',
+    priceVnd: '38000',
+    badge: 'Gấp đôi',
+  },
+  {
+    slug: 'modern-calligraphy-01',
+    name: 'Florence Script No. 1',
+    styleCategory: 'Modern Calligraphy',
+    shape: 'FLAT',
+    priceVnd: '34000',
+    badge: 'Dạng phẳng',
+  },
+]
+
 export function SampleShowcase({ products }: { products: ShowcaseProduct[] }) {
   const [filter, setFilter] = useState<'ALL' | 'BIFOLD' | 'FLAT'>('ALL')
-
-  const filtered = filter === 'ALL' ? products : products.filter((p) => p.shape === filter)
+  const list = products.length > 0 ? products : FALLBACK_PRODUCTS
+  const filtered = filter === 'ALL' ? list : list.filter((p) => p.shape === filter)
 
   return (
     <div>
@@ -26,7 +77,7 @@ export function SampleShowcase({ products }: { products: ShowcaseProduct[] }) {
           className={`filter-pill ${filter === 'ALL' ? 'active' : ''}`}
           onClick={() => setFilter('ALL')}
         >
-          Tất cả thiết kế ({products.length})
+          Tất cả thiết kế ({list.length})
         </button>
         <button
           type="button"

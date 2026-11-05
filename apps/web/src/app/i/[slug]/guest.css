@@ -1,24 +1,17 @@
-body {
-  background: #fbfaf6;
-  color: #252a24;
-  font-family: Lora, Georgia, serif;
-  margin: 0;
-  min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
-}
-
+/* MORI Wedding Studio - Haute Papeterie Digital Invitation System */
 .guest-page {
   min-height: 100vh;
-  padding: 40px 16px 80px;
+  padding: 40px 16px 120px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: radial-gradient(circle at 50% 10%, #ffffff 0%, #f7f5ed 100%);
+  background: radial-gradient(circle at 50% 5%, #ffffff 0%, #f6f3eb 100%);
+  font-family: var(--font-sans, "Be Vietnam Pro", sans-serif);
 }
 
 .guest-container {
   width: 100%;
-  max-width: 640px;
+  max-width: 580px;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -26,126 +19,469 @@ body {
 
 .guest-header-seal {
   text-align: center;
-  padding-bottom: 12px;
+  padding-bottom: 4px;
 }
 
 .guest-atelier-badge {
   display: inline-block;
-  font-family: "Be Vietnam Pro", sans-serif;
   font-size: 11px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #8c734b;
-  background: rgba(179, 142, 70, 0.08);
-  border: 1px solid rgba(179, 142, 70, 0.25);
-  padding: 5px 14px;
+  color: #9c7832;
+  background: rgba(200, 167, 101, 0.12);
+  border: 1px solid rgba(179, 142, 70, 0.28);
+  padding: 6px 16px;
   border-radius: 999px;
-  font-weight: 600;
-  margin-bottom: 8px;
+  font-weight: 700;
 }
 
-.guest-invitation-card {
-  background: #ffffff;
-  border: 1px solid #e5dfd2;
-  border-radius: 16px;
-  padding: 48px 36px;
-  box-shadow: 0 16px 36px rgba(44, 49, 41, 0.06);
+/* Digital Card Surface */
+.digital-invitation-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.digital-card-surface {
+  border-radius: 24px;
+  border: 1.5px solid;
+  padding: 48px 32px 40px;
+  box-shadow: 0 20px 50px rgba(44, 49, 41, 0.08);
   position: relative;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  transition: all 0.35s ease;
 }
 
-.guest-card-inner-frame {
+/* Silhouette Specializations */
+.sil-arch .digital-card-surface {
+  border-radius: 200px 200px 24px 24px;
+  padding-top: 64px;
+}
+
+.sil-deckle .digital-card-surface {
+  box-shadow: 0 20px 50px rgba(44, 49, 41, 0.08), inset 0 0 16px rgba(179, 142, 70, 0.06);
+}
+
+.sil-vellum .digital-card-surface {
+  backdrop-filter: blur(8px);
+}
+
+/* Inner Gold Border */
+.digital-card-inner-border {
   position: absolute;
-  top: 12px;
-  left: 12px;
-  right: 12px;
-  bottom: 12px;
-  border: 1px solid rgba(179, 142, 70, 0.28);
-  border-radius: 10px;
+  top: 14px;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  border: 1px solid;
+  border-radius: 16px;
+  opacity: 0.45;
   pointer-events: none;
 }
 
+.sil-arch .digital-card-inner-border {
+  border-radius: 190px 190px 16px 16px;
+}
+
+/* Motif Header */
+.digital-motif-banner {
+  margin-bottom: 4px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Guest Greeting Pill */
 .guest-greeting-pill {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-family: "Be Vietnam Pro", sans-serif;
-  font-size: 14px;
-  color: #3e4a39;
-  background: #f3f5f0;
-  border: 1px solid #d5decb;
-  padding: 8px 18px;
+  font-size: 13px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid;
+  padding: 7px 18px;
   border-radius: 999px;
-  margin-bottom: 24px;
   font-weight: 500;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
 }
 
 .guest-greeting-pill strong {
-  color: #242c22;
+  font-weight: 700;
+}
+
+/* Parents Row */
+.parents-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
+  max-width: 440px;
+  margin: 6px 0;
+  padding: 12px 0;
+  border-top: 1px dashed rgba(179, 142, 70, 0.3);
+  border-bottom: 1px dashed rgba(179, 142, 70, 0.3);
+}
+
+.parent-side {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  text-align: center;
+}
+
+.parent-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.7;
   font-weight: 600;
 }
 
-.invitation {
-  position: relative;
-  z-index: 1;
+.parent-names {
+  font-size: 13px;
+  line-height: 1.45;
+  font-weight: 600;
 }
 
-.invitation h1 {
-  font-size: 38px;
+.parent-sep {
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+/* Couple Names & Title */
+.couple-names-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.wedding-event-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.couple-headline {
+  font-family: var(--font-serif, "Lora", Georgia, serif);
+  font-size: clamp(34px, 5.2vw, 46px);
   font-weight: 500;
-  color: #242c22;
-  line-height: 1.25;
-  margin: 0 0 16px;
-  letter-spacing: -0.01em;
+  line-height: 1.18;
+  margin: 4px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
-.invitation p {
-  font-family: "Be Vietnam Pro", sans-serif;
+.couple-amp {
+  font-style: italic;
+  font-size: 0.85em;
+  font-weight: 400;
+}
+
+.couple-event-subtitle {
+  font-size: 15px;
+  opacity: 0.8;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* Ceremony Schedule Card */
+.ceremony-schedule-card {
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(179, 142, 70, 0.25);
+  border-radius: 16px;
+  padding: 20px 24px;
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  backdrop-filter: blur(6px);
+}
+
+.schedule-badge {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.lunar-date-sub {
+  font-size: 12px;
+  opacity: 0.75;
+  margin: -6px 0 6px;
+  font-style: italic;
+}
+
+.schedule-timeline-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.timeline-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.timeline-item strong {
+  font-size: 15px;
+  font-family: var(--font-serif, serif);
+}
+
+.timeline-item small {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  opacity: 0.7;
+}
+
+.timeline-sep {
+  font-size: 14px;
+}
+
+.venue-address-box {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.venue-hall-name {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.venue-street {
+  font-size: 12px;
+  font-style: normal;
+  opacity: 0.8;
+}
+
+/* Countdown Strip */
+.wedding-countdown-strip {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(179, 142, 70, 0.25);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+}
+
+.count-pill {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 38px;
+}
+
+.count-digit {
+  font-family: var(--font-serif, serif);
   font-size: 16px;
-  line-height: 1.6;
-  color: #555e52;
-  margin: 0 0 16px;
+  font-weight: 700;
+  line-height: 1.1;
 }
 
+.count-unit-name {
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  opacity: 0.7;
+}
+
+.count-sep {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+/* Couple Greeting Note */
+.couple-greeting-message {
+  max-width: 460px;
+  font-size: 14px;
+  line-height: 1.65;
+  font-style: italic;
+  opacity: 0.85;
+}
+
+.couple-greeting-message p {
+  margin: 0;
+}
+
+/* Audio Player */
+.online-audio-player-wrap {
+  width: 100%;
+  max-width: 440px;
+}
+
+.audio-player-pill-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(179, 142, 70, 0.25);
+  padding: 10px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.audio-player-pill-btn:hover {
+  background: rgba(255, 255, 255, 0.95);
+  transform: translateY(-1px);
+}
+
+.audio-state-icon {
+  font-size: 13px;
+  color: #3e4a39;
+}
+
+.audio-track-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+}
+
+.audio-track-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #242c22;
+}
+
+.audio-artist-sub {
+  font-size: 10px;
+  opacity: 0.65;
+}
+
+.audio-waveform-bars {
+  display: flex;
+  gap: 3px;
+  align-items: flex-end;
+  height: 14px;
+}
+
+.wave-line {
+  width: 2px;
+  background: #3e4a39;
+  border-radius: 2px;
+}
+
+.wave-line.w1 { height: 6px; }
+.wave-line.w2 { height: 12px; }
+.wave-line.w3 { height: 8px; }
+.wave-line.w4 { height: 14px; }
+
+.audio-waveform-bars.playing .wave-line {
+  animation: pulseWave 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes pulseWave {
+  0% { transform: scaleY(0.4); }
+  100% { transform: scaleY(1.2); }
+}
+
+/* Event Action Buttons */
+.event-action-buttons-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+  max-width: 480px;
+}
+
+@media (max-width: 480px) {
+  .event-action-buttons-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.event-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 14px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid rgba(179, 142, 70, 0.3);
+  background: rgba(255, 255, 255, 0.8);
+  color: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.event-action-btn:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: translateY(-1px);
+}
+
+.action-btn-icon {
+  font-size: 14px;
+}
+
+.card-footer-monogram {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(179, 142, 70, 0.3);
+  width: 100%;
+}
+
+/* RSVP Section Styles */
 .guest-rsvp-box {
   background: #ffffff;
   border: 1px solid #e5dfd2;
-  border-radius: 16px;
+  border-radius: 20px;
   padding: 32px 28px;
-  box-shadow: 0 12px 28px rgba(44, 49, 41, 0.04);
+  box-shadow: 0 12px 30px rgba(44, 49, 41, 0.05);
+  text-align: center;
 }
 
 .guest-rsvp-box h2 {
-  font-family: Lora, Georgia, serif;
-  font-size: 22px;
-  font-weight: 500;
+  font-family: var(--font-serif, "Lora", serif);
+  font-size: 24px;
   color: #242c22;
   margin: 0 0 8px;
-  text-align: center;
 }
 
 .guest-rsvp-desc {
-  font-family: "Be Vietnam Pro", sans-serif;
-  font-size: 13px;
-  color: #6c7368;
-  text-align: center;
+  font-size: 14px;
+  color: #5d6657;
   margin: 0 0 20px;
+  line-height: 1.55;
 }
 
 .guest-rsvp-event {
-  background: #fbfaf6;
+  background: #faf8f2;
   border: 1px solid #e8e4da;
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 20px;
-  margin-bottom: 16px;
 }
 
 .guest-rsvp-event-title {
-  font-family: Lora, Georgia, serif;
+  font-family: var(--font-serif, "Lora", serif);
   font-size: 18px;
   color: #242c22;
-  margin: 0 0 14px;
-  font-weight: 500;
+  margin: 0 0 16px;
 }
 
 .guest-rsvp-buttons {
@@ -154,104 +490,433 @@ body {
   gap: 12px;
 }
 
+@media (max-width: 480px) {
+  .guest-rsvp-buttons {
+    grid-template-columns: 1fr;
+  }
+}
+
 .rsvp-btn-yes {
   background: #3e4a39;
-  color: #fbfaf6;
-  border: 1px solid #3e4a39;
-  padding: 12px 16px;
-  border-radius: 8px;
-  font-family: "Be Vietnam Pro", sans-serif;
-  font-size: 14px;
-  font-weight: 500;
+  color: #f7f5ed;
+  border: none;
+  padding: 13px 18px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(62, 74, 57, 0.2);
 }
 
 .rsvp-btn-yes:hover {
-  background: #2f382a;
+  background: #2b3626;
 }
 
 .rsvp-btn-no {
-  background: #ffffff;
-  color: #5f665a;
-  border: 1px solid #d8d4c9;
-  padding: 12px 16px;
-  border-radius: 8px;
-  font-family: "Be Vietnam Pro", sans-serif;
-  font-size: 14px;
+  background: transparent;
+  color: #687162;
+  border: 1px solid #ccc6b8;
+  padding: 12px 18px;
+  border-radius: 999px;
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s;
 }
 
 .rsvp-btn-no:hover {
-  background: #f5f4ec;
+  background: #f0ece2;
   color: #242c22;
 }
 
 .guest-rsvp-status {
   margin-top: 16px;
-  font-family: "Be Vietnam Pro", sans-serif;
   font-size: 13px;
-  text-align: center;
   color: #3e4a39;
-  font-weight: 500;
-  padding: 8px 12px;
   background: #eef2eb;
-  border-radius: 6px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-weight: 600;
 }
 
-.guest-report {
-  margin-top: 24px;
+/* Floating 30-Model Switcher */
+.invitation-switcher-wrapper {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  width: 90%;
+  max-width: 520px;
+}
+
+.switcher-toggle-floating-btn {
+  width: 100%;
+  background: #242c22;
+  color: #fbfaf6;
+  border: 1px solid #d4af37;
+  padding: 12px 20px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  transition: all 0.2s ease;
+}
+
+.switcher-toggle-floating-btn:hover {
+  background: #181d16;
+  transform: translateY(-2px);
+}
+
+.switcher-sparkle {
+  color: #ffd700;
+  font-size: 14px;
+}
+
+.switcher-arrow {
+  font-size: 11px;
+  color: #d4af37;
+  font-weight: 700;
+  background: rgba(212, 175, 55, 0.15);
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+.switcher-panel-drawer {
+  position: absolute;
+  bottom: 56px;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1.5px solid #d4af37;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.25);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 480px;
+}
+
+.switcher-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.switcher-title {
+  font-family: var(--font-serif, "Lora", serif);
+  font-size: 16px;
+  color: #242c22;
+  margin: 0 0 2px;
+}
+
+.switcher-desc {
+  font-size: 11px;
+  color: #6a7364;
+  margin: 0;
+}
+
+.switcher-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: #888;
+}
+
+.switcher-cats-row {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.switcher-cat-pill {
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid #d9d4c7;
+  background: #faf8f2;
+  font-size: 11px;
+  font-weight: 600;
+  color: #555e4e;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.switcher-cat-pill.active {
+  background: #3e4a39;
+  color: #ffffff;
+  border-color: #3e4a39;
+}
+
+.switcher-models-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  max-height: 280px;
+  padding-right: 4px;
+}
+
+.model-option-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: #faf8f2;
+  border: 1px solid #e5dfd2;
+  border-left-width: 4px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.model-option-card:hover {
+  background: #f2ece0;
+}
+
+.model-option-card.selected {
+  background: #f3efe4;
+  border-color: #b38e46;
+}
+
+.model-swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.model-text-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+}
+
+.model-badge-tag {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #9c7832;
+}
+
+.model-title {
+  font-size: 13px;
+  color: #242c22;
+}
+
+.model-sub {
+  font-size: 10px;
+  color: #6a7263;
+}
+
+.model-check-icon {
+  font-size: 14px;
+  color: #3e4a39;
+  font-weight: bold;
+}
+
+/* Passcode Form Styles */
+.passcode-card-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  padding: 10px 0;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.passcode-icon {
+  font-size: 36px;
+  margin-bottom: 4px;
+}
+
+.passcode-title {
+  font-family: var(--font-serif, "Lora", serif);
+  font-size: 24px;
+  color: #242c22;
+  margin: 0;
+}
+
+.passcode-desc {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #636c5e;
+  margin: 0;
+}
+
+.passcode-input-group {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+@media (max-width: 480px) {
+  .passcode-input-group {
+    flex-direction: column;
+  }
+}
+
+.passcode-input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1.5px solid #d4af37;
+  border-radius: 999px;
+  font-size: 14px;
+  outline: none;
+  background: #faf8f2;
+  color: #242c22;
   text-align: center;
 }
 
-.guest-report-trigger {
-  background: none;
+.passcode-submit-btn {
+  background: #3e4a39;
+  color: #ffffff;
   border: none;
-  font-family: "Be Vietnam Pro", sans-serif;
-  font-size: 12px;
-  color: #8c8f89;
+  padding: 12px 22px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
-  text-decoration: underline;
-  padding: 4px 8px;
+  white-space: nowrap;
+  transition: all 0.2s;
 }
 
-.guest-report-trigger:hover {
-  color: #555e52;
+.passcode-submit-btn:hover {
+  background: #273023;
 }
 
-.guest-report-panel {
-  margin-top: 12px;
+.passcode-error-msg {
+  color: #9d2f37;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 4px 0 0;
+}
+
+.passcode-hint-note {
+  font-size: 11px;
+  color: #8c9387;
+  margin-top: 6px;
+  font-style: italic;
+}
+
+/* RSVP Attendee Counter & Wishes */
+.rsvp-attendee-picker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: #4b5446;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.count-selector-btn-group {
+  display: flex;
+  gap: 6px;
+}
+
+.count-select-pill {
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid #d1cbbe;
   background: #ffffff;
-  border: 1px solid #e5dfd2;
-  border-radius: 12px;
-  padding: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #4d5747;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.count-select-pill.active {
+  background: #3e4a39;
+  color: #ffffff;
+  border-color: #3e4a39;
+}
+
+.guest-wishes-box {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px dashed rgba(179, 142, 70, 0.3);
   text-align: left;
 }
 
-.guest-report-panel label {
-  display: block;
-  font-family: "Be Vietnam Pro", sans-serif;
-  font-size: 13px;
-  color: #4b5247;
+.wishes-box-title {
+  font-family: var(--font-serif, "Lora", serif);
+  font-size: 16px;
+  color: #242c22;
+  margin: 0 0 10px;
   font-weight: 500;
-  margin-bottom: 8px;
 }
 
-.guest-report-panel input {
+.wishes-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.wishes-textarea {
   width: 100%;
   box-sizing: border-box;
-  padding: 10px 12px;
-  border: 1px solid #d8d4c9;
-  border-radius: 8px;
-  font-size: 14px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid #d9d4c8;
+  background: #faf8f2;
   font-family: inherit;
-  margin-bottom: 12px;
+  font-size: 13px;
+  line-height: 1.5;
+  resize: vertical;
+  color: #242c22;
+  outline: none;
 }
 
-.guest-report-actions {
+.wishes-textarea:focus {
+  border-color: #b38e46;
+  background: #ffffff;
+}
+
+.wishes-submit-btn {
+  align-self: flex-end;
+  background: #b38e46;
+  color: #ffffff;
+  border: none;
+  padding: 9px 20px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.wishes-submit-btn:hover {
+  background: #957331;
+}
+
+.wish-sent-success {
   display: flex;
-  gap: 8px;
-  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  background: #eef4eb;
+  padding: 12px 16px;
+  border-radius: 10px;
+  color: #2d3827;
+  font-size: 13px;
 }
