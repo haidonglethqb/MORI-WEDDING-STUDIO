@@ -1,0 +1,54 @@
+/* Bespoke Silhouettes & Motifs */
+.silhouette-arch { border-radius: 64px 64px 4px 4px !important; }
+.silhouette-deckle { border-style: dashed !important; border-width: 1px !important; }
+.vellum-paper-overlay {
+  position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.15) 100%);
+  backdrop-filter: blur(1.5px); pointer-events: none; border-radius: inherit;
+}
+
+/* Motifs */
+.card-bespoke-motif { min-height: 38px; display: flex; align-items: center; justify-content: center; width: 100%; margin-bottom: 2px; }
+.motif-svg { width: 72px; height: 18px; display: block; margin: 0 auto; }
+.motif-arch-frame { text-align: center; }
+.motif-vogue-txt { font-size: 6px; letter-spacing: 2px; font-weight: 700; color: #8a671f; display: block; margin-top: 1px; }
+
+.motif-roman-wrap { text-align: center; }
+.motif-roman-date { font-family: var(--font-serif, "Lora", serif); font-size: 7px; font-weight: 600; letter-spacing: 1.5px; }
+.motif-gold-bar { width: 36px; height: 1.5px; margin: 3px auto 0; }
+
+.motif-vellum-sash { position: relative; display: flex; align-items: center; justify-content: center; }
+.champagne-wax-seal {
+  width: 20px; height: 20px; border-radius: 50%; background: #dfc384; color: #fff;
+  display: flex; align-items: center; justify-content: center; font-size: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+.baroque-crown { font-size: 14px; line-height: 1; }
+.baroque-sub { font-size: 6px; letter-spacing: 1.5px; display: block; color: #967435; }
+
+.eucalyptus-icon { font-size: 13px; line-height: 1; margin-top: 2px; }
+.meadow-flora { font-size: 11px; letter-spacing: 2px; }
+.laurel-wreath-icon { font-size: 16px; line-height: 1; }
+
+.imperial-double-joy {
+  font-size: 20px; color: #ffd700; font-weight: 900; line-height: 1;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+.imperial-text { font-size: 6px; color: #f9d877; letter-spacing: 1.5px; font-weight: 700; display: block; margin-top: 2px; }
+.phoenix-symbol { font-size: 16px; color: #ffd700; line-height: 1; }
+.phoenix-sub { font-size: 6px; color: #f9d877; letter-spacing: 1px; font-weight: 700; display: block; }
+.lotus-flower { font-size: 14px; line-height: 1; }
+.lotus-script { font-size: 6px; color: #f9d877; letter-spacing: 1px; font-weight: 700; display: block; }
+
+.enso-circle {
+  width: 22px; height: 22px; border: 1.5px solid; border-radius: 50%; border-right-color: transparent !important;
+  margin: 0 auto; transform: rotate(-25deg);
+}
+.enso-sub { font-size: 6px; letter-spacing: 2px; color: #787367; display: block; margin-top: 2px; }
+.hanko-square {
+  display: inline-block; width: 17px; height: 17px; line-height: 17px; background: #963529;
+  color: #fff; border-radius: 2px; font-size: 11px; font-weight: bold; text-align: center;
+}
+
+.silk-ribbon { width: 44px; height: 2px; background: #9c6644; opacity: 0.6; margin: 0 auto; }
+.wax-seal-stamp { font-size: 13px; color: #9c6644; }
+.celestial-moon { font-size: 11px; letter-spacing: 2px; }
+.default-seal-text { font-size: 8px; letter-spacing: 1.5px; font-weight: 700; }

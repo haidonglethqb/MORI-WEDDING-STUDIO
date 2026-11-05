@@ -1,0 +1,30 @@
+.studio-page { max-width: 1140px; margin: 0 auto; padding: 36px 24px 80px; }
+.studio-header {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  border-bottom: 1px solid rgba(85, 99, 79, 0.16); padding-bottom: 24px;
+  margin-bottom: 36px; flex-wrap: wrap; gap: 16px;
+}
+.studio-header h1 {
+  font-family: var(--font-serif, "Lora", Georgia, serif);
+  font-size: 32px; font-weight: 500; color: #252a24; margin: 0 0 6px;
+}
+.studio-header p { color: #5d635a; font-size: 14px; margin: 0; }
+.studio-actions { display: flex; gap: 12px; align-items: center; }
+.studio-card {
+  background: #ffffff; border-radius: 14px; border: 1px solid rgba(85, 99, 79, 0.14);
+  box-shadow: 0 4px 16px rgba(44, 42, 38, 0.03); padding: 24px 28px;
+}
+.studio-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 16px; }
+.studio-item {
+  display: flex; justify-content: space-between; align-items: center; padding: 18px 22px;
+  border-radius: 10px; border: 1px solid rgba(85, 99, 79, 0.12); background: #fdfdfc;
+  transition: all 0.2s ease; text-decoration: none; color: inherit;
+}
+.studio-item:hover { border-color: #55634f; background: #ffffff; box-shadow: 0 4px 12px rgba(85, 99, 79, 0.08); }
+.studio-item-info { display: flex; flex-direction: column; gap: 4px; }
+.studio-item-title { font-size: 16px; font-weight: 600; color: #252a24; }
+.studio-item-meta { font-size: 13px; color: #6a7166; }
+.studio-empty {
+  padding: 40px 16px; text-align: center; color: #7d8479; font-size: 14px;
+  background: #faf9f5; border-radius: 10px; border: 1px dashed rgba(85, 99, 79, 0.2);
+}

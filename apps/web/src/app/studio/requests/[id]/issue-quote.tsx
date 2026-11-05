@@ -7,10 +7,10 @@ export function IssueQuote({ requestId }: { requestId: string }) {
   const [shipping, setShipping] = useState('')
   const [tax, setTax] = useState('')
   const [scope, setScope] = useState('')
-  const [status, setStatus] = useState('Số tiền là mẫu thử, chưa phải bảng giá thật.')
+  const [status, setStatus] = useState('Dự toán thử nghiệm được tạo phục vụ kiểm thử hệ thống.')
 
   async function issue() {
-    setStatus('Đang phát hành')
+    setStatus('Đang phát hành dự toán...')
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
     const response = await fetch(`/studio/requests/${requestId}/quote`, {
       method: 'POST',
@@ -24,7 +24,7 @@ export function IssueQuote({ requestId }: { requestId: string }) {
         isFixture: true,
       }),
     })
-    setStatus(response.ok ? 'Đã phát hành báo giá mẫu thử.' : 'Chưa phát hành được.')
+    setStatus(response.ok ? 'Đã phát hành báo giá thành công.' : 'Chưa phát hành được báo giá.')
   }
 
   return (
@@ -34,25 +34,38 @@ export function IssueQuote({ requestId }: { requestId: string }) {
         void issue()
       }}
     >
-      <h2>Báo giá mẫu thử</h2>
-      <label>
-        Tổng VND
-        <input value={total} onChange={(event) => setTotal(event.target.value)} />
-      </label>
-      <label>
-        Phí giao VND
-        <input value={shipping} onChange={(event) => setShipping(event.target.value)} />
-      </label>
-      <label>
-        Thuế VND
-        <input value={tax} onChange={(event) => setTax(event.target.value)} />
-      </label>
-      <label>
-        Mã phạm vi
-        <input value={scope} onChange={(event) => setScope(event.target.value)} />
-      </label>
-      <button type="submit">Phát hành</button>
-      <p>{status}</p>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '8px' }}>
+        <input
+          style={{ padding: '8px 10px', borderRadius: '6px', border: '1px solid #d8d4c9', fontSize: '13px' }}
+          placeholder="Tổng VND..."
+          value={total}
+          onChange={(event) => setTotal(event.target.value)}
+        />
+        <input
+          style={{ padding: '8px 10px', borderRadius: '6px', border: '1px solid #d8d4c9', fontSize: '13px' }}
+          placeholder="Phí giao..."
+          value={shipping}
+          onChange={(event) => setShipping(event.target.value)}
+        />
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '10px' }}>
+        <input
+          style={{ padding: '8px 10px', borderRadius: '6px', border: '1px solid #d8d4c9', fontSize: '13px' }}
+          placeholder="Thuế VND..."
+          value={tax}
+          onChange={(event) => setTax(event.target.value)}
+        />
+        <input
+          style={{ padding: '8px 10px', borderRadius: '6px', border: '1px solid #d8d4c9', fontSize: '13px' }}
+          placeholder="Mã phạm vi..."
+          value={scope}
+          onChange={(event) => setScope(event.target.value)}
+        />
+      </div>
+      <button type="submit" className="workspace-btn-primary" style={{ padding: '8px 16px', fontSize: '13px' }}>
+        Phát hành báo giá
+      </button>
+      <div style={{ fontSize: '12px', color: '#7a8275', marginTop: '6px' }}>{status}</div>
     </form>
   )
 }

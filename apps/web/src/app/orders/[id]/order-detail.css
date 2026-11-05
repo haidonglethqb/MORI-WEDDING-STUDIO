@@ -1,0 +1,94 @@
+.order-detail-page {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 36px 24px 80px;
+}
+
+.order-detail-header {
+  border-bottom: 1px solid rgba(85, 99, 79, 0.16);
+  padding-bottom: 24px;
+  margin-bottom: 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.order-detail-header h1 {
+  font-family: var(--font-serif, "Lora", Georgia, serif);
+  font-size: 32px;
+  font-weight: 500;
+  color: #242823;
+  margin: 0 0 6px;
+}
+
+.order-status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.order-status-badge.CONFIRMED { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+.order-status-badge.IN_FULFILLMENT,
+.order-status-badge.IN_PRODUCTION { background: #fff8e1; color: #f57f17; border: 1px solid #ffe082; }
+.order-status-badge.SHIPPED,
+.order-status-badge.DELIVERED { background: #e3f2fd; color: #1565c0; border: 1px solid #90caf9; }
+.order-status-badge.COMPLETED { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+.order-status-badge.CANCELLED { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
+
+.order-detail-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 32px;
+}
+
+@media (max-width: 860px) {
+  .order-detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.order-card-section {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid rgba(85, 99, 79, 0.14);
+  box-shadow: 0 4px 18px rgba(44, 42, 38, 0.03);
+  padding: 24px 28px;
+  margin-bottom: 24px;
+}
+
+.order-card-title {
+  font-family: var(--font-serif, "Lora", Georgia, serif);
+  font-size: 19px;
+  font-weight: 500;
+  color: #242823;
+  margin: 0 0 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(85, 99, 79, 0.1);
+}
+
+.order-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  font-size: 14px;
+  border-bottom: 1px dashed rgba(85, 99, 79, 0.1);
+}
+
+.order-info-row:last-child {
+  border-bottom: none;
+}
+
+.order-total-highlight {
+  font-family: var(--font-serif, "Lora", Georgia, serif);
+  font-size: 22px;
+  font-weight: 600;
+  color: #2e4a2a;
+}

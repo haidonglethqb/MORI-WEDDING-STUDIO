@@ -1,29 +1,49 @@
 .home-nav {
   align-items: center;
+  background: rgba(251, 250, 246, 0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid #ebe6dd;
   display: flex;
-  gap: 24px;
-  height: 76px;
+  gap: 28px;
+  min-height: 72px;
   margin: 0 auto;
-  max-width: 1280px;
+  max-width: 1320px;
   padding: 0 32px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
 }
 
 .home-mark {
+  color: #242823;
   font-family: Lora, Georgia, serif;
-  font-size: 20px;
-  letter-spacing: 0.12em;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
   text-decoration: none;
+  transition: opacity 0.15s;
 }
 
-.home-nav nav {
+.home-mark:hover {
+  opacity: 0.8;
+}
+
+.home-nav-links {
+  align-items: center;
   display: flex;
   gap: 24px;
 }
 
-.home-nav nav a {
+.home-nav-links a {
+  color: #4f574b;
   font-size: 14px;
-  line-height: 20px;
+  font-weight: 500;
   text-decoration: none;
+  transition: color 0.15s;
+}
+
+.home-nav-links a:hover {
+  color: #242823;
 }
 
 .home-nav-end {
@@ -33,15 +53,104 @@
   margin-left: auto;
 }
 
-@media (max-width: 800px) {
+.nav-link-login,
+.nav-link-item,
+.nav-link-staff {
+  color: #3b4438;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.nav-link-login:hover,
+.nav-link-item:hover,
+.nav-link-staff:hover {
+  color: #1f241d;
+  text-decoration: underline;
+}
+
+.nav-link-staff {
+  background: #f1ede4;
+  border-radius: 6px;
+  color: #455240;
+  padding: 6px 12px;
+}
+
+.nav-user-badge {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #e2ded5;
+  border-radius: 100px;
+  display: flex;
+  gap: 8px;
+  padding: 4px 12px 4px 6px;
+}
+
+.user-role-tag {
+  background: #3b4a37;
+  border-radius: 100px;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  text-transform: uppercase;
+}
+
+.user-name {
+  color: #252a24;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.nav-logout-btn {
+  background: transparent;
+  border: 1px solid #dcd6cb;
+  border-radius: 8px;
+  color: #715549;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 14px;
+  text-decoration: none;
+  transition: all 0.15s;
+}
+
+.nav-logout-btn:hover {
+  background: #fcf4f2;
+  border-color: #d8aca3;
+  color: #a83622;
+}
+
+.home-cta {
+  align-items: center;
+  background: #3b4a37;
+  border-radius: 8px;
+  color: #fbfaf6;
+  display: inline-flex;
+  font-size: 14px;
+  font-weight: 500;
+  min-height: 40px;
+  padding: 0 18px;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.home-cta:hover {
+  background: #2b3728;
+}
+
+@media (max-width: 900px) {
   .home-nav {
-    align-items: flex-start;
     flex-wrap: wrap;
-    height: auto;
-    padding: 16px 20px;
+    gap: 16px;
+    padding: 12px 20px;
   }
 
   .home-nav-end {
     margin-left: 0;
+    width: 100%;
+    justify-content: flex-start;
   }
 }

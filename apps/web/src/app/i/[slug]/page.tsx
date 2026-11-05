@@ -36,21 +36,49 @@ export default async function GuestInvitationPage({
       cache: 'no-store',
     })
   } catch {
-    return <p>Thiệp này không còn xem được.</p>
-  }
-  if (!response.ok) {
-    return <p>Thiệp này không còn xem được.</p>
-  }
-  const body = (await response.json()) as OpenInvitation | GatedInvitation
-  const guest = await grantedGuest(slug)
-  if (body.gated && !guest) {
     return (
-      <>
-        <GuestFragment slug={slug} />
-        <p>Thiệp này cần mật khẩu.</p>
-      </>
+      <main className="guest-page">
+        <div className="guest-container">
+          <div className="guest-invitation-card">
+            <h1>Thiệp cưới MORI</h1>
+            <p>Không thể kết nối đến máy chủ lưu trữ thiệp.</p>
+          </div>
+        </div>
+      </main>
     )
   }
+
+  if (!response.ok) {
+    return (
+      <main className="guest-page">
+        <div className="guest-container">
+          <div className="guest-invitation-card">
+            <h1>Thiệp không còn khả dụng</h1>
+            <p>Liên kết thiệp này có thể đã được thay đổi hoặc đã hết hạn.</p>
+          </div>
+        </div>
+      </main>
+    )
+  }
+
+  const body = (await response.json()) as OpenInvitation | GatedInvitation
+  const guest = await grantedGuest(slug)
+
+  if (body.gated && !guest) {
+    return (
+      <main className="guest-page">
+        <div className="guest-container">
+          <GuestFragment slug={slug} />
+          <div className="guest-invitation-card">
+            <span className="guest-atelier-badge">MORI ATELIER · RIÊNG TƯ</span>
+            <h1>Thiệp cưới được bảo vệ</h1>
+            <p>Thiệp cưới này yêu cầu liên kết mời riêng tư hoặc mã bảo mật để xem.</p>
+          </div>
+        </div>
+      </main>
+    )
+  }
+
   const page = guest ?? (body as OpenInvitation)
   const html = renderInvitationHtml({
     template: 'editorial-ivory',
@@ -58,14 +86,32 @@ export default async function GuestInvitationPage({
     eventTitle: page.eventTitle,
     greeting: page.greeting,
   })
+
   return (
-    <>
-      <GuestFragment slug={slug} />
-      {guest ? <p>Xin chào, {guest.partyName}</p> : null}
-      {guest ? <GuestRsvp slug={slug} /> : null}
-      <article className="guest" dangerouslySetInnerHTML={{ __html: html }} />
-      <ReportInvitation slug={slug} />
-    </>
+    <main className="guest-page">
+      <div className="guest-container">
+        <GuestFragment slug={slug} />
+
+        <header className="guest-header-seal">
+          <span className="guest-atelier-badge">MORI ATELIER · THIỆP MỜI TRỰC TUYẾN</span>
+        </header>
+
+        <div className="guest-invitation-card">
+          <div className="guest-card-inner-frame" />
+          {guest ? (
+            <div className="guest-greeting-pill">
+              <span>Trân trọng kính mời:</span>
+              <strong>{guest.partyName}</strong>
+            </div>
+          ) : null}
+          <div dangerouslySetInnerHTML={{ __html: html }} />
+        </div>
+
+        {guest ? <GuestRsvp slug={slug} /> : null}
+
+        <ReportInvitation slug={slug} />
+      </div>
+    </main>
   )
 }
 

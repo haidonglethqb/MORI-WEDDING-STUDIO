@@ -14,10 +14,10 @@ export function RotateHandle({
   onRotated: (next: { slug: string; version: number }) => void
 }) {
   const key = useRef(`rotate-${crypto.randomUUID()}`)
-  const [status, setStatus] = useState('Đường dẫn cũ sẽ không mở được nữa.')
+  const [status, setStatus] = useState('Đường dẫn cũ sẽ không thể truy cập sau khi đổi.')
 
   async function rotate() {
-    setStatus('Đang đổi đường dẫn')
+    setStatus('Đang đổi mã đường dẫn...')
     const response = await fetch(`/invitations/${invitationId}/rotate-handle`, {
       method: 'POST',
       headers: { 'content-type': 'application/json', 'idempotency-key': key.current },
@@ -33,16 +33,20 @@ export function RotateHandle({
     }
     const saved = (await response.json()) as { slug: string; version: number }
     onRotated(saved)
-    setStatus('Đã đổi đường dẫn. Liên kết cũ không còn mở được.')
+    setStatus('Đã đổi đường dẫn mới thành công!')
   }
 
   return (
-    <p>
-      Đường dẫn riêng: {slug}{' '}
-      <button type="button" onClick={() => void rotate()}>
-        Đổi đường dẫn
-      </button>
-      <span> {status}</span>
-    </p>
+    <div style={{ background: '#faf9f5', border: '1px solid #e8e4da', padding: '12px 16px', borderRadius: '8px', marginBottom: '20px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
+        <span style={{ fontSize: '13px', color: '#4b5247' }}>
+          Mã liên kết riêng: <strong style={{ color: '#242c22' }}>/i/{slug}</strong>
+        </span>
+        <button type="button" className="editor-btn-secondary" style={{ padding: '6px 12px', fontSize: '12px' }} onClick={() => void rotate()}>
+          Đổi mã liên kết
+        </button>
+      </div>
+      <div style={{ fontSize: '12px', color: '#7a8275', marginTop: '6px' }}>{status}</div>
+    </div>
   )
 }

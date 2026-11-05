@@ -1,7 +1,10 @@
 import { cookies } from 'next/headers'
+import { HomeNav } from '../home-nav'
 import { CreateDesignRequest } from './create-request'
 import { CreateInvitation } from './create-invitation'
-import '../login/login.css'
+import { InvitationList } from './invitation-list'
+import { OrderList, RequestList, type OrderListItem, type CustomerRequestItem } from './order-list'
+import './workspace.css'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,35 +16,8 @@ interface InvitationListItem {
   displayNames: [string, string]
 }
 
-interface OrderListItem {
-  orderId: string
-  status: string
-  currency: 'VND'
-  totalAmountVnd: string
-  physicalStage: string | null
-  digitalStage: string | null
-}
-
-interface CustomerRequestItem {
-  requestId: string
-  kind: string
-  status: string
-}
-
 function apiOrigin(): string {
   return process.env['API_INTERNAL_ORIGIN'] ?? 'http://127.0.0.1:4000'
-}
-
-const statusLabel: Record<string, string> = {
-  DRAFT: 'Bản nháp',
-  PUBLISHED: 'Đang phát hành',
-  UNPUBLISHED: 'Đã gỡ',
-  EXPIRED: 'Hết hạn',
-  SUBMITTED: 'Đã gửi yêu cầu',
-  CONFIRMED: 'Xưởng đã nhận',
-  IN_FULFILLMENT: 'Đang làm',
-  COMPLETED: 'Đã xong',
-  CANCELLED: 'Đã hủy',
 }
 
 export default async function WorkspacePage() {
@@ -54,103 +30,106 @@ export default async function WorkspacePage() {
     })
   } catch {
     return (
-      <main className="login">
-        <h1>Việc của tôi</h1>
-        <p>Không mở được danh sách thiệp.</p>
-      </main>
+      <>
+        <HomeNav />
+        <main className="workspace-page">
+          <div className="workspace-empty">Không thể kết nối đến máy chủ.</div>
+        </main>
+      </>
     )
   }
+
   if (response.status === 401) {
     return (
-      <main className="login">
-        <h1>Việc của tôi</h1>
-        <p>
-          <a href="/login">Đăng nhập</a> để xem thiệp của bạn.
-        </p>
-      </main>
+      <>
+        <HomeNav />
+        <main className="workspace-page">
+          <div className="workspace-empty">
+            <p>Vui lòng đăng nhập để xem không gian làm việc của bạn.</p>
+            <a href="/login" className="workspace-btn-primary" style={{ display: 'inline-block', marginTop: '12px' }}>
+              Đăng nhập ngay
+            </a>
+          </div>
+        </main>
+      </>
     )
   }
-  if (!response.ok) {
-    return (
-      <main className="login">
-        <h1>Việc của tôi</h1>
-        <p>Không mở được danh sách thiệp.</p>
-      </main>
-    )
-  }
-  const items = (await response.json()) as InvitationListItem[]
-  const ordersResponse = await fetch(`${apiOrigin()}/api/v1/orders/mine`, {
-    headers: { cookie },
-    cache: 'no-store',
-  })
-  const orders = ordersResponse.ok ? ((await ordersResponse.json()) as OrderListItem[]) : []
-  const requestsResponse = await fetch(`${apiOrigin()}/api/v1/requests/mine`, {
-    headers: { cookie },
-    cache: 'no-store',
-  })
-  const requests = requestsResponse.ok ? ((await requestsResponse.json()) as CustomerRequestItem[]) : []
-  const noticesResponse = await fetch(`${apiOrigin()}/api/v1/me/notifications`, {
-    headers: { cookie },
-    cache: 'no-store',
-  })
-  const notices = noticesResponse.ok
-    ? ((await noticesResponse.json()) as { notificationId: string; plainText: string; readAt: string | null }[])
+
+  const items = response.ok ? ((await response.json()) as InvitationListItem[]) : []
+  const ordersRes = await fetch(`${apiOrigin()}/api/v1/orders/mine`, { headers: { cookie }, cache: 'no-store' })
+  const orders = ordersRes.ok ? ((await ordersRes.json()) as OrderListItem[]) : []
+  const requestsRes = await fetch(`${apiOrigin()}/api/v1/requests/mine`, { headers: { cookie }, cache: 'no-store' })
+  const requests = requestsRes.ok ? ((await requestsRes.json()) as CustomerRequestItem[]) : []
+  const noticesRes = await fetch(`${apiOrigin()}/api/v1/me/notifications`, { headers: { cookie }, cache: 'no-store' })
+  const notices = noticesRes.ok
+    ? ((await noticesRes.json()) as { notificationId: string; plainText: string; readAt: string | null }[])
     : []
+
   return (
-    <main className="login">
-      <h1>Việc của tôi</h1>
-      <p>
-        <a href="/addresses">Địa chỉ giao</a>
-      </p>
-      <CreateInvitation />
-      <h2>Thông báo</h2>
-      {notices.length === 0 ? <p>Chưa có thông báo.</p> : null}
-      <ul>
-        {notices.map((notice) => (
-          <li key={notice.notificationId}>
-            {notice.plainText}
-            {notice.readAt ? '' : ' · Mới'}
-          </li>
-        ))}
-      </ul>
-      <h2>Đơn đã gửi</h2>
-      {orders.length === 0 ? <p>Chưa có đơn nào.</p> : null}
-      <ul>
-        {orders.map((order) => (
-          <li key={order.orderId}>
-            <a href={`/orders/${order.orderId}`}>
-              {statusLabel[order.status] ?? order.status} · {order.totalAmountVnd} {order.currency}
+    <>
+      <HomeNav />
+      <main className="workspace-page">
+        <header className="workspace-header">
+          <div>
+            <h1>Không gian làm việc</h1>
+            <p>Theo dõi tiến độ thiết kế, thiệp cưới trực tuyến và đơn chế tác thủ công.</p>
+          </div>
+          <div className="workspace-actions">
+            <a href="/addresses" className="workspace-btn-outline">
+              Sổ địa chỉ
             </a>
-          </li>
-        ))}
-      </ul>
-      <h2>Yêu cầu thiết kế</h2>
-      <CreateDesignRequest />
-      {requests.length === 0 ? <p>Chưa có yêu cầu nào.</p> : null}
-      <ul>
-        {requests.map((request) => (
-          <li key={request.requestId}>
-            <a href={`/requests/${request.requestId}`}>
-              {request.kind} · {statusLabel[request.status] ?? request.status}
-            </a>
-          </li>
-        ))}
-      </ul>
-      <h2>Thiệp</h2>
-      {items.length === 0 ? <p>Chưa có thiệp nào.</p> : null}
-      <ul>
-        {items.map((item) => (
-          <li key={item.invitationId}>
-            <a href={`/invitations/${item.invitationId}`}>
-              {item.displayNames[0]} &amp; {item.displayNames[1]}
-            </a>
-            <p>
-              {item.eventTitle} · {statusLabel[item.status] ?? item.status}
-            </p>
-            {item.status === 'PUBLISHED' ? <a href={`/i/${item.slug}`}>Trang khách</a> : null}
-          </li>
-        ))}
-      </ul>
-    </main>
+            <CreateInvitation />
+          </div>
+        </header>
+
+        <div className="workspace-grid">
+          <div>
+            <section className="workspace-section">
+              <div className="workspace-section-head">
+                <h2>Thiệp cưới trực tuyến ({items.length})</h2>
+              </div>
+              <InvitationList items={items} />
+            </section>
+
+            <section className="workspace-section">
+              <div className="workspace-section-head">
+                <h2>Yêu cầu thiết kế riêng ({requests.length})</h2>
+              </div>
+              <div style={{ marginBottom: '16px' }}>
+                <CreateDesignRequest />
+              </div>
+              <RequestList requests={requests} />
+            </section>
+          </div>
+
+          <div>
+            <section className="workspace-section">
+              <div className="workspace-section-head">
+                <h2>Đơn in ấn ({orders.length})</h2>
+              </div>
+              <OrderList orders={orders} />
+            </section>
+
+            <section className="workspace-section">
+              <div className="workspace-section-head">
+                <h2>Thông báo từ xưởng</h2>
+              </div>
+              {notices.length === 0 ? (
+                <div className="workspace-empty">Chưa có thông báo nào.</div>
+              ) : (
+                <ul className="notice-list">
+                  {notices.map((n) => (
+                    <li key={n.notificationId} className="notice-item">
+                      {n.plainText}
+                      {!n.readAt ? <span className="notice-new">MỚI</span> : null}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          </div>
+        </div>
+      </main>
+    </>
   )
 }

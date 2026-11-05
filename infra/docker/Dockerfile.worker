@@ -9,6 +9,10 @@ COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
 COPY packages/config/package.json packages/config/
 COPY packages/contracts/package.json packages/contracts/
 COPY packages/database/package.json packages/database/
+COPY packages/domain/package.json packages/domain/
+COPY packages/invitation-renderer/package.json packages/invitation-renderer/
+COPY packages/ui/package.json packages/ui/
+COPY packages/api-client/package.json packages/api-client/
 COPY apps/api/package.json apps/api/
 COPY apps/worker/package.json apps/worker/
 COPY apps/web/package.json apps/web/
@@ -22,6 +26,7 @@ ENV DATABASE_URL=postgresql://placeholder:placeholder@localhost:5432/placeholder
 RUN pnpm --filter @mori/database run db:generate
 RUN pnpm --filter @mori/config build
 RUN pnpm --filter @mori/contracts build
+RUN pnpm --filter @mori/domain build
 RUN pnpm --filter @mori/database build
 RUN pnpm --filter @mori/worker build
 
@@ -38,6 +43,7 @@ COPY --from=builder /app/pnpm-workspace.yaml /app/pnpm-lock.yaml /app/package.js
 COPY --from=builder /app/packages/config/package.json packages/config/
 COPY --from=builder /app/packages/contracts/package.json packages/contracts/
 COPY --from=builder /app/packages/database/package.json packages/database/
+COPY --from=builder /app/packages/domain/package.json packages/domain/
 COPY --from=builder /app/apps/worker/package.json apps/worker/
 
 RUN pnpm install --frozen-lockfile --prod
@@ -48,6 +54,7 @@ COPY --from=builder /app/packages/database/dist packages/database/dist/
 COPY --from=builder /app/packages/database/prisma packages/database/prisma/
 COPY --from=builder /app/packages/database/prisma.config.ts packages/database/
 COPY --from=builder /app/packages/database/src/resolve-url.ts packages/database/src/resolve-url.ts
+COPY --from=builder /app/packages/domain/dist packages/domain/dist/
 COPY --from=builder /app/apps/worker/dist apps/worker/dist/
 # Re-generate Prisma client after prod install
 RUN DATABASE_URL=postgresql://placeholder:placeholder@localhost:5432/placeholder \

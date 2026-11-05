@@ -7,7 +7,7 @@ export function CreateInvitation() {
   const [status, setStatus] = useState('')
 
   async function create() {
-    setStatus('Đang tạo')
+    setStatus('Đang tạo...')
     const response = await fetch('/workspace/create', {
       method: 'POST',
       headers: { 'idempotency-key': key.current },
@@ -21,11 +21,11 @@ export function CreateInvitation() {
   }
 
   return (
-    <p>
-      <button type="button" onClick={() => void create()}>
-        Tạo thiệp nháp
+    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+      <button type="button" className="workspace-btn-primary" onClick={() => void create()}>
+        + Tạo thiệp mới
       </button>
-      {status ? <span> {status}</span> : null}
-    </p>
+      {status ? <span style={{ fontSize: '12px', color: '#6a7166' }}>{status}</span> : null}
+    </div>
   )
 }

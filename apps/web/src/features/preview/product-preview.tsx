@@ -2,6 +2,8 @@
 
 import dynamic from 'next/dynamic'
 import { useState } from 'react'
+import { BiFoldControls, FlatControls } from './preview-controls'
+import { PreviewStillCard } from './preview-still-card'
 
 const FlatCardScene = dynamic(
   () => import('./flat-card-scene').then((module) => module.FlatCardScene),
@@ -13,50 +15,122 @@ const BiFoldCardScene = dynamic(
   { ssr: false },
 )
 
-export function ProductPreview({ name, shape }: { name: string; shape: string }) {
-  const [mode, setMode] = useState<'still' | 'three' | 'fallback'>('still')
+interface ProductPreviewProps {
+  slug?: string | undefined
+  name?: string | undefined
+  shape?: string | undefined
+}
+
+export function ProductPreview({ slug = 'editorial-bifold-01', name, shape = 'FLAT' }: ProductPreviewProps) {
+  const [mode, setMode] = useState<'three' | 'still' | 'fallback'>('three')
   const [openAmount, setOpenAmount] = useState(0)
   const [face, setFace] = useState<'front' | 'back'>('front')
   const bifold = shape === 'BIFOLD'
 
   return (
-    <section>
-      <p>Mặt ngoài trước: {name}</p>
-      <p>Mặt ngoài sau: {name}</p>
-      {bifold ? (
-        <label>
-          Độ mở
-          <input
-            type="range"
-            min="0"
-            max="1"
-            step="0.01"
-            value={openAmount}
-            onChange={(event) => setOpenAmount(Number(event.target.value))}
-          />
-        </label>
-      ) : null}
-      {mode === 'still' ? (
-        <button type="button" onClick={() => setMode('three')}>
-          Xem bản 3D
+    <div className="preview-container" style={{ textAlign: 'center', width: '100%' }}>
+      <div style={{ display: 'inline-flex', gap: '8px', marginBottom: '16px', background: '#f0ede2', padding: '4px', borderRadius: '999px' }}>
+        <button
+          type="button"
+          onClick={() => setMode('three')}
+          style={{
+            border: 'none',
+            background: mode === 'three' ? '#55634f' : 'transparent',
+            color: mode === 'three' ? '#f5f4ec' : '#55634f',
+            padding: '6px 14px',
+            borderRadius: '999px',
+            fontSize: '12px',
+            fontWeight: 600,
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+          }}
+        >
+          ✦ Xem 3D Studio
         </button>
-      ) : null}
-      {mode === 'three' && bifold ? (
-        <BiFoldCardScene openAmount={openAmount} onUnavailable={() => setMode('fallback')} />
-      ) : null}
-      {mode === 'three' && !bifold ? (
-        <>
-          <p>{face === 'front' ? 'Đang xem mặt trước' : 'Đang xem mặt sau'}</p>
-          <button type="button" onClick={() => setFace('front')}>
-            Mặt trước
-          </button>
-          <button type="button" onClick={() => setFace('back')}>
-            Mặt sau
-          </button>
-          <FlatCardScene face={face} onUnavailable={() => setMode('fallback')} />
-        </>
-      ) : null}
-      {mode === 'fallback' ? <p>Không xem được 3D. Dùng các mặt ở trên.</p> : null}
-    </section>
+        <button
+          type="button"
+          onClick={() => setMode('still')}
+          style={{
+            border: 'none',
+            background: mode === 'still' ? '#55634f' : 'transparent',
+            color: mode === 'still' ? '#f5f4ec' : '#55634f',
+            padding: '6px 14px',
+            borderRadius: '999px',
+            fontSize: '12px',
+            fontWeight: 600,
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+          }}
+        >
+          Ảnh mặt phẳng
+        </button>
+      </div>
+
+      {mode === 'three' && (
+        <div>
+          <div
+            style={{
+              minHeight: '440px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: 'radial-gradient(circle, #fcfbf7 0%, #f3eee3 100%)',
+              borderRadius: '16px',
+              border: '1px solid rgba(85, 99, 79, 0.15)',
+              boxShadow: 'inset 0 2px 10px rgba(0,0,0,0.02)',
+              position: 'relative',
+              overflow: 'hidden',
+            }}
+          >
+            {bifold ? (
+              <BiFoldCardScene
+                slug={slug}
+                openAmount={openAmount}
+                name={name}
+                onUnavailable={() => setMode('fallback')}
+              />
+            ) : (
+              <FlatCardScene
+                slug={slug}
+                face={face}
+                name={name}
+                onUnavailable={() => setMode('fallback')}
+              />
+            )}
+
+            <div
+              style={{
+                position: 'absolute',
+                bottom: '12px',
+                left: '0',
+                right: '0',
+                fontSize: '11px',
+                color: '#7a8274',
+                letterSpacing: '0.02em',
+                pointerEvents: 'none',
+              }}
+            >
+              ✥ Kéo rê chuột để xoay và cảm nhận ánh kim trên sợi giấy 350gsm ✥
+            </div>
+          </div>
+
+          <div style={{ marginTop: '16px' }}>
+            {bifold ? (
+              <BiFoldControls openAmount={openAmount} onChangeOpenAmount={setOpenAmount} />
+            ) : (
+              <FlatControls face={face} onChangeFace={setFace} />
+            )}
+          </div>
+        </div>
+      )}
+
+      {mode === 'still' && <PreviewStillCard slug={slug} />}
+
+      {mode === 'fallback' && (
+        <div style={{ padding: '24px', background: '#faf9f5', borderRadius: '8px', fontSize: '13px', color: '#666' }}>
+          Trình duyệt không hỗ trợ WebGL tăng tốc 3D. Vui lòng xem bản vẽ tĩnh ở trên.
+        </div>
+      )}
+    </div>
   )
 }

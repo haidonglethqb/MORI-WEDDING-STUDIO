@@ -1,61 +1,227 @@
-body {
-  background: #f5f4ec;
-  color: #252a24;
-  font-family: "Be Vietnam Pro", "Segoe UI", sans-serif;
-  margin: 0;
-  min-height: 100vh;
-}
-
-.editor {
+.editor-page {
+  max-width: 1120px;
   margin: 0 auto;
-  max-width: 720px;
-  padding: 48px 20px;
+  padding: 32px 20px 80px;
+  font-family: "Be Vietnam Pro", -apple-system, sans-serif;
+  color: #242c22;
 }
 
-.editor h1 {
+.editor-header {
+  margin-bottom: 28px;
+}
+
+.editor-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #7a8275;
+  margin-bottom: 12px;
+}
+
+.editor-breadcrumbs a {
+  color: #7a8275;
+  text-decoration: none;
+}
+
+.editor-breadcrumbs a:hover {
+  color: #3e4a39;
+}
+
+.editor-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.editor-title-row h1 {
   font-family: Lora, Georgia, serif;
-  font-size: 36px;
+  font-size: 32px;
   font-weight: 500;
-  line-height: 44px;
-  margin: 0 0 24px;
+  margin: 0 0 6px;
+  color: #1e241c;
 }
 
-.editor label {
-  display: block;
+.editor-subtitle {
   font-size: 14px;
-  line-height: 20px;
-  margin: 0 0 16px;
+  color: #636b5f;
+  margin: 0;
 }
 
-.editor input,
-.editor textarea {
-  box-sizing: border-box;
+.editor-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px;
+}
+
+@media (min-width: 840px) {
+  .editor-grid {
+    grid-template-columns: 1.25fr 1fr;
+    align-items: start;
+  }
+}
+
+.editor-card {
+  background: #ffffff;
+  border: 1px solid #e7e2d7;
+  border-radius: 14px;
+  padding: 28px;
+  box-shadow: 0 4px 18px rgba(40, 44, 37, 0.04);
+  margin-bottom: 24px;
+}
+
+.editor-card-header {
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #f0ede6;
+}
+
+.editor-card-title {
+  font-family: Lora, Georgia, serif;
+  font-size: 20px;
+  font-weight: 500;
+  color: #222920;
+  margin: 0 0 4px;
+}
+
+.editor-card-desc {
+  font-size: 13px;
+  color: #70786b;
+  margin: 0;
+}
+
+.editor-form-group {
+  margin-bottom: 18px;
+}
+
+.editor-form-group label {
   display: block;
-  font: inherit;
-  margin-top: 8px;
-  min-height: 44px;
-  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #333d30;
+  margin-bottom: 6px;
+}
+
+.editor-input,
+.editor-textarea {
   width: 100%;
-}
-
-.editor textarea {
-  min-height: 120px;
-}
-
-.editor button {
-  background: #55634f;
-  border: 0;
+  box-sizing: border-box;
+  padding: 10px 14px;
+  border: 1px solid #dcd7cc;
   border-radius: 8px;
-  color: #f5f4ec;
   font-size: 14px;
-  line-height: 20px;
-  min-height: 44px;
-  padding: 0 16px;
+  font-family: inherit;
+  color: #222920;
+  background: #fdfdfc;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.editor button:focus-visible,
-.editor input:focus-visible,
-.editor textarea:focus-visible {
-  outline: 2px solid #32462f;
-  outline-offset: 3px;
+.editor-input:focus,
+.editor-textarea:focus {
+  outline: none;
+  border-color: #3e4a39;
+  box-shadow: 0 0 0 3px rgba(62, 74, 57, 0.12);
+}
+
+.editor-textarea {
+  min-height: 110px;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.editor-actions-bar {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 24px;
+}
+
+.editor-btn-primary {
+  background: #3e4a39;
+  color: #fbfaf6;
+  border: 1px solid #3e4a39;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.editor-btn-primary:hover {
+  background: #2e382a;
+}
+
+.editor-btn-secondary {
+  background: #ffffff;
+  color: #3e4a39;
+  border: 1px solid #d5decb;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.editor-btn-secondary:hover {
+  background: #f4f6f1;
+}
+
+.editor-status-pill {
+  font-size: 13px;
+  color: #55634f;
+  background: #f0f4ee;
+  border: 1px solid #dbe5d8;
+  padding: 6px 14px;
+  border-radius: 999px;
+  display: inline-block;
+  margin-top: 12px;
+}
+
+.editor-tool-fieldset {
+  border: 1px solid #e7e2d7;
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin-top: 16px;
+  background: #faf9f5;
+}
+
+.editor-tool-fieldset legend {
+  font-family: Lora, Georgia, serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #3e4a39;
+  padding: 0 6px;
+}
+
+.editor-reply-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.editor-reply-item {
+  background: #faf9f5;
+  border: 1px solid #e8e4da;
+  border-radius: 8px;
+  padding: 12px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  flex-wrap: wrap;
+  gap: 8px;
 }

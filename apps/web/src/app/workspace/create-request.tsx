@@ -7,7 +7,7 @@ export function CreateDesignRequest() {
   const [status, setStatus] = useState('')
 
   async function create(kind: 'PAPER' | 'DIGITAL') {
-    setStatus('Đang tạo')
+    setStatus('Đang tạo...')
     if (!key.current) key.current = `design-${crypto.randomUUID()}`
     const response = await fetch('/workspace/request', {
       method: 'POST',
@@ -24,14 +24,14 @@ export function CreateDesignRequest() {
   }
 
   return (
-    <p>
-      <button type="button" onClick={() => void create('PAPER')}>
-        Tạo yêu cầu thiệp giấy
-      </button>{' '}
-      <button type="button" onClick={() => void create('DIGITAL')}>
-        Tạo yêu cầu thiệp số
+    <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+      <button type="button" className="workspace-btn-outline" onClick={() => void create('PAPER')}>
+        Thiệp giấy thủ công
       </button>
-      {status ? <span> {status}</span> : null}
-    </p>
+      <button type="button" className="workspace-btn-outline" onClick={() => void create('DIGITAL')}>
+        Thiệp cưới số
+      </button>
+      {status ? <span style={{ fontSize: '12px', color: '#6a7166' }}>{status}</span> : null}
+    </div>
   )
 }

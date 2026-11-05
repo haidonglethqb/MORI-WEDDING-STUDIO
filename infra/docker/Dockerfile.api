@@ -10,6 +10,10 @@ COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
 COPY packages/config/package.json packages/config/
 COPY packages/contracts/package.json packages/contracts/
 COPY packages/database/package.json packages/database/
+COPY packages/domain/package.json packages/domain/
+COPY packages/invitation-renderer/package.json packages/invitation-renderer/
+COPY packages/ui/package.json packages/ui/
+COPY packages/api-client/package.json packages/api-client/
 COPY apps/api/package.json apps/api/
 COPY apps/worker/package.json apps/worker/
 COPY apps/web/package.json apps/web/
@@ -27,6 +31,8 @@ RUN pnpm --filter @mori/database run db:generate
 # Build shared packages
 RUN pnpm --filter @mori/config build
 RUN pnpm --filter @mori/contracts build
+RUN pnpm --filter @mori/domain build
+RUN pnpm --filter @mori/invitation-renderer build
 RUN pnpm --filter @mori/database build
 # Build the API
 RUN pnpm --filter @mori/api build
@@ -45,6 +51,7 @@ COPY --from=builder /app/pnpm-workspace.yaml /app/pnpm-lock.yaml /app/package.js
 COPY --from=builder /app/packages/config/package.json packages/config/
 COPY --from=builder /app/packages/contracts/package.json packages/contracts/
 COPY --from=builder /app/packages/database/package.json packages/database/
+COPY --from=builder /app/packages/domain/package.json packages/domain/
 COPY --from=builder /app/apps/api/package.json apps/api/
 
 # Install production deps only
@@ -56,6 +63,7 @@ COPY --from=builder /app/packages/contracts/dist packages/contracts/dist/
 COPY --from=builder /app/packages/database/dist packages/database/dist/
 COPY --from=builder /app/packages/database/prisma packages/database/prisma/
 COPY --from=builder /app/packages/database/prisma.config.ts packages/database/
+COPY --from=builder /app/packages/domain/dist packages/domain/dist/
 COPY --from=builder /app/apps/api/dist apps/api/dist/
 COPY --from=builder /app/apps/api/package.json apps/api/package.json
 # Re-generate Prisma client after prod install (prisma is in prod deps).

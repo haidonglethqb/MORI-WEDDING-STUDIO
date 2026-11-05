@@ -13,11 +13,11 @@ export function SwitchRsvpMode({
 }) {
   const [confirm, setConfirm] = useState(false)
   const [status, setStatus] = useState(
-    mode === 'OPEN' ? 'Khách mở đang được trả lời.' : 'Chỉ nhóm trong danh sách được trả lời.',
+    mode === 'OPEN' ? 'Hiện tại: Khách mời mở được phép tự phản hồi.' : 'Hiện tại: Chỉ nhóm khách trong danh sách được trả lời.',
   )
 
   async function switchMode() {
-    setStatus('Đang chuyển')
+    setStatus('Đang chuyển chế độ...')
     const response = await fetch(`/invitations/${invitationId}/rsvp-mode`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
@@ -28,22 +28,30 @@ export function SwitchRsvpMode({
       return
     }
     onSwitched()
-    setStatus('Chỉ nhóm trong danh sách được trả lời. Lời đáp cũ vẫn còn.')
+    setStatus('Đã chuyển sang chế độ danh sách mời riêng tư.')
   }
 
-  if (mode !== 'OPEN') return <p>{status}</p>
+  if (mode !== 'OPEN') {
+    return <div style={{ fontSize: '12px', color: '#7a8275', margin: '8px 0' }}>{status}</div>
+  }
 
   return (
-    <fieldset>
-      <legend>Cách trả lời</legend>
-      <label>
-        <input type="checkbox" checked={confirm} onChange={(event) => setConfirm(event.target.checked)} />
-        Khách mở sẽ không sửa lời đáp nữa
+    <fieldset className="editor-tool-fieldset">
+      <legend>Phương thức tiếp nhận lời đáp</legend>
+      <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', margin: '8px 0 12px', cursor: 'pointer' }}>
+        <input type="checkbox" checked={confirm} onChange={(e) => setConfirm(e.target.checked)} />
+        Khách vãng lai sẽ không thể gửi hoặc sửa lời đáp nữa
       </label>
-      <button type="button" onClick={() => void switchMode()} disabled={!confirm}>
-        Chuyển sang danh sách khách
+      <button
+        type="button"
+        className="editor-btn-secondary"
+        style={{ fontSize: '12px', padding: '6px 14px' }}
+        onClick={() => void switchMode()}
+        disabled={!confirm}
+      >
+        Chuyển sang chế độ Danh sách khách
       </button>
-      <p>{status}</p>
+      <div style={{ fontSize: '12px', color: '#7a8275', marginTop: '8px' }}>{status}</div>
     </fieldset>
   )
 }

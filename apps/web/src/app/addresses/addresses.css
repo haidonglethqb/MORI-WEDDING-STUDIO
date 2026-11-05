@@ -1,0 +1,66 @@
+.addresses-page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 36px 20px 80px;
+  font-family: "Be Vietnam Pro", -apple-system, sans-serif;
+  color: #242c22;
+}
+
+.addresses-header {
+  margin-bottom: 32px;
+  border-bottom: 1px solid rgba(85, 99, 79, 0.14);
+  padding-bottom: 20px;
+}
+
+.addresses-header h1 {
+  font-family: Lora, Georgia, serif;
+  font-size: 30px;
+  font-weight: 500;
+  color: #20261e;
+  margin: 0 0 6px;
+}
+
+.addresses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 36px;
+}
+
+.address-item-card {
+  background: #ffffff;
+  border: 1px solid #e5dfd2;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 14px rgba(44, 49, 41, 0.04);
+}
+
+.address-item-card strong {
+  display: block;
+  font-size: 16px;
+  color: #242c22;
+  margin-bottom: 4px;
+}
+
+.address-item-card p {
+  margin: 0;
+  font-size: 14px;
+  color: #636b5f;
+  line-height: 1.5;
+}
+
+.address-form-box {
+  background: #ffffff;
+  border: 1px solid #e5dfd2;
+  border-radius: 14px;
+  padding: 28px;
+  box-shadow: 0 6px 20px rgba(44, 49, 41, 0.05);
+  margin-top: 24px;
+}
+
+.address-form-box h2 {
+  font-family: Lora, Georgia, serif;
+  font-size: 20px;
+  margin: 0 0 16px;
+  color: #222920;
+}

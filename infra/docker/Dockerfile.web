@@ -9,6 +9,10 @@ COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
 COPY packages/config/package.json packages/config/
 COPY packages/contracts/package.json packages/contracts/
 COPY packages/database/package.json packages/database/
+COPY packages/domain/package.json packages/domain/
+COPY packages/invitation-renderer/package.json packages/invitation-renderer/
+COPY packages/ui/package.json packages/ui/
+COPY packages/api-client/package.json packages/api-client/
 COPY apps/api/package.json apps/api/
 COPY apps/worker/package.json apps/worker/
 COPY apps/web/package.json apps/web/
@@ -20,6 +24,8 @@ FROM deps AS builder
 COPY . .
 # Build shared packages first
 RUN pnpm --filter @mori/contracts build
+RUN pnpm --filter @mori/domain build
+RUN pnpm --filter @mori/invitation-renderer build
 # Build Next.js app (standalone output)
 # API_INTERNAL_ORIGIN is a runtime env var, not a build-time one
 RUN pnpm --filter @mori/web build

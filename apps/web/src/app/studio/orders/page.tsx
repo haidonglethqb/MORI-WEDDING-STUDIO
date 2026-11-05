@@ -1,5 +1,7 @@
 import { cookies } from 'next/headers'
-import '../../login/login.css'
+import { HomeNav } from '../../home-nav'
+import '../studio.css'
+import '../../workspace/workspace.css'
 
 export const dynamic = 'force-dynamic'
 
@@ -33,48 +35,99 @@ export default async function StudioOrdersPage() {
     })
   } catch {
     return (
-      <main className="login">
-        <h1>Đơn xưởng</h1>
-        <p>Không mở được danh sách đơn.</p>
-      </main>
+      <>
+        <HomeNav />
+        <main className="studio-page">
+          <div className="studio-empty">Không thể kết nối đến máy chủ quản lý đơn hàng.</div>
+        </main>
+      </>
     )
   }
+
   if (response.status === 401) {
     return (
-      <main className="login">
-        <h1>Đơn xưởng</h1>
-        <p>
-          <a href="/login">Đăng nhập</a> bằng tài khoản xưởng.
-        </p>
-      </main>
+      <>
+        <HomeNav />
+        <main className="studio-page">
+          <div className="studio-empty">
+            <p>Vui lòng đăng nhập bằng tài khoản nghệ nhân/xưởng studio.</p>
+            <a href="/login" className="workspace-btn-primary" style={{ display: 'inline-block', marginTop: '12px' }}>
+              Đăng nhập tài khoản xưởng
+            </a>
+          </div>
+        </main>
+      </>
     )
   }
+
   if (!response.ok) {
     return (
-      <main className="login">
-        <h1>Đơn xưởng</h1>
-        <p>Trang này dành cho tài khoản xưởng.</p>
-      </main>
+      <>
+        <HomeNav />
+        <main className="studio-page">
+          <div className="studio-empty">
+            <p>Trang này dành riêng cho tài khoản xưởng chế tác.</p>
+            <a href="/workspace" className="workspace-btn-outline" style={{ display: 'inline-block', marginTop: '12px' }}>
+              Về trang khách hàng
+            </a>
+          </div>
+        </main>
+      </>
     )
   }
+
   const orders = (await response.json()) as StudioOrderItem[]
+
   return (
-    <main className="login">
-      <h1>Đơn xưởng</h1>
-      <p>
-        <a href="/studio">Hàng đợi</a>
-      </p>
-      {orders.length === 0 ? <p>Chưa có đơn được giao.</p> : null}
-      <ul>
-        {orders.map((order) => (
-          <li key={order.orderId}>
-            <a href={`/studio/orders/${order.orderId}`}>
-              {statusLabel[order.status] ?? order.status}
-              {order.isFixture ? ' · Mẫu thử' : ''}
+    <>
+      <HomeNav />
+      <main className="studio-page">
+        <header className="studio-header">
+          <div>
+            <h1>Đơn in ấn xưởng chế tác</h1>
+            <p>Theo dõi và cập nhật công đoạn in thiệp giấy mỹ thuật và bàn giao thiệp số.</p>
+          </div>
+          <div className="studio-actions">
+            <a href="/studio" className="workspace-btn-outline">
+              ← Hàng đợi yêu cầu
             </a>
-          </li>
-        ))}
-      </ul>
-    </main>
+          </div>
+        </header>
+
+        <section className="studio-card">
+          <div className="workspace-section-head">
+            <h2>Danh sách đơn cần thực hiện ({orders.length})</h2>
+          </div>
+
+          {orders.length === 0 ? (
+            <div className="studio-empty">Hiện tại chưa có đơn in ấn nào được giao.</div>
+          ) : (
+            <div className="studio-grid">
+              {orders.map((order) => (
+                <div key={order.orderId} className="studio-item">
+                  <div className="studio-item-info">
+                    <span className="studio-item-title">
+                      Đơn hàng #{order.orderId.slice(0, 8)}
+                      {order.isFixture ? ' (Mẫu thử nghiệm)' : ''}
+                    </span>
+                    <span className="studio-item-meta">
+                      Giấy: {order.physicalStage ?? 'Không có'} · Thiệp số: {order.digitalStage ?? 'Không có'}
+                    </span>
+                  </div>
+                  <div className="workspace-item-actions">
+                    <span className={`badge-tag ${order.status}`}>
+                      {statusLabel[order.status] ?? order.status}
+                    </span>
+                    <a href={`/studio/orders/${order.orderId}`} className="workspace-action-link">
+                      Xử lý công đoạn →
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+      </main>
+    </>
   )
 }

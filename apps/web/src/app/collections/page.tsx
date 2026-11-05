@@ -1,3 +1,6 @@
+import { HomeNav } from '../home-nav'
+import { CollectionFilters } from './collection-filters'
+import { buildCuratedItem, type CollectionItem } from './collection-types'
 import './collections.css'
 
 export const dynamic = 'force-dynamic'
@@ -12,11 +15,10 @@ interface CatalogueVariant {
 interface CatalogueProduct {
   slug: string
   name: string
+  type?: 'PAPER' | 'DIGITAL'
   isFixture: boolean
   variants: CatalogueVariant[]
 }
-
-const shapeLabel = { FLAT: 'Thiệp phẳng', BIFOLD: 'Thiệp gấp đôi', TRIFOLD: 'Gấp ba' }
 
 function apiOrigin(): string {
   return process.env['API_INTERNAL_ORIGIN'] ?? 'http://127.0.0.1:4000'
@@ -35,32 +37,39 @@ async function loadProducts(): Promise<CatalogueProduct[]> {
 export default async function CollectionsPage() {
   const products = await loadProducts()
 
+  const items: CollectionItem[] = products
+    .filter((p) => p.variants.some((v) => v.availability !== 'UNAVAILABLE'))
+    .map((product, idx) => {
+      const orderable = product.variants.filter((v) => v.availability !== 'UNAVAILABLE')
+      const bifold = orderable.some((v) => v.shape === 'BIFOLD')
+      const minPrice = orderable.find((v) => v.unitAmountVnd !== null)?.unitAmountVnd ?? '25000'
+
+      return buildCuratedItem(
+        {
+          slug: product.slug,
+          name: product.name,
+          shape: bifold ? 'BIFOLD' : 'FLAT',
+          minPriceVnd: minPrice,
+        },
+        idx,
+      )
+    })
+
   return (
-    <main className="collections">
-      <h1>Bộ sưu tập</h1>
-      {products.length === 0 ? <p>Chưa có mẫu nào đang bán.</p> : null}
-      <ul>
-        {products.map((product) => (
-          <li key={product.slug}>
-            <h2>{product.name}</h2>
-            {product.isFixture ? <p>Mẫu thử</p> : null}
-            <ul>
-              {product.variants
-                .filter((variant) => variant.availability !== 'UNAVAILABLE')
-                .map((variant) => (
-                  <li key={variant.id}>
-                    <span>{shapeLabel[variant.shape]}</span>
-                    <span>
-                      {variant.unitAmountVnd === null
-                        ? 'Cần báo giá studio'
-                        : `${variant.unitAmountVnd} VND`}
-                    </span>
-                  </li>
-                ))}
-            </ul>
-          </li>
-        ))}
-      </ul>
-    </main>
+    <>
+      <HomeNav />
+      <main className="collections-wrap">
+        <header className="collections-header">
+          <span className="collections-tag">Atelier Catalogue 2026</span>
+          <h1>Bộ sưu tập Thiệp cưới Nghệ nhân</h1>
+          <p>
+            Tuyển tập 5 phong cách cưới độc bản: Editorial Vogue, Floral Thảo mộc, Heritage Hoàng Kim,
+            Minimalist Wabi-Sabi và Modern Calligraphy — in trên giấy bã mía sinh thái 350gsm.
+          </p>
+        </header>
+
+        <CollectionFilters items={items} />
+      </main>
+    </>
   )
 }

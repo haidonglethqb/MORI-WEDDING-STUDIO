@@ -1,0 +1,192 @@
+.assistant-page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+.assistant-header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.assistant-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #b38e46;
+  background: #faf4eb;
+  padding: 4px 14px;
+  border-radius: 999px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(179, 142, 70, 0.25);
+}
+
+.assistant-header h1 {
+  font-family: var(--font-serif, "Lora", Georgia, serif);
+  font-size: 36px;
+  font-weight: 500;
+  color: #242823;
+  margin: 0 0 10px;
+  letter-spacing: -0.01em;
+}
+
+.assistant-header p {
+  color: #5d6657;
+  font-size: 15px;
+  max-width: 580px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.assistant-card {
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1px solid rgba(85, 99, 79, 0.16);
+  box-shadow: 0 6px 24px rgba(44, 42, 38, 0.04);
+  padding: 32px;
+  margin-bottom: 40px;
+}
+
+.assistant-section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #3b4438;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 12px;
+}
+
+.quantity-pills {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.quantity-pill-btn {
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid #d5d0c4;
+  background: #fbfaf6;
+  color: #4a5245;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.quantity-pill-btn.active {
+  background: #3e4a39;
+  color: #ffffff;
+  border-color: #3e4a39;
+}
+
+.style-chips-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.style-chip-btn {
+  padding: 14px 12px;
+  border-radius: 12px;
+  border: 1px solid #dfdad0;
+  background: #fcfbf8;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.style-chip-btn.active {
+  background: #f5f0e4;
+  border-color: #b38e46;
+  box-shadow: 0 2px 8px rgba(179, 142, 70, 0.15);
+}
+
+.style-chip-icon {
+  font-size: 20px;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.style-chip-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #252a24;
+}
+
+.assistant-submit-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 999px;
+  background: #3e4a39;
+  color: #f7f5ed;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(62, 74, 57, 0.2);
+  transition: all 0.2s;
+}
+
+.assistant-submit-btn:hover {
+  background: #2b3527;
+}
+
+.results-section-wrap {
+  margin-top: 36px;
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  margin-top: 20px;
+}
+
+.recommend-item-card {
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid rgba(85, 99, 79, 0.14);
+  padding: 20px;
+  box-shadow: 0 4px 16px rgba(44, 42, 38, 0.03);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.recommend-item-title {
+  font-family: var(--font-serif, "Lora", Georgia, serif);
+  font-size: 18px;
+  font-weight: 500;
+  color: #242823;
+  margin: 0 0 6px;
+}
+
+.recommend-item-price {
+  font-size: 14px;
+  font-weight: 600;
+  color: #3e4a39;
+  margin-bottom: 16px;
+}
+
+.recommend-item-cta {
+  display: inline-block;
+  text-align: center;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: #55634f;
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.recommend-item-cta:hover {
+  background: #32462f;
+}
