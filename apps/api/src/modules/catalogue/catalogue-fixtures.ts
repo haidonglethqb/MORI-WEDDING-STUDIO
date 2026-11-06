@@ -60,7 +60,7 @@ export function getFixtureCatalogue(query: CatalogueQuery): CatalogueProduct[] {
     return {
       slug: item.slug,
       name: item.name,
-      type: (item.type ?? 'PAPER') as 'PAPER' | 'DIGITAL',
+      type: item.type ?? 'PAPER',
       isFixture: true,
       styleTags: [item.style],
       variants: isPaper

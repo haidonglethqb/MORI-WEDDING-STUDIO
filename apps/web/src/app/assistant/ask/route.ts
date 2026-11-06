@@ -17,10 +17,13 @@ export async function POST(request: Request) {
     isNewSession = true
   }
 
-  const existingCookieStr = cookieStore.toString()
-  const upstreamCookie = existingCookieStr.includes('mori_assistant_session_id')
-    ? existingCookieStr
-    : `${existingCookieStr ? `${existingCookieStr}; ` : ''}mori_assistant_session_id=${sessionId}`
+  const allCookies = cookieStore.getAll()
+  const hasSession = allCookies.some((c) => c.name === 'mori_assistant_session_id')
+  const cookiePairs = allCookies.map((c) => `${c.name}=${c.value}`)
+  if (!hasSession) {
+    cookiePairs.push(`mori_assistant_session_id=${sessionId}`)
+  }
+  const upstreamCookie = cookiePairs.join('; ')
 
   const raw: unknown = await request.json()
   const body = typeof raw === 'object' && raw !== null ? (raw as Record<string, unknown>) : {}

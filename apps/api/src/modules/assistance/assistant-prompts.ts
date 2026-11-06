@@ -16,27 +16,25 @@ Văn phong: Trân trọng, thanh lịch, tinh tế, giàu cảm xúc, am hiểu 
 4. CON DẤU SÁP TỰ NHIÊN & RUY BĂNG LỤA: Sáp ong thiên nhiên đúc tay khắc Monogram lồng chữ cái tên cô dâu chú rể kết hợp lụa tơ tằm.
 5. TRANG THIỆP CƯỚI SỐ NGHỆ THUẬT: Tặng kèm miễn phí trang thiệp cưới số RSVP tương tác online (trị giá 1.200.000 ₫), đồng bộ thiết kế với thiệp giấy.
 
-[VĂN PHONG NGHỆ NHÂN & QUY TẮC ĐỊNH DẠNG BẮT BUỘC]
-1. TUYỆT ĐỐI KHÔNG IN MÃ ENUM HOẶC TỪ TIẾNG ANH KỸ THUẬT:
-   - TUYỆT ĐỐI KHÔNG BAO GIỜ viết các mã enum kỹ thuật như: HOT_FOIL_160C, DECKLE_EDGE, WAX_SEAL, VELLUM_WRAP, SILK_RIBBON, BIFOLD, FLAT, HERITAGE_INDOCHINE, slug, v.v. vào câu trả lời gửi cho khách.
-   - Nếu khách không hỏi về kỹ thuật hoàn thiện, KHÔNG tự ý chèn danh sách ép kim hay con dấu sáp làm phân tâm khách hàng.
-   - Khi cần nhắc đến kỹ thuật, BẮT BUỘC dùng tiếng Việt sang trọng: "ép kim nhiệt 160°C", "mép xé thủ công Wabi-Sabi", "con dấu sáp tự nhiên", "áo giấy can mờ", "ruy băng lụa tơ tằm", "khổ gập đôi", "khổ đơn phẳng".
-2. QUY CHUẨN ĐƠN VỊ THIỆP CƯỚI:
-   - Thiệp cưới cao cấp luôn tính theo "bộ" hoặc "bộ thiệp" (Ví dụ: "38.000 ₫ / bộ thiệp", "khoảng 200 - 250 bộ thiệp").
-   - TUYỆT ĐỐI KHÔNG BAO GIỜ dùng từ "tờ" hay "đ/tờ" (như "38.000 đ/tờ").
-   - Số lượng thiệp luôn ước tính chẵn theo quy chuẩn tiệc cưới (100, 150, 200, 250 bộ), KHÔNG tính số lẻ máy móc (như "263 tấm thiệp").
-3. BỐ CỤC LỜI THOẠI TRANG NHÃ (CHỐNG DỒN CỤC CHỮ):
-   - Trả lời trực diện, rõ ràng vào câu hỏi của khách hàng, có ngắt đoạn tự nhiên (sử dụng 2 dấu xuống dòng \\n\\n).
-   - Giọng văn thanh lịch, ấm áp như lá thư gửi từ nghệ nhân xưởng chế tác.
-4. BẤT BIẾN INV-13 (ZERO PAYMENTS): Tuyệt đối KHÔNG đề cập thanh toán tiền mặt, chuyển khoản ngân hàng, số tài khoản, tiền cọc. MORI vận hành theo quy trình may đo nghệ nhân: Duyệt bản in mẫu thử (Proof) gửi tận tay trước khi chế tác.
-5. ĐỒNG BỘ 100% TÊN & SỐ LƯỢNG MẪU THIỆP:
-   - Khi nhắc đến mẫu thiệp trong "reply", BẮT BUỘC dùng CHÍNH XÁC tên mẫu trong dấu ngoặc kép ở danh sách [GROUNDED CATALOG] bên dưới (ví dụ: "Song Hỷ Cung Đình", "Provence Magnolia").
-   - Danh sách "suggestedSlugs" PHẢI chứa ĐÚNG VÀ ĐỦ các slug của những mẫu bạn đã trực tiếp nhắc tên trong "reply".
+[QUY TẮC PHẢN HỒI THÔNG MINH - TRÁNH VÒNG LẶP ROBOT]
+1. TRẢ LỜI ĐÚNG TRỌNG TÂM CÂU HỎI MỚI NHẤT CỦA KHÁCH:
+- Đọc kỹ [NEW USER MESSAGE] và trả lời đúng câu hỏi đó trước tiên.
+- Nếu khách hỏi về quá khứ/lịch sử trò chuyện (ví dụ: "câu đầu tiên t nhắn m là gì"): Hãy tra cứu trong [CONVERSATION HISTORY] và trả lời chính xác, ngắn gọn, thân thiện.
+- Nếu khách trò chuyện xã giao, hỏi vui, hoặc bày tỏ cảm xúc (ví dụ: "bạn là ai", "m bị ngu ko", "chuẩn rồi đó", "hi"): Trả lời tự nhiên, hóm hỉnh, chân thành như một nghệ nhân thân thiết. TUYỆT ĐỐI KHÔNG lặp lại bài giới thiệu xưởng từ đầu, KHÔNG liệt kê lại chất liệu giấy, và KHÔNG đưa thẻ sản phẩm (suggestedSlugs để [] rỗng).
+2. KHI NÀO MỚI GỢI Ý THẺ SẢN PHẨM (suggestedSlugs):
+- CHỈ đưa suggestedSlugs khi khách hỏi về mẫu mã, phong cách, giá cả, hoặc yêu cầu gợi ý thiệp cưới.
+- Khi khách ĐÃ ĐỒNG Ý hoặc đang xác nhận thông tin (ví dụ: "chuẩn rồi đó", "ok nha", "địa chỉ là..."): Hãy xác nhận vui vẻ, tóm tắt các thông tin đã chốt, hướng dẫn bước gửi bản in mẫu thử (Proof) tận tay. KHÔNG lặp lại việc gợi ý mẫu hay chào hàng nữa.
+3. KHÔNG BAO GIỜ HỎI LẠI THÔNG TIN ĐÃ CÓ:
+- Tra cứu kỹ [THÔNG TIN TIỆC CƯỚI ĐÃ BIẾT TỪ KHÁCH] và [CONVERSATION HISTORY]. Nếu khách đã cho biết số lượng khách, địa điểm, địa chỉ nhận hàng, TUYỆT ĐỐI KHÔNG hỏi lại những thông tin đó nữa.
+4. TUYỆT ĐỐI CẤM IN MÃ ENUM VÀ KỸ THUẬT TIẾNG ANH:
+- Nghiêm cấm xuất hiện các chuỗi mã kỹ thuật như: HOT_FOIL_160C, DECKLE_EDGE, WAX_SEAL, VELLUM_WRAP, BIFOLD, FLAT, HERITAGE_INDOCHINE, v.v.
+- Không dùng từ "đ/tờ" hay "tờ" mà luôn dùng "₫ / bộ thiệp".
+5. BẤT BIẾN INV-13 (ZERO PAYMENTS): Tuyệt đối KHÔNG đề cập thanh toán tiền mặt, chuyển khoản ngân hàng, số tài khoản, tiền cọc. MORI vận hành theo quy trình may đo nghệ nhân: Duyệt bản in mẫu thử (Proof) gửi tận tay trước khi chế tác.
 
 [REQUIRED JSON SCHEMA]
 Bạn PHẢI trả về duy nhất một chuỗi JSON hợp lệ tuân thủ cấu trúc sau:
 {
-  "reply": "Lời tư vấn nghệ nhân trang nhã, chia đoạn rõ ràng...",
+  "reply": "Lời tư vấn nghệ nhân trang nhã, đúng trọng tâm, chia đoạn tự nhiên...",
   "updatedBrief": {
     "coupleNames": "string | null",
     "weddingDate": "string | null",
@@ -57,9 +55,35 @@ Bạn PHẢI trả về duy nhất một chuỗi JSON hợp lệ tuân thủ c�
 
 export function formatGroundedCatalog(items: CatalogProductItem[]): string {
   const lines = items.map(
-    (i) => `- [${i.slug}] "${i.name}" | Dáng: ${i.shape} | Gu: ${i.styleTags.join(', ')} | Giá từ: ${i.formattedPriceVnd}`,
+    (i) => `- [${i.slug}] "${i.name}" | Dáng: ${i.shape === 'BIFOLD' ? 'Gập đôi' : 'Khổ phẳng'} | Gu: ${i.styleTags.join(', ')} | Giá từ: ${i.formattedPriceVnd}`,
   )
   return `[GROUNDED CATALOG - ACTIVE DB PRODUCTS (${items.length} items)]:\n${lines.join('\n')}`
+}
+
+function formatHumanBrief(brief: ConversationWeddingBrief): string {
+  const parts: string[] = []
+  if (brief.coupleNames) parts.push(`- Tên cặp đôi: ${brief.coupleNames}`)
+  if (brief.weddingDate) parts.push(`- Ngày cưới: ${brief.weddingDate}`)
+  if (brief.location) parts.push(`- Địa điểm / Không gian: ${brief.location}`)
+  if (brief.guestCount) {
+    const suites = brief.estimatedSuites ?? Math.round(brief.guestCount * 0.65)
+    parts.push(`- Quy mô tiệc: ${brief.guestCount} khách (ước tính ~${suites} bộ thiệp)`)
+  }
+  if (brief.aestheticIdentity) {
+    const styles: Record<string, string> = {
+      HERITAGE_INDOCHINE: 'Truyền thống Á Đông',
+      EDITORIAL_VOGUE: 'Tạp chí Vogue Pháp',
+      FLORAL_BOTANICAL: 'Thảo mộc hoa cỏ',
+      MINIMALIST_JAPANDI: 'Tối giản Wabi-Sabi',
+      MODERN_CALLIGRAPHY: 'Thư pháp hiện đại',
+    }
+    parts.push(`- Gu thẩm mỹ mong muốn: ${styles[brief.aestheticIdentity] ?? brief.aestheticIdentity}`)
+  }
+  if (brief.targetShape) {
+    parts.push(`- Dáng thiệp ưu tiên: ${brief.targetShape === 'BIFOLD' ? 'Gập đôi (Bi-fold)' : 'Khổ phẳng (Flat)'}`)
+  }
+
+  return parts.length > 0 ? parts.join('\n') : '(Chưa có thông tin cụ thể)'
 }
 
 export function buildUserPrompt(
@@ -67,27 +91,16 @@ export function buildUserPrompt(
   history: AssistantChatMessage[],
   newMessage: string,
 ): string {
-  const briefStr = JSON.stringify(brief, null, 2)
-  let historySection = '(Chưa có lịch sử đối thoại)'
+  const briefText = formatHumanBrief(brief)
 
-  if (history.length > 4) {
-    const olderTurns = history.slice(0, -4)
-    const recentTurns = history.slice(-4)
-    const summary = olderTurns
-      .map((t) => `${t.role === 'user' ? 'Khách' : 'MORI'}: ${t.content.slice(0, 80)}`)
-      .join(' | ')
-    const recentText = recentTurns
-      .map((t) => `${t.role === 'user' ? 'Khách' : 'MORI'}: ${t.content}`)
-      .join('\n')
-    historySection = `[ATELIER EXECUTIVE SUMMARY - LƯỢT CŨ]:\n${summary}\n\n[GẦN ĐÂY]:\n${recentText}`
-  } else if (history.length > 0) {
-    historySection = history
-      .map((t) => `${t.role === 'user' ? 'Khách' : 'MORI'}: ${t.content}`)
-      .join('\n')
-  }
+  const historyLines = history.map((msg, idx) => {
+    const sender = msg.role === 'user' ? 'Khách hàng' : 'Master Pierre-Minh & Vũ Cầm'
+    return `[Lượt ${idx + 1}] ${sender}: ${msg.content}`
+  })
+  const historySection = historyLines.length > 0 ? historyLines.join('\n\n') : '(Chưa có lịch sử đối thoại)'
 
-  return `[CURRENT WEDDING BRIEF]:
-${briefStr}
+  return `[THÔNG TIN TIỆC CƯỚI ĐÃ BIẾT TỪ KHÁCH]:
+${briefText}
 
 [CONVERSATION HISTORY]:
 ${historySection}
@@ -95,5 +108,5 @@ ${historySection}
 [NEW USER MESSAGE]:
 ${newMessage}
 
-Hãy phân tích tin nhắn mới, trích xuất thông tin mới nếu có vào updatedBrief, gợi ý mẫu thiệp phù hợp từ catalog, và trả về JSON chuẩn.`
+Hãy phân tích kỹ tin nhắn mới và lịch sử trên, trả lời đúng trọng tâm một cách tự nhiên, chỉ gợi ý mẫu khi được yêu cầu, và trả về JSON chuẩn.`
 }

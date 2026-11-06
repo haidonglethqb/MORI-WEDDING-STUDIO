@@ -63,14 +63,14 @@ export class AssistantController {
     } catch (error) {
       if (error instanceof ForbiddenException) throw error
     }
-    const isDev = process.env['APP_ENV'] === 'development'
+    const isDev = process.env['APP_ENV'] !== 'production'
     const sessionId = readCookie(cookie, 'mori_assistant_session_id')
     if (sessionId) {
-      return { subject: `session:${sessionId}`, limit: isDev ? 100 : 5 }
+      return { subject: `session:${sessionId}`, limit: isDev ? 1000 : 5 }
     }
     const ip = forwarded?.split(',')[0]?.trim() || 'local'
     const hash = createHash('sha256').update(ip).digest('hex')
-    return { subject: `ip:${hash}`, limit: isDev ? 100 : 5 }
+    return { subject: `ip:${hash}`, limit: isDev ? 1000 : 5 }
   }
 }
 

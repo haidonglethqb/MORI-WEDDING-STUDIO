@@ -42,7 +42,7 @@ export class AssistantOrchestratorService {
       req.context,
     )
     const boostedBrief = this.extractor.boostFromText(baseBrief, req.message)
-    const history = req.history?.slice(-8) ?? []
+    const history = req.history?.slice(-30) ?? []
     const catalog = await this.catalogProvider.getActiveProducts()
 
     const catalogGrounding = formatGroundedCatalog(catalog)
@@ -88,7 +88,7 @@ export class AssistantOrchestratorService {
     const effectiveSlugs =
       mentionedFromReply.length > 0
         ? mentionedFromReply.map((m) => m.slug)
-        : raw.suggestedSlugs
+        : (raw.suggestedSlugs ?? [])
 
     const matchedProducts = this.matcher.rankProducts(catalog, updatedBrief, effectiveSlugs)
     const suggestedCards = this.guardrail.buildProductCards(matchedProducts)

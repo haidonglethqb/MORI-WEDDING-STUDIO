@@ -24,7 +24,10 @@ export class ScoringMatcher {
   ): CatalogProductItem[] {
     const catalogMap = new Map(catalog.map((c) => [c.slug, c]))
 
-    if (suggestedSlugs && suggestedSlugs.length > 0) {
+    if (suggestedSlugs) {
+      if (suggestedSlugs.length === 0) {
+        return []
+      }
       const matchedFromAi: CatalogProductItem[] = []
       for (const slug of suggestedSlugs) {
         const found = catalogMap.get(slug)
@@ -32,9 +35,7 @@ export class ScoringMatcher {
           matchedFromAi.push(found)
         }
       }
-      if (matchedFromAi.length > 0) {
-        return matchedFromAi.slice(0, 3)
-      }
+      return matchedFromAi.slice(0, 3)
     }
 
     const scoredList = catalog.map((item) => this.calculateAffinity(item, brief))
