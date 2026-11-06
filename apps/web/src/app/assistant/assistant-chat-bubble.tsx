@@ -1,5 +1,6 @@
 'use client'
 
+import type { ReactNode } from 'react'
 import type { ChatMessageItem } from './assistant-types'
 import { AssistantProductCard } from './assistant-product-card'
 
@@ -9,6 +10,40 @@ interface ChatBubbleProps {
 
 function formatVnd(val: string): string {
   return val.includes('₫') ? val : `${val} ₫`
+}
+
+function renderFormattedMessage(content: string): ReactNode {
+  const paragraphs = content.split(/\n\s*\n/)
+  return paragraphs.map((para, pIdx) => {
+    const lines = para.split('\n').filter((l) => l.trim().length > 0)
+    return (
+      <div key={pIdx} className="bubble-paragraph">
+        {lines.map((line, lIdx) => {
+          const trimmed = line.trim()
+          const isBullet =
+            trimmed.startsWith('- ') || trimmed.startsWith('• ') || /^\d+\.\s/.test(trimmed)
+          const cleanLine = trimmed
+            .replace(/^[-•]\s*/, '')
+            .replace(/^\d+\.\s*/, '')
+
+          const parts = cleanLine.split(/(\*\*[^*]+\*\*)/g)
+          const renderedParts = parts.map((part, partIdx) => {
+            if (part.startsWith('**') && part.endsWith('**')) {
+              return <strong key={partIdx}>{part.slice(2, -2)}</strong>
+            }
+            return part
+          })
+
+          return (
+            <div key={lIdx} className={isBullet ? 'bubble-bullet-line' : 'bubble-standard-line'}>
+              {isBullet && <span className="bullet-dot" aria-hidden="true">✦</span>}
+              <span className="bullet-content">{renderedParts}</span>
+            </div>
+          )
+        })}
+      </div>
+    )
+  })
 }
 
 export function AssistantChatBubble({ message }: ChatBubbleProps) {
@@ -36,7 +71,7 @@ export function AssistantChatBubble({ message }: ChatBubbleProps) {
         </div>
 
         <div className="assistant-bubble-content">
-          <p className="bubble-text">{message.content}</p>
+          <div className="bubble-text-flow">{renderFormattedMessage(message.content)}</div>
         </div>
 
         {message.products && message.products.length > 0 && (
@@ -52,7 +87,7 @@ export function AssistantChatBubble({ message }: ChatBubbleProps) {
             <div className="budget-header">
               <span className="budget-title">Dự toán may đo ước tính</span>
               <span className="budget-shape-badge">
-                {message.budget.quantity} bộ thiệp ({message.budget.shape})
+                {message.budget.quantity} bộ thiệp ({message.budget.shape === 'BIFOLD' ? 'Gập đôi' : 'Khổ phẳng'})
               </span>
             </div>
 
