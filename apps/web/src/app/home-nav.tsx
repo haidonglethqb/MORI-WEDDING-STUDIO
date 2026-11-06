@@ -35,49 +35,51 @@ export async function HomeNav() {
 
   return (
     <header className="home-nav">
-      <Link className="home-mark" href="/">
-        MORI
-      </Link>
-      <nav aria-label="Chính" className="home-nav-links">
-        <Link href="/collections">Bộ sưu tập</Link>
-        <Link href="/assistant">Trợ lý gợi ý</Link>
-        <Link href="/#thiep-so">Thiệp số</Link>
-        <Link href="/#xuong">Xưởng</Link>
-      </nav>
-      <div className="home-nav-end">
-        {user ? (
-          <>
-            {user.role === 'STUDIO' || user.role === 'ADMIN' ? (
-              <Link className="nav-link-staff" href="/studio">
-                Hàng đợi xưởng
+      <div className="home-nav-inner">
+        <Link className="home-mark" href="/">
+          MORI
+        </Link>
+        <nav aria-label="Chính" className="home-nav-links">
+          <Link href="/collections">Bộ sưu tập</Link>
+          <Link href="/assistant">Trợ lý gợi ý</Link>
+          <Link href="/#thiep-so">Thiệp số</Link>
+          <Link href="/#xuong">Xưởng</Link>
+        </nav>
+        <div className="home-nav-end">
+          {user ? (
+            <>
+              {user.role === 'STUDIO' || user.role === 'ADMIN' ? (
+                <Link className="nav-link-staff" href="/studio">
+                  Hàng đợi xưởng
+                </Link>
+              ) : null}
+              {user.role === 'ADMIN' ? (
+                <Link className="nav-link-staff" href="/admin/ai">
+                  Cấu hình AI
+                </Link>
+              ) : null}
+              <Link className="nav-link-item" href="/workspace">
+                Việc của tôi
               </Link>
-            ) : null}
-            {user.role === 'ADMIN' ? (
-              <Link className="nav-link-staff" href="/admin/ai">
-                Cấu hình AI
+              <div className="nav-user-badge">
+                <span className="user-role-tag">{user.role}</span>
+                <span className="user-name">{user.displayName}</span>
+              </div>
+              <a className="nav-logout-btn" href="/logout">
+                Đăng xuất
+              </a>
+            </>
+          ) : (
+            <>
+              <Link className="nav-link-login" href="/login">
+                Đăng nhập
               </Link>
-            ) : null}
-            <Link className="nav-link-item" href="/workspace">
-              Việc của tôi
-            </Link>
-            <div className="nav-user-badge">
-              <span className="user-role-tag">{user.role}</span>
-              <span className="user-name">{user.displayName}</span>
-            </div>
-            <a className="nav-logout-btn" href="/logout">
-              Đăng xuất
-            </a>
-          </>
-        ) : (
-          <>
-            <Link className="nav-link-login" href="/login">
-              Đăng nhập
-            </Link>
-            <Link className="home-cta" href="/collections">
-              Xem bộ sưu tập
-            </Link>
-          </>
-        )}
+              <Link className="home-cta" href="/collections">
+                Xem bộ sưu tập
+              </Link>
+            </>
+          )}
+        </div>
       </div>
     </header>
   )

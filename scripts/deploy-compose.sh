@@ -6,6 +6,17 @@ DEPLOY_DIR="/opt/mori"
 echo "=== [1/6] Preparing Deployment Directory ==="
 mkdir -p "$DEPLOY_DIR/media"
 cd "$DEPLOY_DIR"
+trap 'rm -f "$DEPLOY_DIR/deploy.sh"' EXIT
+
+# The VPS transcript showed Docker was not installed. Install only when the
+# engine or Compose v2 is missing; do not run a full OS upgrade during deploy.
+if ! command -v docker >/dev/null 2>&1 || ! docker compose version >/dev/null 2>&1; then
+  echo "=== Installing Docker Engine and Compose v2 ==="
+  apt-get update
+  DEBIAN_FRONTEND=noninteractive apt-get install -y docker.io docker-compose-v2
+fi
+systemctl enable --now docker
+docker info >/dev/null
 
 # 1. Ensure .env exists; if already present, preserve existing credentials
 echo "=== [2/6] Verifying Environment Configuration ==="
@@ -48,6 +59,7 @@ sync_env_var() {
 sync_env_var "CODEX_API_KEY"
 sync_env_var "CODEX_BASE_URL"
 sync_env_var "GROQ_API_KEY"
+sync_env_var "IMAGE_TAG"
 sync_env_var "PUBLIC_APP_ORIGIN"
 sync_env_var "PUBLIC_INVITE_ORIGIN"
 
@@ -66,13 +78,22 @@ echo "=== [4/6] Starting Database and Running Migrations ==="
 docker compose -f compose.yaml -f compose.prod.yaml up -d postgres redis
 
 echo "Waiting for PostgreSQL to pass healthcheck..."
+POSTGRES_READY=0
 for i in {1..30}; do
-  if docker compose -f compose.yaml -f compose.prod.yaml ps postgres | grep -q "(healthy)"; then
+  POSTGRES_ID=$(docker compose -f compose.yaml -f compose.prod.yaml ps -q postgres)
+  POSTGRES_STATUS=$(docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{else}}{{.State.Status}}{{end}}' "$POSTGRES_ID" 2>/dev/null || true)
+  if [ "$POSTGRES_STATUS" = "healthy" ]; then
     echo "PostgreSQL is healthy."
+    POSTGRES_READY=1
     break
   fi
   sleep 2
 done
+if [ "$POSTGRES_READY" -ne 1 ]; then
+  echo "PostgreSQL did not become healthy; refusing to run migrations."
+  docker compose -f compose.yaml -f compose.prod.yaml logs --tail=50 postgres
+  exit 1
+fi
 
 # Run Prisma migrations to deploy all new database schema changes
 echo "Executing Prisma migration deploy..."
@@ -89,7 +110,7 @@ for i in {1..30}; do
   API_STATUS=$(curl -s http://127.0.0.1:4000/api/v1/health/ready || true)
   WEB_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:80/ || true)
   
-  if [[ "$API_STATUS" == *"\"status\":\"ok\""* ]] && [ "$WEB_CODE" -ge 200 ] && [ "$WEB_CODE" -lt 500 ]; then
+  if [[ "$API_STATUS" == *"\"status\":\"ok\""* ]] && [ "$WEB_CODE" = "200" ]; then
     echo "Deployment verification PASSED:"
     echo " - API Readiness: OK (Database connected)"
     echo " - Web Frontend: HTTP $WEB_CODE"
@@ -107,6 +128,12 @@ if [ "$READY" -ne 1 ]; then
   exit 1
 fi
 
-echo "Cleaning up unused container images..."
-docker image prune -f >/dev/null 2>&1 || true
+# Cleanup runs only after the deployment has passed health checks. It prunes
+# unused Docker resources and OS caches, never named volumes or application data.
+echo "=== [7/7] Cleaning Stale Images and Temporary Files ==="
+if [ -x "$DEPLOY_DIR/clean-vps.sh" ]; then
+  "$DEPLOY_DIR/clean-vps.sh"
+else
+  echo "Missing clean-vps.sh; deployment succeeded but cleanup was skipped."
+fi
 echo "=== MORI Wedding Studio Successfully Deployed ==="

@@ -3,24 +3,9 @@
 import { useState } from 'react'
 
 const DEMO_ACCOUNTS = [
-  {
-    label: 'Khách hàng',
-    email: 'customer@mori.local',
-    password: 'MoriWedding2026!',
-    badge: 'Xem việc & đặt thiệp',
-  },
-  {
-    label: 'Xưởng Studio',
-    email: 'studio@mori.local',
-    password: 'MoriWedding2026!',
-    badge: 'Duyệt in & hàng đợi',
-  },
-  {
-    label: 'Quản trị viên',
-    email: 'admin@mori.local',
-    password: 'MoriWedding2026!',
-    badge: 'Toàn quyền hệ thống',
-  },
+  { label: 'Khách hàng', email: 'customer@mori.local', password: 'MoriWedding2026!', badge: 'Xem RSVP & đơn hàng' },
+  { label: 'Xưởng Studio', email: 'studio@mori.local', password: 'MoriWedding2026!', badge: 'Hàng đợi duyệt in' },
+  { label: 'Quản trị viên', email: 'admin@mori.local', password: 'MoriWedding2026!', badge: 'Cấu hình toàn hệ thống' },
 ]
 
 export function LoginForm() {
@@ -31,10 +16,8 @@ export function LoginForm() {
   const [isError, setIsError] = useState(false)
 
   async function handleLogin(targetEmail?: string, targetPass?: string) {
-    const docEmail = typeof document !== 'undefined' ? (document.querySelector('input[name="email"]') as HTMLInputElement)?.value : ''
-    const docPass = typeof document !== 'undefined' ? (document.querySelector('input[name="password"]') as HTMLInputElement)?.value : ''
-    const finalEmail = (targetEmail ?? (email || docEmail) ?? '').trim()
-    const finalPass = targetPass ?? (password || docPass) ?? ''
+    const finalEmail = (targetEmail ?? email).trim()
+    const finalPass = targetPass ?? password
 
     if (!finalEmail || !finalPass) {
       setStatus('Vui lòng nhập đầy đủ email và mật khẩu.')
@@ -68,51 +51,31 @@ export function LoginForm() {
 
       const body = (await response.json()) as { user?: { displayName?: string; role?: string } }
       const displayName = body.user?.displayName ?? 'bạn'
-      setStatus(`Đăng nhập thành công! Xin chào ${displayName}. Đang chuyển trang...`)
+      setStatus(`Đăng nhập thành công! Xin chào ${displayName}.`)
       setIsError(false)
 
       const targetPath = body.user?.role === 'STUDIO' || body.user?.role === 'ADMIN' ? '/studio' : '/workspace'
       setTimeout(() => {
         window.location.assign(targetPath)
-      }, 300)
+      }, 350)
     } catch {
-      setStatus('Đã xảy ra lỗi kết nối mạng.')
+      setStatus('Đã xảy ra lỗi kết nối mạng. Vui lòng thử lại.')
       setIsError(true)
       setLoading(false)
     }
   }
 
   return (
-    <div className="login-card">
-      <div className="login-header">
-        <span className="login-badge">MORI ATELIER</span>
-        <h1>Đăng nhập tài khoản</h1>
-        <p>Truy cập không gian quản lý thiệp cưới và đơn hàng của bạn.</p>
-      </div>
-
-      <div className="demo-accounts-box">
-        <span className="demo-title">Tài khoản dùng thử (bấm để điền nhanh):</span>
-        <div className="demo-buttons">
-          {DEMO_ACCOUNTS.map((acc) => (
-            <button
-              key={acc.email}
-              type="button"
-              className="demo-btn"
-              onClick={() => {
-                setEmail(acc.email)
-                setPassword(acc.password)
-                void handleLogin(acc.email, acc.password)
-              }}
-            >
-              <strong>{acc.label}</strong>
-              <small>{acc.badge}</small>
-            </button>
-          ))}
-        </div>
+    <div className="atelier-card">
+      <div className="atelier-header">
+        <div className="atelier-crest-mark" aria-hidden="true">M</div>
+        <span className="atelier-kicker">MORI ATELIER · HAUTE PAPETERIE</span>
+        <h1>Đăng nhập không gian xưởng</h1>
+        <p>Quản lý bộ thiệp cưới, phê duyệt bản in thử và lưu trữ kỷ niệm cưới.</p>
       </div>
 
       <form
-        className="login-form-inner"
+        className="atelier-form"
         method="POST"
         action="javascript:void(0)"
         onSubmit={(event) => {
@@ -120,19 +83,19 @@ export function LoginForm() {
           void handleLogin()
         }}
       >
-        <label className="field-group">
+        <label className="atelier-field">
           <span>Địa chỉ Email</span>
           <input
             name="email"
             type="email"
-            placeholder="vd: ban@example.com"
+            placeholder="ten.ban@domain.vn"
             autoComplete="username"
             value={email}
             disabled={loading}
             onChange={(event) => setEmail(event.target.value)}
           />
         </label>
-        <label className="field-group">
+        <label className="atelier-field">
           <span>Mật khẩu</span>
           <input
             name="password"
@@ -145,8 +108,8 @@ export function LoginForm() {
           />
         </label>
 
-        <button type="submit" className="login-submit-btn" disabled={loading}>
-          {loading ? 'Đang đăng nhập...' : 'Đăng nhập vào hệ thống'}
+        <button type="submit" className="atelier-primary-btn" disabled={loading}>
+          {loading ? 'Đang xác thực...' : 'Đăng nhập vào Atelier'}
         </button>
 
         {status && (
@@ -155,14 +118,37 @@ export function LoginForm() {
           </div>
         )}
 
-        <div className="login-footer-links">
+        <div className="atelier-links">
           <a href="/forgot">Quên mật khẩu?</a>
-          <span className="dot-divider">·</span>
+          <span className="sep-dot">·</span>
           <a href="/register">Tạo tài khoản mới</a>
-          <span className="dot-divider">·</span>
-          <a href="/">Về trang chủ</a>
+          <span className="sep-dot">·</span>
+          <a href="/">Trang chủ</a>
         </div>
       </form>
+
+      <details className="atelier-dev-drawer">
+        <summary className="dev-drawer-toggle">
+          <span>✦ Khám phá tài khoản thử nghiệm (Dev / Review)</span>
+        </summary>
+        <div className="dev-drawer-content">
+          {DEMO_ACCOUNTS.map((acc) => (
+            <button
+              key={acc.email}
+              type="button"
+              className="dev-pill-btn"
+              onClick={() => {
+                setEmail(acc.email)
+                setPassword(acc.password)
+                void handleLogin(acc.email, acc.password)
+              }}
+            >
+              <strong>{acc.label}</strong>
+              <small>{acc.badge}</small>
+            </button>
+          ))}
+        </div>
+      </details>
     </div>
   )
 }

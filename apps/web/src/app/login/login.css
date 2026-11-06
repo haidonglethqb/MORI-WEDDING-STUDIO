@@ -1,214 +1,138 @@
-body {
-  background: #fbfaf6;
-  color: #242823;
-  font-family: "Be Vietnam Pro", "Segoe UI", sans-serif;
-  margin: 0;
-  min-height: 100vh;
-}
-
-.login {
-  display: flex;
+.auth-layout {
   align-items: center;
+  background: radial-gradient(ellipse at top, #faf7f2 0%, #f4efe6 100%);
+  display: flex;
   justify-content: center;
-  min-height: calc(100vh - 80px);
-  padding: 40px 20px;
+  min-height: calc(100vh - 72px);
+  padding: 48px 20px;
 }
-
-.login-card {
-  background: #ffffff;
-  border: 1px solid #e5e0d8;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px -5px rgba(45, 58, 41, 0.06), 0 4px 10px -2px rgba(45, 58, 41, 0.03);
-  margin: 0 auto;
-  max-width: 480px;
-  padding: 40px;
+.auth-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  max-width: 940px;
   width: 100%;
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1px solid #e7dfd3;
+  box-shadow: 0 20px 48px -12px rgba(44, 40, 32, 0.08);
+  overflow: hidden;
 }
-
-.login-header {
-  text-align: center;
-  margin-bottom: 28px;
+@media (min-width: 860px) {
+  .auth-container { grid-template-columns: 1fr 1.15fr; }
 }
-
-.login-badge {
-  background: #f1ede4;
-  border-radius: 100px;
-  color: #63715e;
-  display: inline-block;
+.auth-editorial-panel {
+  display: none;
+  background: linear-gradient(145deg, #2b3828 0%, #1e291c 100%);
+  color: #f7f4ed;
+  padding: 48px 40px;
+  border-right: 1px solid rgba(220, 205, 180, 0.15);
+}
+@media (min-width: 860px) {
+  .auth-editorial-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+}
+.editorial-kicker {
+  color: #c9ad84;
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.15em;
-  margin-bottom: 12px;
-  padding: 4px 12px;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
 }
-
-.login-header h1 {
-  font-family: Lora, Georgia, serif;
-  font-size: 32px;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  line-height: 38px;
-  margin: 0 0 8px;
+.auth-editorial-panel h2 {
+  font-family: Lora, "Cormorant Garamond", Georgia, serif;
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1.35;
+  color: #ffffff;
+  margin: 14px 0 12px;
 }
-
-.login-header p {
-  color: #666c62;
-  font-size: 14px;
-  line-height: 22px;
+.auth-editorial-panel p {
+  color: #c8d1c5;
+  font-size: 13.5px;
+  line-height: 1.6;
   margin: 0;
 }
-
-.demo-accounts-box {
-  background: #f9f8f4;
-  border: 1px dashed #d5d0c4;
-  border-radius: 10px;
-  margin-bottom: 24px;
-  padding: 16px;
-}
-
-.demo-title {
-  color: #555b51;
-  display: block;
-  font-size: 12px;
-  font-weight: 500;
-  margin-bottom: 10px;
-}
-
-.demo-buttons {
+.editorial-features {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 16px;
+  margin-top: 32px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding-top: 24px;
 }
-
-.demo-btn {
-  align-items: center;
-  background: #ffffff;
-  border: 1px solid #dfdad0;
-  border-radius: 8px;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  padding: 8px 12px;
-  text-align: left;
+.feature-pill { display: flex; gap: 10px; align-items: flex-start; }
+.feature-pill span { font-size: 14px; }
+.feature-pill strong { color: #e5ded2; font-size: 13px; font-weight: 600; display: block; }
+.feature-pill small { color: #9fad9b; font-size: 11.5px; display: block; }
+.auth-form-panel { background: #ffffff; padding: 40px 36px; }
+@media (max-width: 640px) { .auth-form-panel { padding: 28px 18px; } }
+.atelier-card { width: 100%; margin: 0 auto; }
+.atelier-header { text-align: center; margin-bottom: 24px; }
+.atelier-crest-mark {
+  width: 42px; height: 42px; margin: 0 auto 12px; border-radius: 50%;
+  border: 1px solid #d9cbba; background: #faf8f4; color: #8c7355;
+  display: flex; align-items: center; justify-content: center;
+  font-family: Lora, Georgia, serif; font-size: 18px; font-weight: 600;
+}
+.atelier-kicker {
+  display: inline-block; color: #8c7355; font-size: 10.5px; font-weight: 600;
+  letter-spacing: 0.16em; margin-bottom: 6px;
+}
+.atelier-header h1 {
+  font-family: Lora, Georgia, serif; font-size: 24px; font-weight: 500;
+  color: #1f261e; margin: 0 0 6px;
+}
+.atelier-header p { color: #6a7167; font-size: 13px; line-height: 1.45; margin: 0; }
+.atelier-form { display: flex; flex-direction: column; gap: 16px; }
+.atelier-field { display: flex; flex-direction: column; gap: 5px; }
+.atelier-field span { color: #3b4338; font-size: 12.5px; font-weight: 500; }
+.atelier-field input {
+  background: #faf9f6; border: 1px solid #ded7ca; border-radius: 8px;
+  color: #242922; font-size: 14px; min-height: 42px; padding: 8px 12px;
   transition: all 0.15s ease;
 }
-
-.demo-btn:hover {
-  background: #f3f0e8;
-  border-color: #55634f;
-  transform: translateY(-1px);
+.atelier-field input:focus {
+  background: #ffffff; border-color: #53674c;
+  box-shadow: 0 0 0 3px rgba(83, 103, 76, 0.12); outline: none;
 }
-
-.demo-btn strong {
-  color: #2d3a29;
-  font-size: 13px;
+.atelier-primary-btn {
+  background: #2b3928; color: #f7f4ed; border: 0; border-radius: 8px;
+  font-size: 14px; font-weight: 500; min-height: 44px; cursor: pointer;
+  margin-top: 4px; transition: all 0.2s ease;
 }
-
-.demo-btn small {
-  color: #7c8577;
-  font-size: 11px;
+.atelier-primary-btn:hover:not(:disabled) {
+  background: #1c261a; transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(35, 46, 33, 0.2);
 }
-
-.login-form-inner {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
+.atelier-primary-btn:disabled { background: #9aa297; cursor: not-allowed; }
+.status-banner { border-radius: 8px; font-size: 12.5px; padding: 9px 12px; text-align: center; }
+.status-error { background: #fdf3f2; border: 1px solid #f6cdc7; color: #b03624; }
+.status-success { background: #f2f7f1; border: 1px solid #cbe4c7; color: #2b6521; }
+.atelier-links {
+  display: flex; justify-content: center; align-items: center; gap: 8px;
+  font-size: 12.5px; margin-top: 4px;
 }
-
-.field-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+.atelier-links a { color: #55634f; text-decoration: none; }
+.atelier-links a:hover { color: #232a20; text-decoration: underline; }
+.sep-dot { color: #beb8ac; }
+.atelier-dev-drawer {
+  margin-top: 22px; padding-top: 14px; border-top: 1px dashed #e3ddd1;
 }
-
-.field-group span {
-  color: #3b4438;
-  font-size: 13px;
-  font-weight: 500;
+.dev-drawer-toggle {
+  color: #8f968b; font-size: 11px; cursor: pointer; user-select: none;
+  list-style: none; text-align: center;
 }
-
-.field-group input {
-  background: #ffffff;
-  border: 1px solid #d8d3c7;
-  border-radius: 8px;
-  color: #252a24;
-  font-size: 14px;
-  min-height: 44px;
-  padding: 10px 14px;
-  transition: border-color 0.15s, box-shadow 0.15s;
+.dev-drawer-toggle::-webkit-details-marker { display: none; }
+.dev-drawer-toggle:hover { color: #4f5a4a; }
+.dev-drawer-content { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+.dev-pill-btn {
+  display: flex; justify-content: space-between; align-items: center;
+  background: #faf8f5; border: 1px solid #dfdad0; border-radius: 6px;
+  padding: 6px 10px; cursor: pointer; text-align: left;
 }
-
-.field-group input:focus {
-  border-color: #4a5c43;
-  box-shadow: 0 0 0 3px rgba(74, 92, 67, 0.12);
-  outline: none;
-}
-
-.login-submit-btn {
-  align-items: center;
-  background: #3b4a37;
-  border: 0;
-  border-radius: 8px;
-  color: #fbfaf6;
-  cursor: pointer;
-  display: inline-flex;
-  font-size: 15px;
-  font-weight: 500;
-  justify-content: center;
-  min-height: 46px;
-  margin-top: 6px;
-  transition: background 0.15s, transform 0.1s;
-  width: 100%;
-}
-
-.login-submit-btn:hover:not(:disabled) {
-  background: #2d3a29;
-}
-
-.login-submit-btn:disabled {
-  background: #899385;
-  cursor: not-allowed;
-}
-
-.status-banner {
-  border-radius: 8px;
-  font-size: 13px;
-  line-height: 18px;
-  padding: 10px 14px;
-  text-align: center;
-}
-
-.status-error {
-  background: #fdf2f0;
-  border: 1px solid #f6cdc7;
-  color: #b33927;
-}
-
-.status-success {
-  background: #f2f8f0;
-  border: 1px solid #cce5c7;
-  color: #2f6925;
-}
-
-.login-footer-links {
-  align-items: center;
-  display: flex;
-  font-size: 13px;
-  justify-content: center;
-  margin-top: 12px;
-}
-
-.login-footer-links a {
-  color: #55634f;
-  text-decoration: none;
-}
-
-.login-footer-links a:hover {
-  text-decoration: underline;
-}
-
-.dot-divider {
-  color: #b0aaa0;
-  margin: 0 8px;
-}
+.dev-pill-btn:hover { background: #f1ede4; border-color: #55634f; }
+.dev-pill-btn strong { font-size: 12px; color: #2a3426; }
+.dev-pill-btn small { font-size: 11px; color: #788274; }

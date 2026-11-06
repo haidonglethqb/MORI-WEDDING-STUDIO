@@ -31,6 +31,24 @@ Three targets: `app-web` (Next.js, port 3000), `app-api` (NestJS, port 3001), `a
 - **Automated gates:** Tests pass, no coverage decrease, migrations reversible
 - **No hand-edits:** `docs/api/openapi.json` is generated; never edit by hand
 
+### Production Compose Deployment
+
+The deploy workflow builds immutable images tagged with the commit SHA, uploads the Compose and maintenance scripts,
+then deploys that exact tag to the VPS. Configure these GitHub Actions repository secrets:
+
+| Secret | Value |
+| --- | --- |
+| `SSH_HOST` | `43.240.117.146` |
+| `SSH_PORT` | `24700` |
+| `SSH_USER` | `root` (a dedicated deploy user with Docker access is preferred) |
+| `SSH_KEY` | Full PEM private-key contents; do not use a workstation file path |
+
+The host installs Docker Engine and Compose v2 if either is missing, starts PostgreSQL/Redis, waits for PostgreSQL
+health, runs the one-shot Prisma migration service, then starts the app and checks API readiness plus the web root.
+Cleanup runs only after health checks succeed. It removes unused containers/images/build cache, apt cache, and old
+journal entries; named Docker volumes and `/opt/mori/media` are retained. Production deployment does not run the
+development seed or create predictable demo accounts.
+
 ## Related
 
 - [Compose services](./compose-services.md) — Local stack

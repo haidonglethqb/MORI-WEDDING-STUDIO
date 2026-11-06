@@ -63,7 +63,7 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          source: "compose.yaml,compose.prod.yaml,scripts/deploy-compose.sh"
+          source: "compose.yaml,compose.prod.yaml,scripts/deploy-compose.sh,scripts/clean-vps.sh"
           target: "/opt/mori"
 
       - name: Execute Automated Deployment on VPS
@@ -73,7 +73,7 @@ jobs:
           GHCR_USER: ${{ github.actor }}
           GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SERVER_HOST: ${{ secrets.SSH_HOST }}
-          IMAGE_TAG: latest
+          IMAGE_TAG: ${{ github.sha }}
           CODEX_API_KEY: ${{ secrets.CODEX_API_KEY }}
           CODEX_BASE_URL: ${{ secrets.CODEX_BASE_URL }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
@@ -85,5 +85,6 @@ jobs:
           envs: REPO_OWNER,GHCR_USER,GHCR_TOKEN,SERVER_HOST,IMAGE_TAG,CODEX_API_KEY,CODEX_BASE_URL,GROQ_API_KEY
           script: |
             tr -d '\r' < /opt/mori/scripts/deploy-compose.sh > /opt/mori/deploy.sh
-            chmod +x /opt/mori/deploy.sh
+            tr -d '\r' < /opt/mori/scripts/clean-vps.sh > /opt/mori/clean-vps.sh
+            chmod +x /opt/mori/deploy.sh /opt/mori/clean-vps.sh
             /opt/mori/deploy.sh

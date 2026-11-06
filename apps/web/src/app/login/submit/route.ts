@@ -10,7 +10,17 @@ function apiOrigin(): string {
 export async function POST(request: Request) {
   const originCheck = validateBffOrigin(request)
   if (!originCheck.ok) return originCheck.response
-  const body: unknown = await request.json()
+
+  let body: unknown
+  try {
+    body = await request.json()
+  } catch {
+    return new NextResponse(JSON.stringify({ code: 'BAD_REQUEST', message: 'Malformed JSON payload' }), {
+      status: 400,
+      headers: { 'content-type': 'application/json' },
+    })
+  }
+
   const upstream = await fetch(`${apiOrigin()}/api/v1/auth/login`, {
     method: 'POST',
     headers: {

@@ -53,7 +53,7 @@ export function RegisterForm() {
 
       setIsError(false)
       setLoading(false)
-      setStatus('Đăng ký thành công! Vui lòng kiểm tra email để lấy mã xác nhận.')
+      setStatus('Đăng ký thành công! Vui lòng kiểm tra hòm thư để lấy mã xác nhận.')
     } catch {
       setStatus('Đã xảy ra lỗi mạng. Vui lòng thử lại.')
       setIsError(true)
@@ -62,15 +62,16 @@ export function RegisterForm() {
   }
 
   return (
-    <div className="login-card">
-      <div className="login-header">
-        <span className="login-badge">MORI ATELIER · HỘI VIÊN MỚI</span>
-        <h1>Tạo tài khoản</h1>
+    <div className="atelier-card">
+      <div className="atelier-header">
+        <div className="atelier-crest-mark" aria-hidden="true">✦</div>
+        <span className="atelier-kicker">MORI ATELIER · HỘI VIÊN MỚI</span>
+        <h1>Tạo tài khoản hội viên</h1>
         <p>Tham gia cùng MORI để lưu giữ thiệp cưới và theo dõi tiến trình chế tác.</p>
       </div>
 
       <form
-        className="login-form-inner"
+        className="atelier-form"
         method="POST"
         action="javascript:void(0)"
         onSubmit={(event) => {
@@ -78,7 +79,7 @@ export function RegisterForm() {
           void submit()
         }}
       >
-        <label className="field-group">
+        <label className="atelier-field">
           <span>Tên hiển thị / Cặp đôi</span>
           <input
             name="displayName"
@@ -90,7 +91,7 @@ export function RegisterForm() {
           />
         </label>
 
-        <label className="field-group">
+        <label className="atelier-field">
           <span>Địa chỉ Email</span>
           <input
             name="email"
@@ -103,7 +104,7 @@ export function RegisterForm() {
           />
         </label>
 
-        <label className="field-group">
+        <label className="atelier-field">
           <span>Mật khẩu (tối thiểu 15 ký tự)</span>
           <input
             name="password"
@@ -116,7 +117,7 @@ export function RegisterForm() {
           />
         </label>
 
-        <button type="submit" className="login-submit-btn" disabled={loading}>
+        <button type="submit" className="atelier-primary-btn" disabled={loading}>
           {loading ? 'Đang tạo tài khoản...' : 'Tạo tài khoản hội viên'}
         </button>
 
@@ -126,11 +127,11 @@ export function RegisterForm() {
           </div>
         )}
 
-        <div className="login-footer-links">
+        <div className="atelier-links">
           <a href="/login">Đã có tài khoản? Đăng nhập</a>
-          <span className="dot-divider">·</span>
+          <span className="sep-dot">·</span>
           <a href="/verify">Nhập mã xác nhận</a>
-          <span className="dot-divider">·</span>
+          <span className="sep-dot">·</span>
           <a href="/">Trang chủ</a>
         </div>
       </form>
