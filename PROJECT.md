@@ -47,7 +47,7 @@
 | M-E2E | E2E Testing Track | Offline mock harness, test runner, T01-T30 test cases, publish `TEST_READY.md` | none | DONE |
 | M1 | Milestone 1 (PR-00) | Baseline, Security & Gateway: secrets removal, SSRF guard, Origin/CSRF, Quota 429/503, honest outage reporting | none | DONE |
 | M2 | Milestone 2 (PR-01) | Catalogue & Single Pricing Engine: `EstimateService` DI, `AiCatalogueTool`, `AiPricingTool`, fix AI-002/AI-003, pass T09, T11-T14, T28 | M1 (contracts) | DONE |
-| M3 | Milestone 3 (Final) | Phase 1: 100% pass of E2E Tiers 1-4; Phase 2: Tier 5 adversarial coverage hardening | M-E2E, M1, M2 | PLANNED |
+| M3 | Milestone 3 (Final) | Phase 1: 100% pass of E2E Tiers 1-4; Phase 2: Tier 5 adversarial coverage hardening | M-E2E, M1, M2 | DONE |
 
 ## Code Layout
 - `apps/api/src/modules/assistance/`:
