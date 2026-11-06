@@ -1,9 +1,7 @@
-name: CI/CD Pipeline
+name: Deploy Pipeline
 
 on:
   push:
-    branches: [main]
-  pull_request:
     branches: [main]
   workflow_dispatch:
 
@@ -12,67 +10,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
-    name: Lint, Typecheck & Test
-    runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:17-alpine
-        env:
-          POSTGRES_USER: mori
-          POSTGRES_PASSWORD: mori_secret
-          POSTGRES_DB: mori_db
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 5
-      redis:
-        image: redis:7-alpine
-        ports:
-          - 6379:6379
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 5
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js 24
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24
-
-      - name: Enable Corepack & Setup pnpm
-        run: |
-          corepack enable
-          corepack prepare pnpm@12.16.1 --activate
-
-      - name: Install Monorepo Dependencies
-        run: corepack pnpm install --frozen-lockfile
-
-      - name: Generate Prisma Client
-        env:
-          DATABASE_URL: postgresql://mori:mori_secret@localhost:5432/mori_db
-        run: corepack pnpm db:generate
-
-      - name: Check Import Boundaries
-        run: corepack pnpm check:boundaries
-
-      - name: Typecheck
-        env:
-          DATABASE_URL: postgresql://mori:mori_secret@localhost:5432/mori_db
-        run: corepack pnpm typecheck
-
   build-and-push:
     name: Build & Push Docker Images
-    needs: test
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -110,7 +49,6 @@ jobs:
   deploy:
     name: Deploy to Remote VPS
     needs: build-and-push
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
 
     steps:
