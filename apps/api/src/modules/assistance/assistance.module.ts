@@ -12,6 +12,7 @@ import { BespokeEstimator } from './bespoke-estimator.js'
 import { SupervisorGuardrail } from './supervisor-guardrail.js'
 import { AssistantOrchestratorService } from './assistant-orchestrator.service.js'
 import { AiConfigService } from './ai-config.service.js'
+import { AiLogService } from './ai-log.service.js'
 import { AdminAiConfigController } from './admin-ai-config.controller.js'
 
 @Module({
@@ -19,6 +20,7 @@ import { AdminAiConfigController } from './admin-ai-config.controller.js'
   controllers: [AssistantController, AdminAiConfigController],
   providers: [
     AiConfigService,
+    AiLogService,
     RecommendationService,
     AssistantQuotaService,
     AiToolBoundary,
@@ -30,6 +32,6 @@ import { AdminAiConfigController } from './admin-ai-config.controller.js'
     SupervisorGuardrail,
     AssistantOrchestratorService,
   ],
-  exports: [AssistantOrchestratorService, AiConfigService],
+  exports: [AssistantOrchestratorService, AiConfigService, AiLogService],
 })
 export class AssistanceModule {}

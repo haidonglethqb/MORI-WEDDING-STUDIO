@@ -11,6 +11,7 @@ import { CatalogProvider } from './catalog-provider.js'
 import { ScoringMatcher } from './scoring-matcher.js'
 import { BespokeEstimator } from './bespoke-estimator.js'
 import { SupervisorGuardrail } from './supervisor-guardrail.js'
+import { AiLogService } from './ai-log.service.js'
 import {
   ATELIER_MASTER_SYSTEM_PROMPT,
   buildUserPrompt,
@@ -26,6 +27,8 @@ interface ModelRawOutput {
 
 @Injectable()
 export class AssistantOrchestratorService {
+  private readonly logService: AiLogService
+
   constructor(
     private readonly groqGateway: GroqAiGateway,
     private readonly extractor: ContextExtractor,
@@ -33,7 +36,10 @@ export class AssistantOrchestratorService {
     private readonly matcher: ScoringMatcher,
     private readonly estimator: BespokeEstimator,
     private readonly guardrail: SupervisorGuardrail,
-  ) {}
+    logService?: AiLogService,
+  ) {
+    this.logService = logService ?? new AiLogService()
+  }
 
   async handleChat(req: AssistantChatRequest): Promise<AssistantChatResponse> {
     const start = Date.now()
@@ -49,20 +55,43 @@ export class AssistantOrchestratorService {
     const systemPrompt = `${ATELIER_MASTER_SYSTEM_PROMPT}\n\n${catalogGrounding}`
     const userPrompt = buildUserPrompt(boostedBrief, history, req.message)
 
+    let response: AssistantChatResponse
     try {
       const completion = await this.groqGateway.executeCompletion<ModelRawOutput>(
         systemPrompt,
         userPrompt,
       )
-      return this.formatSuccessResponse(completion.data, boostedBrief, catalog, {
+      response = this.formatSuccessResponse(completion.data, boostedBrief, catalog, {
         modelUsed: completion.modelUsed,
         fallbackTier: completion.fallbackTier,
         latencyMs: completion.latencyMs,
         groundedProductCount: catalog.length,
       })
     } catch {
-      return this.formatLocalFallback(boostedBrief, req.message, catalog, Date.now() - start)
+      response = this.formatLocalFallback(boostedBrief, req.message, catalog, Date.now() - start)
     }
+
+    this.logService.recordLog({
+      userMessage: req.message,
+      modelUsed: response.meta.modelUsed,
+      fallbackTier: response.meta.fallbackTier,
+      latencyMs: response.meta.latencyMs,
+      assistantReply: response.reply,
+      suggestedProducts: response.suggestedProducts.map((p) => ({
+        slug: p.slug,
+        name: p.name,
+        startingPriceVnd: p.startingPriceVnd,
+      })),
+      extractedContext: {
+        coupleNames: response.updatedBrief.coupleNames,
+        weddingDate: response.updatedBrief.weddingDate,
+        location: response.updatedBrief.location,
+        guestCount: response.updatedBrief.guestCount,
+        budget: response.updatedBrief.budgetRangeVnd?.max,
+      },
+    })
+
+    return response
   }
 
   private formatSuccessResponse(
@@ -74,7 +103,6 @@ export class AssistantOrchestratorService {
     const sanitizedReply = this.guardrail.sanitizeArtisanReply(raw.reply)
     const updatedBrief = this.extractor.mergeBrief(currentBrief, raw.updatedBrief)
 
-    // Detect if specific product names were mentioned directly in the reply text
     const mentionedFromReply: { slug: string; index: number }[] = []
     const lowerReply = sanitizedReply.toLowerCase()
     for (const item of catalog) {

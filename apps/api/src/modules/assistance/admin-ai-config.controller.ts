@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Header,
   Headers,
@@ -13,6 +14,7 @@ import { getPrismaClient } from '@mori/database'
 import { IdentityService } from '../identity/identity.service.js'
 import { readCookie } from '../identity/read-cookie.js'
 import { AiConfigService, type AiSystemConfig } from './ai-config.service.js'
+import { AiLogService } from './ai-log.service.js'
 
 const PRIVATE = 'private, no-store'
 const SESSION_COOKIE = 'mori_session'
@@ -37,6 +39,7 @@ const AVAILABLE_GROQ_MODELS = [
 export class AdminAiConfigController {
   constructor(
     private readonly configService: AiConfigService,
+    private readonly logService: AiLogService,
     private readonly identity: IdentityService,
   ) {}
 
@@ -49,6 +52,22 @@ export class AdminAiConfigController {
       availableCodexModels: AVAILABLE_CODEX_MODELS,
       availableGroqModels: AVAILABLE_GROQ_MODELS,
     }
+  }
+
+  @Get('logs')
+  @Header('Cache-Control', PRIVATE)
+  async getLogs(@Headers('cookie') cookie: string | undefined) {
+    await this.verifyAdmin(cookie)
+    return this.logService.getLogs(50)
+  }
+
+  @Delete('logs')
+  @HttpCode(200)
+  @Header('Cache-Control', PRIVATE)
+  async clearLogs(@Headers('cookie') cookie: string | undefined) {
+    await this.verifyAdmin(cookie)
+    this.logService.clearLogs()
+    return { success: true }
   }
 
   @Put()
