@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { validateBffOrigin } from '../../../lib/safe-mutation-origin'
 
 export const dynamic = 'force-dynamic'
 
@@ -7,12 +8,14 @@ function apiOrigin(): string {
 }
 
 export async function POST(request: Request) {
+  const originCheck = validateBffOrigin(request)
+  if (!originCheck.ok) return originCheck.response
   const body: unknown = await request.json()
   const upstream = await fetch(`${apiOrigin()}/api/v1/auth/register`, {
     method: 'POST',
     headers: {
       'content-type': 'application/json',
-      origin: 'http://app.mori.localhost',
+      origin: originCheck.upstreamOrigin,
     },
     body: JSON.stringify(body),
     cache: 'no-store',

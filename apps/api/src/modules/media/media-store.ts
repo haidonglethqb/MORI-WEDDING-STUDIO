@@ -22,7 +22,7 @@ export function readImmutable(storageKey: string): Buffer {
 }
 
 function mediaRoot(): string {
-  return process.env['MEDIA_ROOT'] ?? join(tmpdir(), 'mori-media')
+  return process.env['MEDIA_ROOT'] ?? join(process.cwd(), '.data', 'media')
 }
 
 export function sha256(bytes: Buffer): string {

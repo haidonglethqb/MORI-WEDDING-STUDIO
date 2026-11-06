@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
+import { validateBffOrigin } from '../../../../lib/safe-mutation-origin'
 
 export const dynamic = 'force-dynamic'
 
@@ -20,13 +21,16 @@ export async function GET() {
   })
 }
 
-export async function DELETE() {
+export async function DELETE(request: Request) {
+  const originCheck = validateBffOrigin(request)
+  if (!originCheck.ok) return originCheck.response
+
   const cookie = (await cookies()).toString()
   const upstream = await fetch(`${apiOrigin()}/api/v1/admin/ai-config/logs`, {
     method: 'DELETE',
     headers: {
       cookie,
-      origin: 'http://app.mori.localhost',
+      origin: originCheck.upstreamOrigin,
     },
     cache: 'no-store',
   })

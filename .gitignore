@@ -17,6 +17,12 @@ docs/api/openapi.json.tmp
 .env.*
 !.env.example
 
+# Runtime data & AI configs
+.data/
+apps/api/.data/
+**/.data/
+ai-config*.json
+
 # IDE
 .DS_Store
 .vscode/settings.json
@@ -32,6 +38,3 @@ prisma/migrations/**/.gitkeep
 *.log
 npm-debug.log*
 pnpm-debug.log*
-
-.data/
-apps/api/.data/

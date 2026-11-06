@@ -27,6 +27,9 @@ export class AssistantQuotaService {
       })
     } catch (err) {
       if (err instanceof ConflictException) throw err
+      if (process.env['NODE_ENV'] === 'production' || process.env['APP_ENV'] === 'production') {
+        throw new ConflictException('Assistant quota verification temporarily unavailable')
+      }
       const current = this.memoryBuckets.get(key) ?? 0
       if (current >= limit) {
         throw new ConflictException('The assistant quota for today is full')

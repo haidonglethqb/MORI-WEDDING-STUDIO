@@ -11,14 +11,13 @@ import {
   Post,
   Put,
 } from '@nestjs/common'
-import { getPrismaClient } from '@mori/database'
+import { SESSION_COOKIE } from '@mori/contracts'
 import { IdentityService } from '../identity/identity.service.js'
 import { readCookie } from '../identity/read-cookie.js'
 import { AiConfigService, type AiSystemConfig } from './ai-config.service.js'
 import { AiLogService } from './ai-log.service.js'
 
 const PRIVATE = 'private, no-store'
-const SESSION_COOKIE = 'mori_session'
 
 const AVAILABLE_CODEX_MODELS = [
   'gpt-6.1-sol',
@@ -176,13 +175,13 @@ export class AdminAiConfigController {
   }
 
   private async verifyAdmin(cookie: string | undefined): Promise<void> {
-    if (process.env['APP_ENV'] !== 'production') return
+    const token = readCookie(cookie, SESSION_COOKIE)
+    if (!token) throw new NotFoundException()
     try {
-      const user = await this.identity.currentUser(readCookie(cookie, SESSION_COOKIE))
-      const admin = await getPrismaClient().user.findFirst({
-        where: { id: user.id, role: 'ADMIN', status: 'ACTIVE' },
-      })
-      if (!admin) throw new NotFoundException()
+      const user = await this.identity.currentUser(token)
+      if (user.role !== 'ADMIN' || user.status !== 'ACTIVE') {
+        throw new NotFoundException()
+      }
     } catch {
       throw new NotFoundException()
     }

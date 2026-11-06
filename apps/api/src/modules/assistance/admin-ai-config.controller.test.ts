@@ -13,16 +13,24 @@ describe('AdminAiConfigController', () => {
 
   const controller = new AdminAiConfigController(configService, logService, mockIdentity)
 
+  const adminCookie = '__Host-mori_session=test-admin-token'
+
+  it('rejects unauthenticated requests with 404', async () => {
+    await expect(controller.getConfig(undefined)).rejects.toThrow()
+  })
+
   it('retrieves masked config and model options', async () => {
-    const res = await controller.getConfig(undefined)
+    configService.updateConfig({ codexApiKey: 'sk-mock-key-for-admin-config-test' })
+    const res = await controller.getConfig(adminCookie)
     expect(res.config).toBeDefined()
     expect(res.config.codexApiKeyMasked).toContain('...')
+    expect(res.config.hasCodexApiKey).toBe(true)
     expect(res.availableCodexModels).toContain('gpt-6.1-sol')
     expect(res.availableGroqModels).toContain('openai/gpt-oss-120b')
   })
 
   it('updates provider and model configurations dynamically', async () => {
-    const updateRes = await controller.updateConfig(undefined, {
+    const updateRes = await controller.updateConfig(adminCookie, {
       provider: 'CODEX',
       codexPrimaryModel: 'gpt-6.1-sol',
       codexFallbackModel: 'gpt-6.1-terra',
@@ -45,7 +53,7 @@ describe('AdminAiConfigController', () => {
       suggestedProducts: [],
     })
 
-    const sessions = await controller.getLogs(undefined)
+    const sessions = await controller.getLogs(adminCookie)
     expect(sessions.length).toBeGreaterThan(0)
     expect(sessions[0]?.sessionId).toBe('sess-test-1')
     expect(sessions[0]?.turns[0]?.userMessage).toBe('Test user message')

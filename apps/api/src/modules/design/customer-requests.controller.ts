@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Header, Headers, NotFoundException, Param, Post } from '@nestjs/common'
 import { SESSION_COOKIE } from '@mori/contracts'
+import { assertActiveUser } from '../identity/assert-active-user.js'
 import { IdentityService } from '../identity/identity.service.js'
 import { readCookie } from '../identity/read-cookie.js'
 import { CustomerRequestsService } from './customer-requests.service.js'
@@ -20,6 +21,7 @@ export class CustomerRequestsController {
   @Header('Cache-Control', PRIVATE)
   async mine(@Headers('cookie') cookie: string | undefined) {
     const user = await this.identity.currentUser(readCookie(cookie, SESSION_COOKIE))
+    assertActiveUser(user)
     return this.requests.list(user.id)
   }
 
@@ -31,6 +33,7 @@ export class CustomerRequestsController {
     @Body() body: { kind?: string },
   ) {
     const user = await this.identity.currentUser(readCookie(cookie, SESSION_COOKIE))
+    assertActiveUser(user)
     return this.requests.start(user.id, body.kind ?? '', idempotencyKey ?? '')
   }
 
@@ -38,6 +41,7 @@ export class CustomerRequestsController {
   @Header('Cache-Control', PRIVATE)
   async thread(@Headers('cookie') cookie: string | undefined, @Param('id') id: string) {
     const user = await this.identity.currentUser(readCookie(cookie, SESSION_COOKIE))
+    assertActiveUser(user)
     return this.requests.thread(user.id, id)
   }
 
@@ -45,6 +49,7 @@ export class CustomerRequestsController {
   @Header('Cache-Control', PRIVATE)
   async revisions(@Headers('cookie') cookie: string | undefined, @Param('id') id: string) {
     const user = await this.identity.currentUser(readCookie(cookie, SESSION_COOKIE))
+    assertActiveUser(user)
     return this.proofs.listForCustomer(user.id, id)
   }
 
@@ -57,6 +62,7 @@ export class CustomerRequestsController {
     @Body() body: unknown,
   ) {
     const user = await this.identity.currentUser(readCookie(cookie, SESSION_COOKIE))
+    assertActiveUser(user)
     const proofs = await this.proofs.listForCustomer(user.id, id)
     if (!proofs.some((proof) => proof.revisionId === revisionId)) throw new NotFoundException()
     await approveProofCommand(user.id, revisionId, body)
@@ -72,6 +78,7 @@ export class CustomerRequestsController {
     @Body() body: { plainText?: string },
   ) {
     const user = await this.identity.currentUser(readCookie(cookie, SESSION_COOKIE))
+    assertActiveUser(user)
     await this.requests.reply(user.id, id, body.plainText ?? '', idempotencyKey ?? '')
     return { accepted: true }
   }

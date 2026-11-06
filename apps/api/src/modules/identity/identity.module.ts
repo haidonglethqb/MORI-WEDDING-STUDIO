@@ -17,7 +17,12 @@ import { IdentityService } from './identity.service.js'
       provide: ACCOUNT_MAIL,
       useFactory: (): AccountMail => {
         const host = process.env['SMTP_HOST']
-        if (!host) return new LoggingAccountMail()
+        if (!host) {
+          if (process.env['NODE_ENV'] === 'production' || process.env['APP_ENV'] === 'production') {
+            throw new Error('SMTP_HOST configuration is required in production environment')
+          }
+          return new LoggingAccountMail()
+        }
         const port = Number(process.env['SMTP_PORT'] ?? '1025')
         return new SmtpAccountMail({ host, port, from: 'noreply@mori.localhost' })
       },

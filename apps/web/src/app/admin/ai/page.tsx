@@ -18,13 +18,13 @@ export default async function AdminAiPage() {
   let payload: InitialConfigPayload = {
     config: {
       provider: 'CODEX',
-      codexApiKeyMasked: 'sk-KPbp***na',
-      hasCodexApiKey: true,
+      codexApiKeyMasked: '',
+      hasCodexApiKey: false,
       codexBaseUrl: 'https://api.modelapi.vn/v1',
       codexPrimaryModel: 'gpt-6.1-sol',
       codexFallbackModel: 'gpt-6.1-terra',
-      groqApiKeyMasked: 'gsk_***',
-      hasGroqApiKey: true,
+      groqApiKeyMasked: '',
+      hasGroqApiKey: false,
       groqPrimaryModel: 'openai/gpt-oss-120b',
     },
     availableCodexModels: [

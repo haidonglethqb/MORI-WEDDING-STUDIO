@@ -30,7 +30,7 @@ export interface MaskedAiConfig {
 
 const DEFAULT_CONFIG: AiSystemConfig = {
   provider: 'CODEX',
-  codexApiKey: process.env['CODEX_API_KEY'] ?? 'sk-KPbpFQ47t8g4JZa5OIPwlYL3tLKu8xgBcqGy1aIKRSa1gFna',
+  codexApiKey: process.env['CODEX_API_KEY'] ?? '',
   codexBaseUrl: process.env['CODEX_BASE_URL'] ?? 'https://api.modelapi.vn/v1',
   codexPrimaryModel: 'gpt-6.1-sol',
   codexFallbackModel: 'gpt-6.1-terra',
