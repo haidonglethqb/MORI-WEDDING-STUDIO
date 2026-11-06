@@ -44,10 +44,12 @@ then deploys that exact tag to the VPS. Configure these GitHub Actions repositor
 | `SSH_KEY` | Full PEM private-key contents; do not use a workstation file path |
 
 The host installs Docker Engine and Compose v2 if either is missing, starts PostgreSQL/Redis, waits for PostgreSQL
-health, runs the one-shot Prisma migration service, then starts the app and checks API readiness plus the web root.
-Cleanup runs only after health checks succeed. It removes unused containers/images/build cache, apt cache, and old
-journal entries; named Docker volumes and `/opt/mori/media` are retained. Production deployment does not run the
-development seed or create predictable demo accounts.
+health, runs the one-shot Prisma migration service, then starts the app and checks API readiness plus the HTTPS web
+origin. Caddy listens on ports 80/443, obtains and renews certificates, and reverse-proxies to the private web
+container port. Set Cloudflare SSL/TLS to Full (Strict). Cleanup runs only after health checks succeed. It removes
+unused containers/images/build cache, apt cache, and old journal entries; named Docker volumes and
+`/opt/mori/media` are retained. Production deployment does not run the development seed or create predictable demo
+accounts.
 
 ## Related
 

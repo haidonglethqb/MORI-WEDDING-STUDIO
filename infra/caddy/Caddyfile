@@ -1,0 +1,4 @@
+moriwedding.xyz, www.moriwedding.xyz {
+	encode zstd gzip
+	reverse_proxy web:3000
+}

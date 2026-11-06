@@ -63,7 +63,7 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          source: "compose.yaml,compose.prod.yaml,scripts/deploy-compose.sh,scripts/clean-vps.sh"
+          source: "compose.yaml,compose.prod.yaml,infra/caddy/Caddyfile,scripts/deploy-compose.sh,scripts/clean-vps.sh"
           target: "/opt/mori"
 
       - name: Execute Automated Deployment on VPS
@@ -77,12 +77,14 @@ jobs:
           CODEX_API_KEY: ${{ secrets.CODEX_API_KEY }}
           CODEX_BASE_URL: ${{ secrets.CODEX_BASE_URL }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          PUBLIC_APP_ORIGIN: https://moriwedding.xyz
+          PUBLIC_INVITE_ORIGIN: https://moriwedding.xyz
         with:
           host: ${{ secrets.SSH_HOST }}
           port: ${{ secrets.SSH_PORT }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          envs: REPO_OWNER,GHCR_USER,GHCR_TOKEN,SERVER_HOST,IMAGE_TAG,CODEX_API_KEY,CODEX_BASE_URL,GROQ_API_KEY
+          envs: REPO_OWNER,GHCR_USER,GHCR_TOKEN,SERVER_HOST,IMAGE_TAG,CODEX_API_KEY,CODEX_BASE_URL,GROQ_API_KEY,PUBLIC_APP_ORIGIN,PUBLIC_INVITE_ORIGIN
           script: |
             tr -d '\r' < /opt/mori/scripts/deploy-compose.sh > /opt/mori/deploy.sh
             tr -d '\r' < /opt/mori/scripts/clean-vps.sh > /opt/mori/clean-vps.sh

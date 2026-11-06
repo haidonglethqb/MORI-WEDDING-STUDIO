@@ -32,8 +32,8 @@ POSTGRES_PASSWORD=${RAND_PASS}
 IMAGE_REGISTRY=ghcr.io
 IMAGE_REPO=${REPO_OWNER:-haidonglethqb}
 IMAGE_TAG=${IMAGE_TAG:-latest}
-PUBLIC_APP_ORIGIN=http://${SERVER_HOST:-43.240.117.146}
-PUBLIC_INVITE_ORIGIN=http://${SERVER_HOST:-43.240.117.146}
+PUBLIC_APP_ORIGIN=https://moriwedding.xyz
+PUBLIC_INVITE_ORIGIN=https://moriwedding.xyz
 API_INTERNAL_ORIGIN=http://api:4000
 PORT=4000
 EOF
@@ -108,7 +108,7 @@ echo "=== [6/6] Verifying Health & Readiness ==="
 READY=0
 for i in {1..30}; do
   API_STATUS=$(curl -s http://127.0.0.1:4000/api/v1/health/ready || true)
-  WEB_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:80/ || true)
+  WEB_CODE=$(curl -k -s -o /dev/null -w "%{http_code}" --resolve moriwedding.xyz:443:127.0.0.1 https://moriwedding.xyz/ || true)
   
   if [[ "$API_STATUS" == *"\"status\":\"ok\""* ]] && [ "$WEB_CODE" = "200" ]; then
     echo "Deployment verification PASSED:"
