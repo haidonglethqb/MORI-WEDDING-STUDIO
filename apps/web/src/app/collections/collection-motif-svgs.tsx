@@ -49,7 +49,7 @@ export function renderCardMotif(type: string, accentColor: string): ReactNode {
           <svg className="motif-svg" viewBox="0 0 80 18" fill="none">
             <path d="M10 9H70M25 4C30 9 35 14 40 9C45 4 50 9 55 9" stroke={accentColor} strokeWidth="1.2" />
           </svg>
-          <span className="eucalyptus-icon">🌿</span>
+          <span className="eucalyptus-icon" aria-hidden="true" />
         </div>
       )
     case 'meadow-wildflowers':
@@ -81,7 +81,9 @@ export function renderCardMotif(type: string, accentColor: string): ReactNode {
     case 'lotus-heritage':
       return (
         <div className="motif-lotus">
-          <span className="lotus-flower">🪷</span>
+          <svg className="lotus-flower" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 20c-4.5-2.2-6.6-6.2-5.2-10.3C10 11.1 12 14 12 20Zm0 0c4.5-2.2 6.6-6.2 5.2-10.3C14 11.1 12 14 12 20Zm0-1c-3-3-3.6-7.3 0-11.5 3.6 4.2 3 8.5 0 11.5Z" stroke="currentColor" strokeWidth="1.1" />
+          </svg>
           <span className="lotus-script">DUYÊN KHỞI TRĂM NĂM</span>
         </div>
       )

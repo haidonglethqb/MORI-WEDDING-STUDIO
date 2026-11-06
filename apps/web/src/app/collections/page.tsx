@@ -39,19 +39,19 @@ export default async function CollectionsPage() {
 
   const items: CollectionItem[] = products
     .filter((p) => p.variants.some((v) => v.availability !== 'UNAVAILABLE'))
-    .map((product, idx) => {
+    .map((product) => {
       const orderable = product.variants.filter((v) => v.availability !== 'UNAVAILABLE')
-      const bifold = orderable.some((v) => v.shape === 'BIFOLD')
-      const minPrice = orderable.find((v) => v.unitAmountVnd !== null)?.unitAmountVnd ?? '25000'
+      const shape = orderable[0]?.shape ?? 'FLAT'
+      const minPrice = orderable.find((v) => v.unitAmountVnd !== null)?.unitAmountVnd ?? null
 
       return buildCuratedItem(
         {
           slug: product.slug,
           name: product.name,
-          shape: bifold ? 'BIFOLD' : 'FLAT',
+          shape,
           minPriceVnd: minPrice,
+          isFixture: product.isFixture,
         },
-        idx,
       )
     })
 
@@ -60,12 +60,14 @@ export default async function CollectionsPage() {
       <HomeNav />
       <main className="collections-wrap">
         <header className="collections-header">
-          <span className="collections-tag">Atelier Catalogue 2026</span>
+          <span className="collections-tag">BỘ SƯU TẬP MORI</span>
           <h1>Bộ sưu tập Thiệp cưới Nghệ nhân</h1>
           <p>
-            Tuyển tập 5 phong cách cưới độc bản: Editorial Vogue, Floral Thảo mộc, Heritage Hoàng Kim,
-            Minimalist Wabi-Sabi và Modern Calligraphy — in trên giấy bã mía sinh thái 350gsm.
+            Khám phá các hướng thiết kế và chọn mẫu để bắt đầu trao đổi cùng xưởng.
           </p>
+          {items.some((item) => item.isFixture) ? (
+            <p className="catalogue-note">Một số mẫu đang là nội dung minh họa. Giá và quy cách thực tế sẽ được xác nhận trước khi bạn gửi yêu cầu.</p>
+          ) : null}
         </header>
 
         <CollectionFilters items={items} />

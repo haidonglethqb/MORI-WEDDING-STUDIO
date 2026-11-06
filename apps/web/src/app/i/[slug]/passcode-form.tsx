@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { MoriIcon } from '../../../components/mori-icon'
 
 export function PasscodeForm({ slug }: { slug: string }) {
   const [passcode, setPasscode] = useState('')
@@ -47,7 +48,7 @@ export function PasscodeForm({ slug }: { slug: string }) {
       }}
       className="passcode-card-form"
     >
-      <div className="passcode-icon">🔒</div>
+      <MoriIcon className="passcode-icon" name="lock" />
       <h2 className="passcode-title">Thiệp cưới được bảo vệ</h2>
       <p className="passcode-desc">
         Gia đình đã thiết lập mã bảo vệ cho thiệp cưới này. Quý khách vui lòng nhập mã PIN hoặc mật mã được cung cấp để mở thiệp.

@@ -1,5 +1,6 @@
 import { RegisterForm } from './register-form'
 import { HomeNav } from '../home-nav'
+import { MoriIcon } from '../../components/mori-icon'
 import '../login/login.css'
 
 export const dynamic = 'force-dynamic'
@@ -22,21 +23,21 @@ export default function RegisterPage() {
 
             <div className="editorial-features">
               <div className="feature-pill">
-                <span>🎨</span>
+                <MoriIcon name="palette" />
                 <div>
                   <strong>Trợ lý AI Stylist cá nhân hoá</strong>
                   <small>Gợi ý bảng màu & phong cách thiệp cưới theo sở thích</small>
                 </div>
               </div>
               <div className="feature-pill">
-                <span>📋</span>
+                <MoriIcon name="envelope" />
                 <div>
                   <strong>Quản lý khách mời & thiệp số</strong>
                   <small>Gửi thiệp online và thống kê phản hồi RSVP tự động</small>
                 </div>
               </div>
               <div className="feature-pill">
-                <span>📦</span>
+                <MoriIcon name="paper" />
                 <div>
                   <strong>Theo dõi tiến độ xưởng chế tác</strong>
                   <small>Cập nhật trạng thái in, dập nhiệt và giao nhận thiệp</small>

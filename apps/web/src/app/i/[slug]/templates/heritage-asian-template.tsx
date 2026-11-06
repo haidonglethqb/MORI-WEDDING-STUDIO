@@ -2,7 +2,6 @@
 
 import type { DigitalModelProfile } from '../invitation-model-profiles'
 import { InvitationAudioPlayer } from '../invitation-audio-player'
-import { InvitationCalendarAction } from '../invitation-calendar-action'
 
 interface TemplateProps {
   profile: DigitalModelProfile
@@ -128,7 +127,6 @@ export function HeritageAsianTemplate({
       </div>
 
       <InvitationAudioPlayer />
-      <InvitationCalendarAction title={eventTitle} venue={venue} displayNames={displayNames} />
 
       <div className="heritage-footer-seal" style={{ color: profile.accentColor }}>
         <span>囍 BÁCH NIÊN GIAI LÃO · PHỤNG VŨ NGHINH XUÂN 囍</span>

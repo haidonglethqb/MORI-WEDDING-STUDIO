@@ -66,7 +66,7 @@ export function AssistantChatBubble({ message }: ChatBubbleProps) {
       </div>
       <div className="assistant-bubble-container">
         <div className="assistant-bubble-header">
-          <span className="atelier-name">Pierre-Minh &amp; Vũ Cầm</span>
+          <span className="atelier-name">Trợ lý MORI</span>
           <span className="atelier-role">Nghệ nhân MORI</span>
         </div>
 
@@ -93,11 +93,11 @@ export function AssistantChatBubble({ message }: ChatBubbleProps) {
 
             <div className="budget-breakdown">
               <div className="budget-row">
-                <span>Phôi thiệp giấy bã mía 350gsm:</span>
+                <span>Chi phí phôi thiệp:</span>
                 <strong>{formatVnd(message.budget.baseAmountVnd)}</strong>
               </div>
               <div className="budget-row">
-                <span>Gia công ép kim 160°C &amp; mép xé:</span>
+                <span>Gia công theo lựa chọn:</span>
                 <strong>{formatVnd(message.budget.finishesAmountVnd)}</strong>
               </div>
               <div className="budget-row budget-total-row">

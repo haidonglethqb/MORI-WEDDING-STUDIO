@@ -4,20 +4,20 @@ import { useState } from 'react'
 
 const FAQS = [
   {
-    q: 'Xưởng có gửi bản in thử (hard proof) thực tế trước khi in hàng loạt không?',
-    a: 'Có. Sau khi hai bạn duyệt xong mô hình 3D trực tuyến, MORI sẽ sản xuất 01 bộ thiệp mẫu hoàn thiện với chất liệu giấy bã mía và kỹ thuật ép kim đã chọn để gửi đến tận nhà cho bạn kiểm tra chất lượng thực tế trước khi bấm lệnh sản xuất số lượng lớn.',
+    q: 'Quy trình duyệt thiết kế diễn ra thế nào?',
+    a: 'Sau khi thống nhất hướng thiết kế, bạn có thể xem lại nội dung và quy cách trước khi xác nhận bước tiếp theo. Xưởng sẽ trao đổi rõ các mốc duyệt và sản xuất theo từng đơn hàng.',
   },
   {
-    q: 'Giấy bã mía sinh thái có bị ố vàng hoặc giòn gãy theo thời gian không?',
-    a: 'Hoàn toàn không. Giấy bã mía 350gsm của MORI được sản xuất theo quy trình Tree-free không tẩy clo công nghiệp và loại bỏ hoàn toàn acid tự do (Acid-free), giúp giấy giữ được độ dai dẻo, bền màu và có thể lưu giữ làm kỷ niệm hàng chục năm.',
+    q: 'MORI hiện có những lựa chọn chất liệu nào?',
+    a: 'Chất liệu và kỹ thuật hoàn thiện phụ thuộc vào mẫu và đơn hàng. Xưởng sẽ xác nhận thông số, chi phí và thời gian thực hiện trước khi bạn chốt.',
   },
   {
     q: 'Khách mời lớn tuổi có dễ dàng sử dụng thiệp cưới số RSVP không?',
-    a: 'Giao diện thiệp số được tối ưu giao diện trực quan với phông chữ tiếng Việt to rõ, chỉ cần bấm vào đường link gửi qua Zalo/tin nhắn là thiệp tự mở ngay lập tức, không cần tải ứng dụng hay đăng ký tài khoản rườm rà.',
+    a: 'Khách mời mở đường dẫn thiệp trên trình duyệt điện thoại hoặc máy tính. Một số nội dung có thể yêu cầu mã truy cập nếu chủ thiệp bật chế độ bảo vệ.',
   },
   {
-    q: 'Thời gian từ lúc đặt thiết kế đến khi nhận trọn bộ thiệp là bao lâu?',
-    a: 'Thời gian thông thường từ 7 đến 10 ngày làm việc (bao gồm 24-48 giờ lên bản dựng 3D, 2 ngày duyệt in mẫu và 5 ngày gia công thủ công ép kim, xé mép, đóng dấu sáp). Xưởng cũng có gói hỗ trợ hỏa tốc cho các cặp đôi cần gấp.',
+    q: 'Mất bao lâu để hoàn thành đơn hàng?',
+    a: 'Thời gian phụ thuộc vào số lượng, quy cách và lịch sản xuất tại thời điểm đặt hàng. Xưởng sẽ báo mốc dự kiến trước khi bạn xác nhận.',
   },
 ]
 

@@ -1,24 +1,26 @@
+import { MoriIcon } from '../components/mori-icon'
+
 export function HeroTrustBar() {
   const stats = [
     {
-      icon: '🌿',
-      title: 'Giấy bã mía sinh thái 350gsm',
-      desc: '100% sợi thực vật, không tẩy clo, bền vững',
+      icon: 'paper' as const,
+      title: 'Chọn thiết kế',
+      desc: 'Khám phá các phong cách thiệp',
     },
     {
-      icon: '⚜️',
-      title: 'Ép kim chìm nhiệt cao 160°C',
-      desc: 'Lá kim vàng ấm dập chìm cơ học độc bản',
+      icon: 'palette' as const,
+      title: 'Trao đổi cùng xưởng',
+      desc: 'Chia sẻ mong muốn và quy cách',
     },
     {
-      icon: '📱',
-      title: 'Thiệp cưới số tương tác RSVP',
-      desc: 'Đồng bộ thời gian thực, bản đồ & lời chúc',
+      icon: 'envelope' as const,
+      title: 'Thiệp trực tuyến',
+      desc: 'Tạo thiệp và quản lý phản hồi',
     },
     {
-      icon: '✨',
-      title: 'Mô hình 3D xoay 360° trực quan',
-      desc: 'Kiểm tra chính xác từng chi tiết trước khi in',
+      icon: 'check' as const,
+      title: 'Duyệt bản mẫu',
+      desc: 'Xem lại nội dung trước khi xác nhận',
     },
   ]
 
@@ -26,7 +28,7 @@ export function HeroTrustBar() {
     <div className="hero-trust-grid">
       {stats.map((s) => (
         <div key={s.title} className="hero-trust-card">
-          <span className="hero-trust-icon">{s.icon}</span>
+          <MoriIcon className="hero-trust-icon" name={s.icon} />
           <div className="hero-trust-text">
             <strong>{s.title}</strong>
             <small>{s.desc}</small>

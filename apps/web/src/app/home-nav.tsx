@@ -43,7 +43,7 @@ export async function HomeNav() {
           <Link href="/collections">Bộ sưu tập</Link>
           <Link href="/assistant">Trợ lý gợi ý</Link>
           <Link href="/#thiep-so">Thiệp số</Link>
-          <Link href="/#xuong">Xưởng</Link>
+          <Link href="/#che-tac">Xưởng</Link>
         </nav>
         <div className="home-nav-end">
           {user ? (

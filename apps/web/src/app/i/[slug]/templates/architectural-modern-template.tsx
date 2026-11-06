@@ -2,7 +2,6 @@
 
 import type { DigitalModelProfile } from '../invitation-model-profiles'
 import { InvitationAudioPlayer } from '../invitation-audio-player'
-import { InvitationCalendarAction } from '../invitation-calendar-action'
 
 interface TemplateProps {
   profile: DigitalModelProfile
@@ -122,7 +121,6 @@ export function ArchitecturalModernTemplate({
       </div>
 
       <InvitationAudioPlayer />
-      <InvitationCalendarAction title={eventTitle} venue={venue} displayNames={displayNames} />
 
       <div className="modern-card-footer" style={{ color: profile.accentColor }}>
         <span>✦ MORI ARCHITECTURAL ATELIER · BESPOKE WEDDING ✦</span>

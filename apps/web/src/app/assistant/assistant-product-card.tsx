@@ -4,9 +4,10 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { getBespokeProfile } from '../collections/collection-catalog-data'
 import { renderCardMotif } from '../collections/collection-motif-svgs'
-import { resolveSampleCouple } from '../collections/collection-types'
+import { getPreviewCoupleName } from '../collections/collection-types'
 import { ProductPreview } from '../../features/preview/product-preview'
 import type { SuggestedProductCard } from './assistant-types'
+import { MoriIcon } from '../../components/mori-icon'
 
 interface ProductCardProps {
   item: SuggestedProductCard
@@ -22,8 +23,10 @@ const SILHOUETTE_MAP: Record<string, string> = {
 export function AssistantProductCard({ item }: ProductCardProps) {
   const [show3D, setShow3D] = useState(false)
   const profile = getBespokeProfile(item.slug)
-  const title = profile?.title ?? item.title ?? item.name
-  const subtitle = profile?.subtitle ?? item.subtitle ?? 'Chế tác giấy bã mía 350gsm'
+  const title = item.isFixture ? profile?.title ?? item.title ?? item.name : item.title ?? item.name
+  const subtitle = item.isFixture
+    ? 'Mẫu minh họa; thông tin sản phẩm thực tế đang được cập nhật.'
+    : item.subtitle
   const silhouetteLabel = profile?.silhouette ? SILHOUETTE_MAP[profile.silhouette] : null
 
   const cardBg = profile?.cardBg ?? '#fdfcf9'
@@ -31,10 +34,10 @@ export function AssistantProductCard({ item }: ProductCardProps) {
   const borderColor = profile?.borderColor ?? '#c5a059'
   const accentColor = profile?.accentColor ?? '#b38e46'
   const motifType = profile?.motifType ?? 'arch-vogue'
-  const coupleName = resolveSampleCouple(item.slug)
+  const coupleName = getPreviewCoupleName()
   const textColor = isDark ? '#fbf8ee' : '#222820'
 
-  const displayPrice = item.startingPriceVnd.includes('₫')
+  const displayPrice = item.isFixture ? 'Mẫu minh họa' : item.startingPriceVnd.includes('₫')
     ? item.startingPriceVnd
     : `${item.startingPriceVnd} ₫`
 
@@ -46,7 +49,7 @@ export function AssistantProductCard({ item }: ProductCardProps) {
       </div>
 
       {/* Visual In-Chat Card Mockup Preview */}
-      <div className="card-mockup-stage" onClick={() => setShow3D(!show3D)} role="button" tabIndex={0}>
+      <div className="card-mockup-stage" aria-label="Phối cảnh thiệp minh họa">
         <div
           className={`mini-artisan-paper ${isDark ? 'is-dark' : 'is-light'}`}
           style={{
@@ -58,10 +61,10 @@ export function AssistantProductCard({ item }: ProductCardProps) {
           <div className="mini-motif-box">{renderCardMotif(motifType, accentColor)}</div>
           <div className="mini-paper-typography">
             <span className="mini-couple-title" style={{ color: textColor }}>
-              {coupleName}
+              Tên hai bạn
             </span>
             <span className="mini-date-subtitle" style={{ color: isDark ? '#dfd5be' : '#71786c' }}>
-              12 Tháng 12, 2026
+              Ngày tổ chức
             </span>
             <div className="mini-divider-line" style={{ background: accentColor }} />
             <span className="mini-tagline" style={{ color: accentColor }}>
@@ -69,7 +72,7 @@ export function AssistantProductCard({ item }: ProductCardProps) {
             </span>
           </div>
           <span className="mini-preview-overlay-hint">
-            {show3D ? '✕ Đóng 3D' : '✦ Bấm để xoay 3D'}
+            Phối cảnh minh họa
           </span>
         </div>
       </div>
@@ -81,13 +84,14 @@ export function AssistantProductCard({ item }: ProductCardProps) {
       {show3D && (
         <div className="inline-3d-scene-box">
           <div className="inline-3d-header">
-            <span className="inline-3d-label">✦ 3D Studio Trực Tiếp</span>
+            <span className="inline-3d-label">Xem trước 3D</span>
             <button
               type="button"
               className="inline-3d-close-btn"
+              aria-label="Thu gọn phối cảnh 3D"
               onClick={() => setShow3D(false)}
             >
-              ✕ Thu gọn
+              Thu gọn
             </button>
           </div>
           <ProductPreview slug={item.slug} name={coupleName} shape={item.shape} />
@@ -96,7 +100,7 @@ export function AssistantProductCard({ item }: ProductCardProps) {
 
       <div className="embedded-product-footer">
         <div className="embedded-product-price">
-          <span className="price-label">Giá khởi điểm</span>
+          <span className="price-label">{item.isFixture ? 'Giá và quy cách' : 'Giá tham khảo'}</span>
           <span className="price-value">{displayPrice}</span>
         </div>
 
@@ -106,10 +110,10 @@ export function AssistantProductCard({ item }: ProductCardProps) {
             className={`embedded-preview-3d-btn ${show3D ? 'active' : ''}`}
             onClick={() => setShow3D(!show3D)}
           >
-            {show3D ? '✕ Đóng 3D' : '✦ Xem 3D tại đây'}
+            {show3D ? 'Đóng xem trước' : <><MoriIcon name="paper" /> Xem trước 3D</>}
           </button>
           <Link href={`/products/${item.slug}`} className="embedded-product-action">
-            Mở Studio &rarr;
+            Xem mẫu và thông tin <MoriIcon name="arrow-right" />
           </Link>
         </div>
       </div>

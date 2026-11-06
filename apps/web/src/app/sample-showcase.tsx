@@ -7,67 +7,25 @@ import { buildCuratedItem } from './collections/collection-types'
 export interface ShowcaseProduct {
   slug: string
   name: string
-  styleCategory: string
-  shape: 'BIFOLD' | 'FLAT'
-  priceVnd: string
-  badge: string
+  shape: 'BIFOLD' | 'FLAT' | 'TRIFOLD'
+  priceVnd: string | null
+  isFixture: boolean
 }
 
-const FALLBACK_PRODUCTS: ShowcaseProduct[] = [
-  {
-    slug: 'editorial-bifold-01',
-    name: "L'Amour Vogue No. 1",
-    styleCategory: 'Editorial Vogue',
-    shape: 'BIFOLD',
-    priceVnd: '45000',
-    badge: 'Gấp đôi',
-  },
-  {
-    slug: 'editorial-flat-01',
-    name: 'Haute Couture Élysée',
-    styleCategory: 'Editorial Vogue',
-    shape: 'FLAT',
-    priceVnd: '32000',
-    badge: 'Dạng phẳng',
-  },
-  {
-    slug: 'floral-bifold-01',
-    name: 'Jardin Botanique No. 1',
-    styleCategory: 'Floral Botanical',
-    shape: 'BIFOLD',
-    priceVnd: '42000',
-    badge: 'Gấp đôi',
-  },
-  {
-    slug: 'traditional-flat-01',
-    name: 'Hoàng Kim Hỷ Sự No. 1',
-    styleCategory: 'Heritage Á Đông',
-    shape: 'FLAT',
-    priceVnd: '35000',
-    badge: 'Dạng phẳng',
-  },
-  {
-    slug: 'minimalist-bifold-01',
-    name: 'Wabi-Sabi Kyoto No. 1',
-    styleCategory: 'Minimalist Japandi',
-    shape: 'BIFOLD',
-    priceVnd: '38000',
-    badge: 'Gấp đôi',
-  },
-  {
-    slug: 'modern-calligraphy-01',
-    name: 'Florence Script No. 1',
-    styleCategory: 'Modern Calligraphy',
-    shape: 'FLAT',
-    priceVnd: '34000',
-    badge: 'Dạng phẳng',
-  },
-]
-
 export function SampleShowcase({ products }: { products: ShowcaseProduct[] }) {
-  const [filter, setFilter] = useState<'ALL' | 'BIFOLD' | 'FLAT'>('ALL')
-  const list = products.length > 0 ? products : FALLBACK_PRODUCTS
+  const [filter, setFilter] = useState<'ALL' | 'BIFOLD' | 'FLAT' | 'TRIFOLD'>('ALL')
+  const list = products
   const filtered = filter === 'ALL' ? list : list.filter((p) => p.shape === filter)
+
+  if (list.length === 0) {
+    return (
+      <div className="collections-empty-box">
+        <p className="empty-title">Bộ sưu tập đang được cập nhật</p>
+        <p className="empty-sub">Bạn vẫn có thể trao đổi với xưởng để tìm hướng thiết kế phù hợp.</p>
+        <a className="home-cta" href="/assistant">Trao đổi với MORI</a>
+      </div>
+    )
+  }
 
   return (
     <div>
@@ -75,6 +33,7 @@ export function SampleShowcase({ products }: { products: ShowcaseProduct[] }) {
         <button
           type="button"
           className={`filter-pill ${filter === 'ALL' ? 'active' : ''}`}
+          aria-pressed={filter === 'ALL'}
           onClick={() => setFilter('ALL')}
         >
           Tất cả thiết kế ({list.length})
@@ -82,6 +41,7 @@ export function SampleShowcase({ products }: { products: ShowcaseProduct[] }) {
         <button
           type="button"
           className={`filter-pill ${filter === 'BIFOLD' ? 'active' : ''}`}
+          aria-pressed={filter === 'BIFOLD'}
           onClick={() => setFilter('BIFOLD')}
         >
           Thiệp gấp đôi (Bi-fold)
@@ -89,22 +49,28 @@ export function SampleShowcase({ products }: { products: ShowcaseProduct[] }) {
         <button
           type="button"
           className={`filter-pill ${filter === 'FLAT' ? 'active' : ''}`}
+          aria-pressed={filter === 'FLAT'}
           onClick={() => setFilter('FLAT')}
         >
           Thiệp đơn phẳng (Flat Card)
         </button>
+        {list.some((item) => item.shape === 'TRIFOLD') ? (
+          <button type="button" className={`filter-pill ${filter === 'TRIFOLD' ? 'active' : ''}`} aria-pressed={filter === 'TRIFOLD'} onClick={() => setFilter('TRIFOLD')}>
+            Thiệp gấp ba
+          </button>
+        ) : null}
       </div>
 
       <div className="collections-artisan-grid">
-        {filtered.map((item, idx) => {
+        {filtered.map((item) => {
           const curated = buildCuratedItem(
             {
               slug: item.slug,
               name: item.name,
               shape: item.shape,
               minPriceVnd: item.priceVnd,
+              isFixture: item.isFixture,
             },
-            idx,
           )
 
           return (
@@ -115,9 +81,9 @@ export function SampleShowcase({ products }: { products: ShowcaseProduct[] }) {
                 <div className="artisan-card-body">
                   <div className="artisan-specs-row">
                     <span className="spec-shape-pill">
-                      {item.shape === 'BIFOLD' ? 'Khổ gấp đôi 2 mặt' : 'Khổ đơn phẳng 2 mặt'}
+                      {item.shape === 'BIFOLD' ? 'Khổ gấp đôi' : item.shape === 'TRIFOLD' ? 'Khổ gấp ba' : 'Khổ đơn phẳng'}
                     </span>
-                    <span className="spec-material-tag">Giấy bã mía 350gsm</span>
+                    {item.isFixture ? <span className="spec-material-tag">Mẫu minh họa</span> : null}
                   </div>
 
                   <h3 className="artisan-curated-title">{curated.curatedTitle}</h3>
@@ -126,10 +92,8 @@ export function SampleShowcase({ products }: { products: ShowcaseProduct[] }) {
 
                   <div className="artisan-card-footer">
                     <div className="artisan-price-block">
-                      <span className="price-lead-label">Giá hoàn thiện</span>
-                      <span className="price-main-vnd">
-                        Từ {Number(item.priceVnd).toLocaleString('vi-VN')} ₫
-                      </span>
+                      <span className="price-lead-label">{item.isFixture ? 'Giá và quy cách' : 'Giá tham khảo'}</span>
+                      <span className="price-main-vnd">{item.isFixture ? 'Mẫu minh họa' : item.priceVnd ? `Từ ${BigInt(item.priceVnd).toLocaleString('vi-VN')} ₫` : 'Đang cập nhật'}</span>
                     </div>
                     <span className="artisan-cta-link">Trải nghiệm 3D &rarr;</span>
                   </div>

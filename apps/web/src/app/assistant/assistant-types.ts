@@ -27,6 +27,7 @@ export interface SuggestedProductCard {
   subtitle: string
   shape: string
   startingPriceVnd: string
+  isFixture?: boolean
   silhouette?: string
   accentColor?: string
 }

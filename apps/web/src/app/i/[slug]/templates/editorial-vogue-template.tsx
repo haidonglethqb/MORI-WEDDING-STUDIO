@@ -2,7 +2,6 @@
 
 import type { DigitalModelProfile } from '../invitation-model-profiles'
 import { InvitationAudioPlayer } from '../invitation-audio-player'
-import { InvitationCalendarAction } from '../invitation-calendar-action'
 
 interface TemplateProps {
   profile: DigitalModelProfile
@@ -123,7 +122,6 @@ export function EditorialVogueTemplate({
       </div>
 
       <InvitationAudioPlayer />
-      <InvitationCalendarAction title={eventTitle} venue={venue} displayNames={displayNames} />
 
       <div className="vogue-card-footer">
         <span>✦ MORI ATELIER · HAUTE PAPETERIE VOGUE ✦</span>

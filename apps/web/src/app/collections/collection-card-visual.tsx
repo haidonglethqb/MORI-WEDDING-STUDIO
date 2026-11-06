@@ -45,8 +45,8 @@ export function CollectionCardVisual({ item }: { item: CollectionItem }) {
 
         {/* Central Typography */}
         <div className="paper-text-center">
-          <h4 className="stage-couple-names">{item.sampleCouple}</h4>
-          <p className="stage-date-text">{item.sampleDate}</p>
+          <h4 className="stage-couple-names">Tên cặp đôi</h4>
+          <p className="stage-date-text">Ngày tổ chức</p>
           <div className="stage-ornament-divider" style={{ background: accentColor }} />
           <span className="stage-save-date" style={{ color: accentColor }}>
             {item.categoryId === 'heritage' ? 'TRĂM NĂM HẠNH PHÚC' : 'SAVE THE DATE'}

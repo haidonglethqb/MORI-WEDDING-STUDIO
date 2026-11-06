@@ -123,12 +123,13 @@ export class AssistantOrchestratorService {
     // Ground card prices and budget via EstimateService / AiPricingTool (T28)
     let estimatedBudget: EstimatedBudgetSummary | null = null
     const suites = updatedBrief.estimatedSuites
-    if (this.pricingTool && suites && suites >= 10 && matchedProducts.length > 0) {
-      for (const card of suggestedCards) {
+    const pricedProducts = matchedProducts.filter((product) => !product.isFixture)
+    if (this.pricingTool && suites && suites >= 10 && pricedProducts.length > 0) {
+      for (const card of suggestedCards.filter((product) => !product.isFixture)) {
         const est = await this.pricingTool.lookupVariantAndEstimate({ productSlug: card.slug, shape: card.shape, quantity: suites })
         if (est.success && est.merchandiseVnd) card.startingPriceVnd = est.merchandiseVnd
       }
-      const primary = matchedProducts[0]
+      const primary = pricedProducts[0]
       if (primary) {
         const primaryEst = await this.pricingTool.lookupVariantAndEstimate({ productSlug: primary.slug, shape: primary.shape, quantity: suites })
         if (primaryEst.success && primaryEst.merchandiseVnd) {
@@ -149,7 +150,7 @@ export class AssistantOrchestratorService {
       updatedBrief,
       suggestedProducts: suggestedCards,
       estimatedBudget,
-      quickFollowUps: raw.quickFollowUps?.slice(0, 3) ?? ['Dáng thiệp gập đôi hay phẳng?', 'Tư vấn chi phí theo số lượng khách', 'Tìm hiểu giấy bã mía 350gsm'],
+      quickFollowUps: raw.quickFollowUps?.slice(0, 3) ?? ['Bạn thích thiệp gấp đôi hay phẳng?', 'Tư vấn theo số lượng khách', 'Tìm hiểu các lựa chọn chất liệu'],
       meta,
     }
   }

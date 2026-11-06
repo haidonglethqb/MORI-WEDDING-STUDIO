@@ -2,7 +2,6 @@
 
 import type { DigitalModelProfile } from '../invitation-model-profiles'
 import { InvitationAudioPlayer } from '../invitation-audio-player'
-import { InvitationCalendarAction } from '../invitation-calendar-action'
 
 interface TemplateProps {
   profile: DigitalModelProfile
@@ -116,7 +115,6 @@ export function MinimalistZenTemplate({
       </div>
 
       <InvitationAudioPlayer />
-      <InvitationCalendarAction title={eventTitle} venue={venue} displayNames={displayNames} />
 
       <div className="zen-bottom-mark">
         <span>✦ MORI WABI-SABI ATELIER ✦</span>

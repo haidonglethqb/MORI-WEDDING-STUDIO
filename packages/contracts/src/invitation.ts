@@ -39,6 +39,8 @@ export const PublicInvitationSchema = z.object({
   displayNames: InvitationContentSchema.shape.displayNames,
   eventTitle: z.string(),
   greeting: z.string().nullable(),
+  eventLocalStart: InvitationContentSchema.shape.eventLocalStart,
+  timeZone: InvitationContentSchema.shape.timeZone,
 })
 
 export type PublicInvitation = z.infer<typeof PublicInvitationSchema>

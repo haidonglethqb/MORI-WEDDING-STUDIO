@@ -8,5 +8,7 @@ export function toPublicInvitation(slug: string, payload: unknown): PublicInvita
     displayNames: content.displayNames,
     eventTitle: content.eventTitle,
     greeting: content.greeting ?? null,
+    ...(content.eventLocalStart ? { eventLocalStart: content.eventLocalStart } : {}),
+    ...(content.timeZone ? { timeZone: content.timeZone } : {}),
   }
 }

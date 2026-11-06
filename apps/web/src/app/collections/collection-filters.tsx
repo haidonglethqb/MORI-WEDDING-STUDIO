@@ -1,20 +1,44 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { CollectionCard } from './collection-card'
 import { CollectionCategorySection } from './collection-category-section'
 import { COLLECTION_CATEGORIES, type CollectionItem } from './collection-types'
+import { MoriIcon } from '../../components/mori-icon'
 
 const SHAPES = [
   { id: 'ALL', label: 'Tất cả quy cách' },
   { id: 'BIFOLD', label: 'Khổ gấp đôi' },
   { id: 'FLAT', label: 'Khổ đơn phẳng' },
+  { id: 'TRIFOLD', label: 'Khổ gấp ba' },
 ]
 
 export function CollectionFilters({ items }: { items: CollectionItem[] }) {
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL')
   const [selectedShape, setSelectedShape] = useState<string>('ALL')
   const [query, setQuery] = useState('')
+
+  useEffect(() => {
+    const syncFromUrl = () => {
+      const params = new URLSearchParams(window.location.search)
+      setSelectedCategory(params.get('style') ?? 'ALL')
+      setSelectedShape(params.get('shape') ?? 'ALL')
+      setQuery(params.get('q') ?? '')
+    }
+    syncFromUrl()
+    window.addEventListener('popstate', syncFromUrl)
+    return () => window.removeEventListener('popstate', syncFromUrl)
+  }, [])
+
+  function updateUrl(next: { style: string; shape: string; query: string }, mode: 'push' | 'replace' = 'push') {
+    const params = new URLSearchParams()
+    if (next.style !== 'ALL') params.set('style', next.style)
+    if (next.shape !== 'ALL') params.set('shape', next.shape)
+    if (next.query.trim()) params.set('q', next.query.trim())
+    const queryString = params.toString()
+    const url = `${window.location.pathname}${queryString ? `?${queryString}` : ''}`
+    window.history[`${mode}State`]({}, '', url)
+  }
 
   const isFiltering = selectedCategory !== 'ALL' || selectedShape !== 'ALL' || query.trim() !== ''
 
@@ -27,8 +51,7 @@ export function CollectionFilters({ items }: { items: CollectionItem[] }) {
         !q ||
         item.curatedTitle.toLowerCase().includes(q) ||
         item.skuName.toLowerCase().includes(q) ||
-        item.categoryLabel.toLowerCase().includes(q) ||
-        item.sampleCouple.toLowerCase().includes(q)
+        item.categoryLabel.toLowerCase().includes(q)
       return matchCat && matchShape && matchQuery
     })
   }, [items, selectedCategory, selectedShape, query])
@@ -37,6 +60,7 @@ export function CollectionFilters({ items }: { items: CollectionItem[] }) {
     setSelectedCategory('ALL')
     setSelectedShape('ALL')
     setQuery('')
+    updateUrl({ style: 'ALL', shape: 'ALL', query: '' })
   }
 
   return (
@@ -45,17 +69,26 @@ export function CollectionFilters({ items }: { items: CollectionItem[] }) {
       <div className="filter-panel-wrap">
         <div className="filter-row-top">
           <div className="search-input-box">
-            <span className="search-icon">🔍</span>
+            <label className="visually-hidden" htmlFor="collection-search">Tìm mẫu thiệp</label>
+            <MoriIcon className="search-icon" name="search" />
             <input
+              id="collection-search"
               type="text"
-              placeholder="Tìm theo phong cách, tên tác phẩm, tên cặp đôi..."
+              placeholder="Tìm theo phong cách hoặc tên mẫu"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value
+                setQuery(value)
+                updateUrl({ style: selectedCategory, shape: selectedShape, query: value }, 'replace')
+              }}
               className="search-input"
             />
             {query && (
-              <button type="button" onClick={() => setQuery('')} className="search-clear">
-                ✕
+              <button type="button" onClick={() => {
+                setQuery('')
+                updateUrl({ style: selectedCategory, shape: selectedShape, query: '' }, 'replace')
+              }} className="search-clear" aria-label="Xóa nội dung tìm kiếm">
+                <MoriIcon name="close" />
               </button>
             )}
           </div>
@@ -66,7 +99,11 @@ export function CollectionFilters({ items }: { items: CollectionItem[] }) {
                 key={shape.id}
                 type="button"
                 className={`shape-toggle-btn ${selectedShape === shape.id ? 'active' : ''}`}
-                onClick={() => setSelectedShape(shape.id)}
+                aria-pressed={selectedShape === shape.id}
+                onClick={() => {
+                  setSelectedShape(shape.id)
+                  updateUrl({ style: selectedCategory, shape: shape.id, query })
+                }}
               >
                 {shape.label}
               </button>
@@ -79,18 +116,26 @@ export function CollectionFilters({ items }: { items: CollectionItem[] }) {
           <button
             type="button"
             className={`style-tab-pill ${selectedCategory === 'ALL' ? 'active' : ''}`}
-            onClick={() => setSelectedCategory('ALL')}
+            aria-pressed={selectedCategory === 'ALL'}
+            onClick={() => {
+              setSelectedCategory('ALL')
+              updateUrl({ style: 'ALL', shape: selectedShape, query })
+            }}
           >
-            ✦ Tất cả bộ sưu tập
+            Tất cả bộ sưu tập
           </button>
           {COLLECTION_CATEGORIES.map((cat) => (
             <button
               key={cat.id}
               type="button"
               className={`style-tab-pill ${selectedCategory === cat.id ? 'active' : ''}`}
-              onClick={() => setSelectedCategory(cat.id)}
+              aria-pressed={selectedCategory === cat.id}
+              onClick={() => {
+                setSelectedCategory(cat.id)
+                updateUrl({ style: cat.id, shape: selectedShape, query })
+              }}
             >
-              <span className="tab-cat-icon">{cat.icon}</span>
+              <MoriIcon className="tab-cat-icon" name={cat.icon} />
               {cat.title.replace('Bộ sưu tập ', '')}
             </button>
           ))}
@@ -98,7 +143,7 @@ export function CollectionFilters({ items }: { items: CollectionItem[] }) {
 
         {/* Counter & Clear Action */}
         <div className="results-counter-row">
-          <span>
+          <span aria-live="polite">
             Đang hiển thị <strong>{filteredItems.length}</strong> / {items.length} tác phẩm thủ công
           </span>
           {isFiltering && (

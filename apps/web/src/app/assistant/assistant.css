@@ -588,6 +588,8 @@
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
+.assistant-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.embedded-preview-3d-btn svg, .embedded-product-action svg { width: 16px; height: 16px; vertical-align: middle; }
 .chat-input-field:focus {
   border-color: #3e4a39;
   background: #ffffff;

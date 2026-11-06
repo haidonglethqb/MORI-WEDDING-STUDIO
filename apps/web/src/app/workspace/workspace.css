@@ -77,3 +77,10 @@
   font-size: 10px; font-weight: 700; color: #b91c1c; background: #fee2e2;
   padding: 2px 6px; border-radius: 4px; margin-left: 8px;
 }
+.workspace-load-error {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 10px; padding: 14px 16px; border: 1px solid #ead8b8; border-radius: 10px;
+  background: #fffaf0; color: #62543b; font-size: 14px; line-height: 1.5;
+}
+.workspace-load-error a { color: #354331; font-weight: 600; text-underline-offset: 3px; }
+.workspace-load-error a:focus-visible { outline: 2px solid #354331; outline-offset: 3px; }

@@ -1,4 +1,5 @@
 import { BESPOKE_PROFILES } from './collection-catalog-data'
+import type { MoriIconName } from '../../components/mori-icon'
 
 export type StyleCategoryId = 'editorial' | 'floral' | 'heritage' | 'minimalist' | 'modern'
 
@@ -8,7 +9,7 @@ export interface CollectionCategory {
   subtitle: string
   badge: string
   accentColor: string
-  icon: string
+  icon: MoriIconName
 }
 
 export interface CollectionItem {
@@ -19,87 +20,55 @@ export interface CollectionItem {
   categoryId: StyleCategoryId
   categoryLabel: string
   shape: 'BIFOLD' | 'FLAT' | 'TRIFOLD'
-  minPriceVnd: string
-  sampleCouple: string
-  sampleDate: string
+  minPriceVnd: string | null
+  isFixture: boolean
 }
 
 export const COLLECTION_CATEGORIES: CollectionCategory[] = [
   {
     id: 'editorial',
     title: 'Bộ sưu tập Editorial Vogue',
-    subtitle: 'Cảm hứng bìa tạp chí thời trang Paris, typography ấn tượng và khung viền nhũ kim sắc sảo.',
-    badge: 'High Fashion & Luxe',
+    subtitle: 'Bố cục thanh lịch, tương phản rõ và nhiều khoảng thở.',
+    badge: 'Thanh lịch',
     accentColor: '#b38e46',
-    icon: '✦',
+    icon: 'spark',
   },
   {
     id: 'floral',
     title: 'Bộ sưu tập Floral Botanical',
-    subtitle: 'Vườn thảo mộc mùa hạ, cành lá uốn lượn dập chìm trên nền giấy bã mía mộc mạc.',
-    badge: 'Hữu cơ & Thảo mộc',
+    subtitle: 'Họa tiết lấy cảm hứng từ thiên nhiên với nét mềm mại.',
+    badge: 'Cảm hứng thiên nhiên',
     accentColor: '#4d6345',
-    icon: '❀',
+    icon: 'leaf',
   },
   {
     id: 'heritage',
     title: 'Bộ sưu tập Heritage Á Đông',
-    subtitle: 'Sắc son chu sa cung đình, ép nhũ hoàng kim cùng con dấu song hỷ trường cửu.',
-    badge: 'Cung đình & Cát tường',
+    subtitle: 'Họa tiết và bố cục gợi nhắc nét văn hóa Á Đông.',
+    badge: 'Á Đông',
     accentColor: '#8a241f',
-    icon: '囍',
+    icon: 'heart',
   },
   {
     id: 'minimalist',
     title: 'Bộ sưu tập Minimalist Japandi',
-    subtitle: 'Vẻ đẹp Wabi-Sabi tinh giản, dập chìm không màu và tỷ lệ vàng tĩnh lặng.',
-    badge: 'Tinh giản & Thiền định',
+    subtitle: 'Đường nét gọn gàng, màu sắc tiết chế và nhịp điệu cân bằng.',
+    badge: 'Tinh giản',
     accentColor: '#5c6456',
-    icon: '✤',
+    icon: 'paper',
   },
   {
     id: 'modern',
     title: 'Bộ sưu tập Modern Calligraphy',
-    subtitle: 'Nét bút thư pháp lãng mạn, dải lụa mộc buông lơi và con dấu sáp thủ công.',
-    badge: 'Thư pháp & Phóng khoáng',
+    subtitle: 'Kiểu chữ giàu cá tính kết hợp cùng bố cục phóng khoáng.',
+    badge: 'Thư pháp',
     accentColor: '#9c6644',
-    icon: '✒',
+    icon: 'palette',
   },
 ]
 
-const SAMPLE_COUPLES = [
-  'Minh Sơn & Thảo Vy',
-  'Hoàng Long & Khánh Linh',
-  'Quốc Anh & Hà Phương',
-  'Đức Duy & Mai Anh',
-  'Gia Huy & Tuệ Mẫn',
-  'Thanh Tùng & Ngọc Diệp',
-  'Tuấn Kiệt & Quỳnh Chi',
-  'Việt Hưng & Lan Hương',
-]
-
-const SLUG_COUPLE_OVERRIDES: Record<string, string> = {
-  'traditional-bifold-02': 'Hoàng Long & Khánh Linh',
-  'traditional-bifold-01': 'Minh Sơn & Thảo Vy',
-  'editorial-bifold-01': 'Minh Sơn & Thảo Vy',
-  'editorial-bifold-02': 'Hoàng Long & Khánh Linh',
-  'editorial-flat-01': 'Quốc Anh & Hà Phương',
-  'editorial-flat-02': 'Đức Duy & Mai Anh',
-  'floral-bifold-01': 'Gia Huy & Tuệ Mẫn',
-  'floral-bifold-02': 'Thanh Tùng & Ngọc Diệp',
-  'floral-flat-01': 'Tuấn Kiệt & Quỳnh Chi',
-  'floral-flat-02': 'Việt Hưng & Lan Hương',
-  'traditional-flat-01': 'Minh Sơn & Thảo Vy',
-  'traditional-flat-02': 'Hoàng Long & Khánh Linh',
-}
-
-export function resolveSampleCouple(slug: string, fallbackIdx = 0): string {
-  const override = SLUG_COUPLE_OVERRIDES[slug]
-  if (override) return override
-  let hash = 0
-  for (let i = 0; i < slug.length; i++) hash = (hash << 5) - hash + slug.charCodeAt(i)
-  const idx = Math.abs(hash + fallbackIdx) % SAMPLE_COUPLES.length
-  return SAMPLE_COUPLES[idx] ?? 'Minh Sơn & Thảo Vy'
+export function getPreviewCoupleName(): string {
+  return 'Tên cô dâu & chú rể'
 }
 
 export function resolveCategoryId(slug: string): StyleCategoryId {
@@ -112,8 +81,7 @@ export function resolveCategoryId(slug: string): StyleCategoryId {
 }
 
 export function buildCuratedItem(
-  raw: { slug: string; name: string; shape: 'BIFOLD' | 'FLAT' | 'TRIFOLD'; minPriceVnd: string | null },
-  index: number,
+  raw: { slug: string; name: string; shape: 'BIFOLD' | 'FLAT' | 'TRIFOLD'; minPriceVnd: string | null; isFixture: boolean },
 ): CollectionItem {
   const categoryId = resolveCategoryId(raw.slug)
   const cat = COLLECTION_CATEGORIES.find((c) => c.id === categoryId)
@@ -123,13 +91,14 @@ export function buildCuratedItem(
   return {
     slug: raw.slug,
     skuName: raw.name,
-    curatedTitle: profile?.title ?? raw.name,
-    curatedDesc: profile?.subtitle ?? 'Ấn phẩm chế tác thủ công trên giấy bã mía 350gsm',
+    curatedTitle: raw.isFixture ? profile?.title ?? raw.name : raw.name,
+    curatedDesc: raw.isFixture
+      ? 'Mẫu minh họa để tham khảo phong cách và bố cục.'
+      : 'Xem thông tin quy cách hiện có trên trang chi tiết.',
     categoryId,
     categoryLabel,
     shape: raw.shape,
-    minPriceVnd: raw.minPriceVnd ?? '25000',
-    sampleCouple: resolveSampleCouple(raw.slug, index),
-    sampleDate: 'Tháng 12 · 2026 · Hà Nội',
+    minPriceVnd: raw.minPriceVnd,
+    isFixture: raw.isFixture,
   }
 }

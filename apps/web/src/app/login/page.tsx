@@ -1,5 +1,6 @@
 import { HomeNav } from '../home-nav'
 import { LoginForm } from './login-form'
+import { MoriIcon } from '../../components/mori-icon'
 import './login.css'
 
 export const dynamic = 'force-dynamic'
@@ -12,34 +13,33 @@ export default function LoginPage() {
         <div className="auth-container">
           <section className="auth-editorial-panel" aria-label="Giới thiệu Atelier">
             <div>
-              <span className="editorial-kicker">✦ MORI ATELIER · 2026 ✦</span>
+              <span className="editorial-kicker"><MoriIcon name="spark" /> MORI ATELIER</span>
               <h2>Nghệ thuật thiệp cưới giấy ngà thủ công</h2>
               <p>
-                Không gian thiết kế và quản lý tiến trình may đo thiệp cưới độc bản,
-                kết hợp chất liệu giấy bã mía 350gsm và thiệp số tương tác đa chiều.
+                Theo dõi yêu cầu thiết kế, bản duyệt và thiệp mời trực tuyến trong cùng một không gian.
               </p>
             </div>
 
             <div className="editorial-features">
               <div className="feature-pill">
-                <span>🌿</span>
+                <MoriIcon name="paper" />
                 <div>
-                  <strong>100% Tree-free Sugar Cane Paper</strong>
-                  <small>Giấy bã mía hữu cơ 350gsm dập nổi nhiệt 160°C</small>
+                  <strong>Thiết kế thiệp giấy</strong>
+                  <small>Trao đổi quy cách và chất liệu cùng xưởng</small>
                 </div>
               </div>
               <div className="feature-pill">
-                <span>⚜️</span>
+                <MoriIcon name="heart" />
                 <div>
                   <strong>Haute Papeterie Atelier</strong>
-                  <small>Từng bộ thiệp sắp riêng theo câu chuyện tình yêu</small>
+                  <small>Yêu cầu và phản hồi được lưu theo từng thiết kế</small>
                 </div>
               </div>
               <div className="feature-pill">
-                <span>💌</span>
+                <MoriIcon name="envelope" />
                 <div>
                   <strong>Thiệp cưới số tương tác đa chiều</strong>
-                  <small>Đồng bộ RSVP tức thì, bảo mật quyền riêng tư</small>
+                  <small>Quản lý nội dung thiệp và phản hồi khách mời</small>
                 </div>
               </div>
             </div>

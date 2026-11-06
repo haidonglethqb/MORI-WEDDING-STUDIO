@@ -24,9 +24,9 @@ export function AssistantForm() {
               <span>M</span>
             </div>
             <div className="chat-header-text">
-              <span className="chat-header-title">Pierre-Minh &amp; Vũ Cầm</span>
+              <span className="chat-header-title">MORI · Trợ lý gợi ý</span>
               <span className="chat-header-status">
-                <span className="status-indicator-dot" /> Trực tuyến • Cố vấn May đo MORI
+                <span className="status-indicator-dot" /> Hỗ trợ chọn mẫu và hoàn thiện nội dung
               </span>
             </div>
           </div>
@@ -53,7 +53,7 @@ export function AssistantForm() {
           </button>
         </div>
 
-        <div className="chat-messages-flow">
+        <div className="chat-messages-flow" role="log" aria-live="polite" aria-relevant="additions text" aria-busy={loading}>
           {messages.map((m) => (
             <AssistantChatBubble key={m.id} message={m} />
           ))}
@@ -67,7 +67,7 @@ export function AssistantForm() {
                   <span className="typing-dot" />
                   <span className="typing-dot" />
                   <span className="typing-dot" />
-                  <span className="typing-label">Nghệ nhân đang suy nghĩ và phối chất liệu...</span>
+                  <span className="typing-label">MORI đang chuẩn bị câu trả lời...</span>
                 </div>
               </div>
             </div>
@@ -97,7 +97,9 @@ export function AssistantForm() {
               void sendMessage(input)
             }}
           >
+            <label className="assistant-sr-only" htmlFor="assistant-message">Tin nhắn của bạn</label>
             <input
+              id="assistant-message"
               type="text"
               className="chat-input-field"
               placeholder="Nhắn tin với Nghệ nhân MORI (vd: Tụi mình cưới ở Đà Lạt, 120 khách...)"

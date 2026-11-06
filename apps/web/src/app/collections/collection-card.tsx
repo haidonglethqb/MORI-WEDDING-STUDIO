@@ -5,9 +5,9 @@ export type { CollectionItem }
 
 export function CollectionCard({ item }: { item: CollectionItem }) {
   const isBifold = item.shape === 'BIFOLD'
-  const formattedPrice = item.minPriceVnd
+  const formattedPrice = !item.isFixture && item.minPriceVnd
     ? `Từ ${Number(item.minPriceVnd).toLocaleString('vi-VN')} ₫`
-    : 'Liên hệ xưởng'
+    : item.isFixture ? 'Mẫu minh họa' : 'Đang cập nhật'
 
   return (
     <article className={`artisan-collection-card card-cat-${item.categoryId}`}>
@@ -25,7 +25,7 @@ export function CollectionCard({ item }: { item: CollectionItem }) {
             <span className="spec-shape-pill">
               {isBifold ? 'Khổ gấp đôi 2 mặt' : 'Khổ đơn phẳng 2 mặt'}
             </span>
-            <span className="spec-material-tag">Giấy bã mía 350gsm</span>
+            {item.isFixture ? <span className="spec-material-tag">Thông tin mẫu</span> : null}
           </div>
 
           <h3 className="artisan-curated-title">{item.curatedTitle}</h3>
@@ -34,7 +34,7 @@ export function CollectionCard({ item }: { item: CollectionItem }) {
 
           <div className="artisan-card-footer">
             <div className="artisan-price-block">
-              <span className="price-lead-label">Giá hoàn thiện</span>
+              <span className="price-lead-label">{item.isFixture ? 'Giá và quy cách' : 'Giá tham khảo'}</span>
               <span className="price-main-vnd">{formattedPrice}</span>
             </div>
             <span className="artisan-cta-link">

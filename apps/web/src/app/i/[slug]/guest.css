@@ -43,6 +43,41 @@
   width: 100%;
 }
 
+.public-invitation-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  overflow-wrap: anywhere;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 64px 36px 48px;
+  border: 1px solid #c9b98f;
+  background: #fffdf8;
+  color: #252a24;
+  text-align: center;
+  box-shadow: 0 18px 44px rgba(44, 49, 41, 0.08);
+}
+.public-invitation-border { position: absolute; inset: 12px; border: 1px solid rgba(156, 131, 111, 0.35); pointer-events: none; }
+.public-invitation-kicker { color: #75664b; font-size: 11px; font-weight: 600; letter-spacing: 0.2em; }
+.public-invitation-mark { width: 21px; height: 21px; color: #9c836f; }
+.public-invitation-guest { max-width: 100%; margin: 0; color: #596254; font-size: 13px; line-height: 1.6; }
+.public-invitation-guest strong { display: block; color: #252a24; font-family: var(--font-serif, Georgia, serif); font-size: 17px; font-weight: 500; }
+.public-invitation-names { display: flex; flex-direction: column; align-items: center; gap: 4px; max-width: 100%; margin: 0; color: #252a24; font-family: var(--font-serif, Georgia, serif); font-size: clamp(32px, 8vw, 52px); font-weight: 400; line-height: 1.12; overflow-wrap: anywhere; }
+.public-invitation-amp { color: #9c836f; font-size: 0.72em; font-style: italic; }
+.public-invitation-rule { width: 48px; height: 1px; background: #9c836f; }
+.public-invitation-event { max-width: 100%; margin: 0; font-size: 17px; line-height: 1.55; }
+.public-invitation-date { display: inline-flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px; color: #55634f; font-size: 14px; line-height: 1.5; }
+.public-invitation-date svg { width: 17px; height: 17px; flex: 0 0 17px; }
+.public-invitation-greeting { max-width: 440px; margin: 0; color: #5f675c; font-family: var(--font-serif, Georgia, serif); font-size: 16px; font-style: italic; line-height: 1.7; }
+.public-invitation-note { margin: 0; color: #5f675c; font-size: 14px; }
+.public-calendar-link { min-height: 44px; display: inline-flex; align-items: center; gap: 9px; padding: 0 16px; border: 1px solid #55634f; color: #45523f; font-size: 13px; text-decoration: none; transition: background-color 160ms ease, color 160ms ease; }
+.public-calendar-link:hover { background: #55634f; color: #fffdf8; }
+.public-calendar-link:focus-visible { outline: 2px solid #32462f; outline-offset: 3px; }
+.public-calendar-link svg { width: 17px; height: 17px; }
+@media (max-width: 480px) { .public-invitation-card { padding: 54px 24px 38px; gap: 18px; } }
+
 .digital-card-surface {
   border-radius: 24px;
   border: 1.5px solid;
@@ -432,9 +467,7 @@
   transform: translateY(-1px);
 }
 
-.action-btn-icon {
-  font-size: 14px;
-}
+.action-btn-icon { width: 16px; height: 16px; }
 
 .card-footer-monogram {
   font-size: 10px;
@@ -742,10 +775,7 @@
   margin: 0 auto;
 }
 
-.passcode-icon {
-  font-size: 36px;
-  margin-bottom: 4px;
-}
+.passcode-icon { width: 36px; height: 36px; margin-bottom: 4px; color: #55634f; }
 
 .passcode-title {
   font-family: var(--font-serif, "Lora", serif);

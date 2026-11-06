@@ -2,12 +2,6 @@
 
 import { useState } from 'react'
 
-const DEMO_ACCOUNTS = [
-  { label: 'Khách hàng', email: 'customer@mori.local', password: 'MoriWedding2026!', badge: 'Xem RSVP & đơn hàng' },
-  { label: 'Xưởng Studio', email: 'studio@mori.local', password: 'MoriWedding2026!', badge: 'Hàng đợi duyệt in' },
-  { label: 'Quản trị viên', email: 'admin@mori.local', password: 'MoriWedding2026!', badge: 'Cấu hình toàn hệ thống' },
-]
-
 export function LoginForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -74,22 +68,18 @@ export function LoginForm() {
         <p>Quản lý bộ thiệp cưới, phê duyệt bản in thử và lưu trữ kỷ niệm cưới.</p>
       </div>
 
-      <form
-        className="atelier-form"
-        method="POST"
-        action="javascript:void(0)"
-        onSubmit={(event) => {
+      <form className="atelier-form" onSubmit={(event) => {
           event.preventDefault()
           void handleLogin()
-        }}
-      >
+        }}>
         <label className="atelier-field">
           <span>Địa chỉ Email</span>
           <input
             name="email"
             type="email"
             placeholder="ten.ban@domain.vn"
-            autoComplete="username"
+            autoComplete="email"
+            required
             value={email}
             disabled={loading}
             onChange={(event) => setEmail(event.target.value)}
@@ -102,6 +92,7 @@ export function LoginForm() {
             type="password"
             placeholder="••••••••••••"
             autoComplete="current-password"
+            required
             value={password}
             disabled={loading}
             onChange={(event) => setPassword(event.target.value)}
@@ -113,7 +104,7 @@ export function LoginForm() {
         </button>
 
         {status && (
-          <div className={`status-banner ${isError ? 'status-error' : 'status-success'}`}>
+          <div className={`status-banner ${isError ? 'status-error' : 'status-success'}`} role={isError ? 'alert' : 'status'} aria-live={isError ? 'assertive' : 'polite'}>
             {status}
           </div>
         )}
@@ -127,28 +118,6 @@ export function LoginForm() {
         </div>
       </form>
 
-      <details className="atelier-dev-drawer">
-        <summary className="dev-drawer-toggle">
-          <span>✦ Khám phá tài khoản thử nghiệm (Dev / Review)</span>
-        </summary>
-        <div className="dev-drawer-content">
-          {DEMO_ACCOUNTS.map((acc) => (
-            <button
-              key={acc.email}
-              type="button"
-              className="dev-pill-btn"
-              onClick={() => {
-                setEmail(acc.email)
-                setPassword(acc.password)
-                void handleLogin(acc.email, acc.password)
-              }}
-            >
-              <strong>{acc.label}</strong>
-              <small>{acc.badge}</small>
-            </button>
-          ))}
-        </div>
-      </details>
     </div>
   )
 }

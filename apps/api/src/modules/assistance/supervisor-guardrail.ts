@@ -81,9 +81,10 @@ export class SupervisorGuardrail {
       slug: prod.slug,
       name: prod.name,
       title: prod.name,
-      subtitle: `Chế tác thủ công giấy bã mía 350gsm (${prod.shape === 'BIFOLD' ? 'Gập đôi' : 'Khổ phẳng'})`,
+      subtitle: prod.isFixture ? 'Mẫu minh họa để tham khảo phong cách.' : prod.shape === 'BIFOLD' ? 'Thiệp gấp đôi' : 'Thiệp phẳng',
       shape: prod.shape,
-      startingPriceVnd: prod.formattedPriceVnd,
+      startingPriceVnd: prod.isFixture ? 'Mẫu minh họa' : prod.formattedPriceVnd,
+      isFixture: prod.isFixture ?? false,
     }))
   }
 

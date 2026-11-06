@@ -1,4 +1,3 @@
-import { GUEST_COOKIE } from '@mori/contracts'
 import { NextResponse } from 'next/server'
 
 export const dynamic = 'force-dynamic'
@@ -35,21 +34,11 @@ export async function POST(
       }
       return res
     }
+    return NextResponse.json(
+      { message: upstream.status === 401 ? 'Mã truy cập không chính xác' : 'Không thể xác minh mã truy cập' },
+      { status: upstream.status === 401 ? 401 : 502 },
+    )
   } catch {
-    // If backend is unavailable during dev/demo, allow standard demo passcodes
+    return NextResponse.json({ message: 'Không thể kết nối để xác minh mã truy cập' }, { status: 503 })
   }
-
-  // Fallback demo passcodes
-  if (passcode === '12345678' || passcode === '28112026' || passcode === 'mori2026') {
-    const res = NextResponse.json({ ok: true })
-    res.cookies.set(GUEST_COOKIE, `demo-passcode-grant-${Date.now()}`, {
-      path: '/',
-      httpOnly: true,
-      sameSite: 'lax',
-      maxAge: 43200,
-    })
-    return res
-  }
-
-  return NextResponse.json({ message: 'Invalid passcode' }, { status: 401 })
 }

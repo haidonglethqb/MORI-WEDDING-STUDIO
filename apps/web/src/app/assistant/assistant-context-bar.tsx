@@ -1,6 +1,7 @@
 'use client'
 
 import type { ConversationWeddingBrief } from './assistant-types'
+import { MoriIcon } from '../../components/mori-icon'
 
 interface ContextBarProps {
   brief: ConversationWeddingBrief
@@ -54,7 +55,7 @@ export function AssistantContextBar({ brief, onReset }: ContextBarProps) {
             )}
             {brief.aestheticIdentity && (
               <span className="context-tag">
-                🎨 {STYLE_LABELS[brief.aestheticIdentity] ?? brief.aestheticIdentity}
+                <MoriIcon name="palette" /> {STYLE_LABELS[brief.aestheticIdentity] ?? brief.aestheticIdentity}
               </span>
             )}
           </div>

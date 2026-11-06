@@ -5,7 +5,7 @@ import { getBespokeProfile } from '../../collections/collection-catalog-data'
 import {
   COLLECTION_CATEGORIES,
   resolveCategoryId,
-  resolveSampleCouple,
+  getPreviewCoupleName,
 } from '../../collections/collection-types'
 import { ProductMetaHeader } from './product-meta-header'
 import './product.css'
@@ -51,31 +51,12 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const products = await loadProducts()
   let product = products.find((item) => item.slug === slug)
 
-  if (!product) {
-    const profile = getBespokeProfile(slug)
-    if (profile) {
-      const bifold = slug.includes('bifold')
-      product = {
-        slug,
-        name: profile.title,
-        isFixture: true,
-        variants: [
-          {
-            shape: bifold ? 'BIFOLD' : 'FLAT',
-            availability: 'AVAILABLE',
-            unitAmountVnd: bifold ? '38000' : '28000',
-          },
-        ],
-      }
-    }
-  }
-
   if (!product) notFound()
 
   const orderable = product.variants.filter((variant) => variant.availability !== 'UNAVAILABLE')
   const profile = getBespokeProfile(slug)
-  const curatedTitle = profile?.title ?? product.name
-  const curatedSubtitle = profile?.subtitle
+  const curatedTitle = product.isFixture ? profile?.title ?? product.name : product.name
+  const curatedSubtitle = product.isFixture ? profile?.subtitle : undefined
   const categoryId = resolveCategoryId(slug)
   const cat = COLLECTION_CATEGORIES.find((c) => c.id === categoryId)
 
@@ -99,7 +80,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           <div className="product-preview-card">
             <ProductPreview
               slug={slug}
-              name={resolveSampleCouple(slug)}
+              name={getPreviewCoupleName()}
               shape={orderable[0]?.shape ?? 'FLAT'}
             />
           </div>
@@ -114,9 +95,9 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             />
 
             <p className="product-desc">
-              Thiệp cưới cao cấp từ MORI Studio được in trên nền giấy bã mía sinh thái bền vững,
-              ép kim chìm nhiệt độ cao và hoàn thiện hoàn toàn thủ công từ đôi bàn tay của các
-              nghệ nhân xưởng.
+              {product.isFixture
+                ? 'Mẫu này giúp bạn tham khảo phong cách và bố cục. Thông số và giá sản phẩm thực tế đang được cập nhật.'
+                : 'Xem các quy cách hiện có bên dưới. Chất liệu, kỹ thuật hoàn thiện và thời gian sẽ được xưởng xác nhận theo đơn hàng.'}
             </p>
 
             <div className="product-variants-box">
@@ -137,7 +118,9 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                     {shapeLabel[variant.shape] ?? variant.shape}
                   </span>
                   <span className="product-variant-price">
-                    {variant.unitAmountVnd === null
+                    {product.isFixture
+                      ? 'Mẫu minh họa'
+                      : variant.unitAmountVnd === null
                       ? 'Liên hệ báo giá'
                       : `${Number(variant.unitAmountVnd).toLocaleString('vi-VN')} ₫`}
                   </span>
@@ -147,21 +130,21 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
             <div className="product-specs">
               <p style={{ margin: '0 0 6px', fontWeight: 600, color: '#32462f' }}>
-                Chất liệu &amp; Quy chuẩn xưởng:
+                Thông tin cần xác nhận:
               </p>
               <ul style={{ margin: 0, paddingLeft: '18px' }}>
-                <li>Giấy bã mía tự nhiên 350gsm màu ngà ấm áp.</li>
-                <li>Mực in khoáng gốc đậu nành an toàn thân thiện môi trường.</li>
-                <li>Tặng kèm trang thiệp điện tử RSVP tương thích mọi điện thoại.</li>
+                <li>Chất liệu và kỹ thuật hoàn thiện theo mẫu được chọn.</li>
+                <li>Số lượng và thời gian thực hiện theo nhu cầu.</li>
+                <li>Chi phí được xác nhận trước khi bạn chốt yêu cầu.</li>
               </ul>
             </div>
 
             <div style={{ marginTop: '24px' }}>
               <a
-                href={`/workspace?product=${encodeURIComponent(slug)}&shape=${encodeURIComponent(orderable[0]?.shape ?? 'FLAT')}`}
+                href="/assistant"
                 className="product-order-cta"
               >
-                Bắt đầu thiết kế &amp; Đặt in mẫu này &rarr;
+                Hỏi về mẫu này &rarr;
               </a>
             </div>
           </div>

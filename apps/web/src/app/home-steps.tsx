@@ -1,36 +1,8 @@
 export function HomeSteps() {
   const steps = [
-    {
-      num: '01',
-      title: 'Chọn mẫu hoặc ý tưởng',
-      desc: 'Chọn từ bộ sưu tập hoặc nhờ Trợ lý Stylist gợi ý thiết kế phù hợp với ngân sách và concept cưới.',
-    },
-    {
-      num: '02',
-      title: 'Duyệt phối cảnh 3D',
-      desc: 'Kiểm tra chính xác tên song thân, địa điểm và hình dung tấm thiệp thật qua không gian 3D trực quan.',
-    },
-    {
-      num: '03',
-      title: 'Nhận bản in mẫu tận tay',
-      desc: 'Xưởng gửi 01 bản in thử thực tế để hai bạn chạm vào thớ giấy bã mía và độ sâu ép kim trước khi in lớn.',
-    },
-    {
-      num: '04',
-      title: 'Chế tác & Bàn giao trọn vẹn',
-      desc: 'Gia công ép kim, xé mép, đóng dấu sáp và đồng thời kích hoạt trang thiệp cưới số RSVP tương tác.',
-    },
+    { num: '01', title: 'Tìm một hướng thiết kế', desc: 'Khám phá bộ sưu tập hoặc trao đổi với trợ lý để tìm phong cách hợp với hai bạn.' },
+    { num: '02', title: 'Cùng hoàn thiện chi tiết', desc: 'Trao đổi nội dung, số lượng và quy cách. Xưởng xác nhận chất liệu, chi phí và các mốc thực hiện.' },
+    { num: '03', title: 'Duyệt trước khi gửi đi', desc: 'Kiểm tra tên, lời mời và thông tin ngày cưới. Theo dõi các bước tiếp theo trong không gian của bạn.' },
   ]
-
-  return (
-    <ul className="steps-list-four">
-      {steps.map((s) => (
-        <li key={s.num} className="step-item">
-          <span className="step-num">{s.num}</span>
-          <h3>{s.title}</h3>
-          <p>{s.desc}</p>
-        </li>
-      ))}
-    </ul>
-  )
+  return <ol className="steps-list-four">{steps.map((step) => <li className="step-item" key={step.num}><span className="step-num">{step.num}</span><h3>{step.title}</h3><p>{step.desc}</p></li>)}</ol>
 }

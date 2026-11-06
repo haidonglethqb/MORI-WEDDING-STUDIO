@@ -7,14 +7,12 @@ interface RsvpSheet {
   events: { eventId: string; title: string }[]
 }
 
-export function GuestRsvp({ slug, coupleNames }: { slug: string; coupleNames?: string }) {
+export function GuestRsvp({ slug }: { slug: string }) {
   const [sheet, setSheet] = useState<RsvpSheet | null>(null)
   const [status, setStatus] = useState('')
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
   const [count, setCount] = useState(1)
   const [loading, setLoading] = useState(false)
-  const [wish, setWish] = useState('')
-  const [wishSent, setWishSent] = useState(false)
 
   useEffect(() => {
     void fetch(`/i/${encodeURIComponent(slug)}/rsvp`, { cache: 'no-store' })
@@ -121,35 +119,6 @@ export function GuestRsvp({ slug, coupleNames }: { slug: string; coupleNames?: s
         ))
       ) : null}
 
-      {/* Sổ lưu bút chúc phúc trực tuyến */}
-      <div className="guest-wishes-box">
-        <h4 className="wishes-box-title">Gửi lời chúc phúc đến Tân Lang &amp; Tân Nương</h4>
-        {wishSent ? (
-          <div className="wish-sent-success">
-            <span>💐</span>
-            <strong>Lời chúc của bạn đã được gửi thành công đến đôi uyên ương!</strong>
-          </div>
-        ) : (
-          <form
-            onSubmit={(e) => {
-              e.preventDefault()
-              if (wish.trim()) setWishSent(true)
-            }}
-            className="wishes-form"
-          >
-            <textarea
-              value={wish}
-              onChange={(e) => setWish(e.target.value)}
-              placeholder={`Viết lời chúc phúc chân thành gửi đến ${coupleNames || 'đôi uyên ương'}...`}
-              rows={3}
-              className="wishes-textarea"
-            />
-            <button type="submit" disabled={!wish.trim()} className="wishes-submit-btn">
-              Gửi lời chúc phúc ✦
-            </button>
-          </form>
-        )}
-      </div>
     </section>
   )
 }

@@ -2,7 +2,6 @@
 
 import type { DigitalModelProfile } from '../invitation-model-profiles'
 import { InvitationAudioPlayer } from '../invitation-audio-player'
-import { InvitationCalendarAction } from '../invitation-calendar-action'
 
 interface TemplateProps {
   profile: DigitalModelProfile
@@ -125,7 +124,6 @@ export function ModernCalligraphyTemplate({
       </div>
 
       <InvitationAudioPlayer />
-      <InvitationCalendarAction title={eventTitle} venue={venue} displayNames={displayNames} />
 
       <div className="calligraphy-footer-sign" style={{ color: profile.accentColor }}>
         <span>✒ MORI BESPOKE CALLIGRAPHY PRESS · ARTISAN EDITION ✒</span>

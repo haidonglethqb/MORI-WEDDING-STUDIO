@@ -2,7 +2,7 @@
 
 import { getBespokeProfile } from '../../app/collections/collection-catalog-data'
 import { renderCardMotif } from '../../app/collections/collection-motif-svgs'
-import { resolveSampleCouple } from '../../app/collections/collection-types'
+import { getPreviewCoupleName } from '../../app/collections/collection-types'
 
 export function PreviewStillCard({ slug }: { slug: string }) {
   const profile = getBespokeProfile(slug)
@@ -10,7 +10,7 @@ export function PreviewStillCard({ slug }: { slug: string }) {
   const isDark = cardBg.startsWith('#6') || cardBg.startsWith('#7') || cardBg.startsWith('#8')
   const borderColor = profile?.borderColor ?? '#b8944d'
   const accentColor = profile?.accentColor ?? '#b8944d'
-  const coupleName = resolveSampleCouple(slug)
+  const coupleName = getPreviewCoupleName()
   const textColor = isDark ? '#fbf8ee' : '#222820'
   const motifType = profile?.motifType ?? 'arch-vogue'
 

@@ -16,6 +16,15 @@ interface InvitationListItem {
   displayNames: [string, string]
 }
 
+async function readList<T>(response: Response | null): Promise<T[]> {
+  if (!response?.ok) return []
+  try {
+    return (await response.json()) as T[]
+  } catch {
+    return []
+  }
+}
+
 function apiOrigin(): string {
   return process.env['API_INTERNAL_ORIGIN'] ?? 'http://127.0.0.1:4000'
 }
@@ -55,15 +64,20 @@ export default async function WorkspacePage() {
     )
   }
 
-  const items = response.ok ? ((await response.json()) as InvitationListItem[]) : []
-  const ordersRes = await fetch(`${apiOrigin()}/api/v1/orders/mine`, { headers: { cookie }, cache: 'no-store' })
-  const orders = ordersRes.ok ? ((await ordersRes.json()) as OrderListItem[]) : []
-  const requestsRes = await fetch(`${apiOrigin()}/api/v1/requests/mine`, { headers: { cookie }, cache: 'no-store' })
-  const requests = requestsRes.ok ? ((await requestsRes.json()) as CustomerRequestItem[]) : []
-  const noticesRes = await fetch(`${apiOrigin()}/api/v1/me/notifications`, { headers: { cookie }, cache: 'no-store' })
-  const notices = noticesRes.ok
-    ? ((await noticesRes.json()) as { notificationId: string; plainText: string; readAt: string | null }[])
-    : []
+  const [ordersResult, requestsResult, noticesResult] = await Promise.allSettled([
+    fetch(`${apiOrigin()}/api/v1/orders/mine`, { headers: { cookie }, cache: 'no-store' }),
+    fetch(`${apiOrigin()}/api/v1/requests/mine`, { headers: { cookie }, cache: 'no-store' }),
+    fetch(`${apiOrigin()}/api/v1/me/notifications`, { headers: { cookie }, cache: 'no-store' }),
+  ])
+  const ordersRes = ordersResult.status === 'fulfilled' ? ordersResult.value : null
+  const requestsRes = requestsResult.status === 'fulfilled' ? requestsResult.value : null
+  const noticesRes = noticesResult.status === 'fulfilled' ? noticesResult.value : null
+  const [items, orders, requests, notices] = await Promise.all([
+    readList<InvitationListItem>(response),
+    readList<OrderListItem>(ordersRes),
+    readList<CustomerRequestItem>(requestsRes),
+    readList<{ notificationId: string; plainText: string; readAt: string | null }>(noticesRes),
+  ])
 
   return (
     <>
@@ -86,35 +100,35 @@ export default async function WorkspacePage() {
           <div>
             <section className="workspace-section">
               <div className="workspace-section-head">
-                <h2>Thiệp cưới trực tuyến ({items.length})</h2>
+                <h2>Thiệp cưới trực tuyến ({response.ok ? items.length : '—'})</h2>
               </div>
-              <InvitationList items={items} />
+              {response.ok ? <InvitationList items={items} /> : <WorkspaceLoadError label="thiệp trực tuyến" />}
             </section>
 
             <section className="workspace-section">
               <div className="workspace-section-head">
-                <h2>Yêu cầu thiết kế riêng ({requests.length})</h2>
+                <h2>Yêu cầu thiết kế riêng ({requestsRes?.ok ? requests.length : '—'})</h2>
               </div>
               <div style={{ marginBottom: '16px' }}>
                 <CreateDesignRequest />
               </div>
-              <RequestList requests={requests} />
+              {requestsRes?.ok ? <RequestList requests={requests} /> : <WorkspaceLoadError label="yêu cầu thiết kế" />}
             </section>
           </div>
 
           <div>
             <section className="workspace-section">
               <div className="workspace-section-head">
-                <h2>Đơn in ấn ({orders.length})</h2>
+                <h2>Đơn in ấn ({ordersRes?.ok ? orders.length : '—'})</h2>
               </div>
-              <OrderList orders={orders} />
+              {ordersRes?.ok ? <OrderList orders={orders} /> : <WorkspaceLoadError label="đơn hàng" />}
             </section>
 
             <section className="workspace-section">
               <div className="workspace-section-head">
                 <h2>Thông báo từ xưởng</h2>
               </div>
-              {notices.length === 0 ? (
+              {!noticesRes?.ok ? <WorkspaceLoadError label="thông báo" /> : notices.length === 0 ? (
                 <div className="workspace-empty">Chưa có thông báo nào.</div>
               ) : (
                 <ul className="notice-list">
@@ -131,5 +145,14 @@ export default async function WorkspacePage() {
         </div>
       </main>
     </>
+  )
+}
+
+function WorkspaceLoadError({ label }: { label: string }) {
+  return (
+    <div className="workspace-load-error" role="status">
+      <span>Chưa tải được {label}; dữ liệu của bạn vẫn được giữ nguyên.</span>
+      <a href="/workspace">Thử tải lại</a>
+    </div>
   )
 }

@@ -3,7 +3,7 @@ import {
   getBespokeProfile,
   type BespokeProductProfile,
 } from '../../app/collections/collection-catalog-data'
-import { resolveSampleCouple } from '../../app/collections/collection-types'
+import { getPreviewCoupleName } from '../../app/collections/collection-types'
 import { drawCardCover } from './texture-cover-drawer'
 import { drawCardInside } from './texture-inside-drawer'
 
@@ -29,7 +29,7 @@ export function createBespokePaperTexture(
   if (!ctx) return new THREE.CanvasTexture(canvas)
 
   const profile = getBespokeProfile(slug) ?? DEFAULT_FALLBACK_PROFILE
-  const couple = customCoupleName || resolveSampleCouple(slug)
+  const couple = customCoupleName || getPreviewCoupleName()
 
   if (isCover) {
     drawCardCover(ctx, profile, couple, 'Tháng 12 · 2026 · Hà Nội')

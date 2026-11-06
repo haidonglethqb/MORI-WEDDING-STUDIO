@@ -1,117 +1,113 @@
 'use client'
 
 import { useState } from 'react'
+import { MoriIcon, type MoriIconName } from '../components/mori-icon'
 
-interface CraftItem {
+interface DesignChoice {
   id: string
   name: string
-  subtitle: string
   tag: string
-  desc: string
-  specs: string[]
-  visualAccent: string
-  symbol: string
+  description: string
+  details: string[]
+  icon: MoriIconName
+  accent: string
 }
 
-const CRAFTS: CraftItem[] = [
+const DESIGN_CHOICES: [DesignChoice, ...DesignChoice[]] = [
   {
-    id: 'bagasse-paper',
-    name: 'Giấy Bã Mía Sinh Thái 350gsm',
-    subtitle: 'Nền giấy ngà tự nhiên, không qua tẩy trắng công nghiệp',
-    tag: 'Tree-Free Eco Paper',
-    desc: 'Được chế tác từ sợi bã mía nông nghiệp tái sinh 100%, bảo toàn các sợi cellulose hữu cơ tự nhiên mang lại xúc cảm đầm tay, sần mịn và hương thơm nhẹ nhàng của thực vật.',
-    specs: ['Định lượng: 350gsm siêu dày', 'Màu sắc: Ngà ấm tự nhiên (Natural Ivory)', 'Bảo vệ rừng: 100% Tree-Free', 'Không chứa acid gây ố vàng'],
-    visualAccent: '#e9e4d6',
-    symbol: '🌾',
+    id: 'layout',
+    name: 'Bố cục',
+    tag: 'Sắp xếp nội dung',
+    description: 'Chọn cách đặt tên, ngày cưới và lời mời để thông tin quan trọng dễ đọc.',
+    details: ['Tên hai bạn', 'Thời gian và địa điểm', 'Lời mời và thông tin cần thiết'],
+    icon: 'paper',
+    accent: '#e9e4d6',
   },
   {
-    id: 'hot-foil',
-    name: 'Ép Kim Chìm Nhiệt Độ Cao (Hot Foil Deboss)',
-    subtitle: 'Lá kim vàng gold ấm được dập chìm cơ học dưới 160°C',
-    tag: 'Artisan Hot Foil',
-    desc: 'Khuôn đồng gia công CNC ép lá kim chìm sâu vào từng thớ giấy bã mía, tạo hiệu ứng khúc xạ ánh sáng lấp lánh khi nghiêng thiệp, mang lại vẻ đẹp quyền quý vượt thời gian.',
-    specs: ['Nhiệt độ dập: 160°C chuẩn xác', 'Độ chìm: 0.4mm sâu sắc nét', 'Sắc kim: Champagne Gold & Rose Copper', 'Bền màu: Không bong tróc vĩnh viễn'],
-    visualAccent: '#d8c28b',
-    symbol: '⚜️',
+    id: 'color',
+    name: 'Màu sắc',
+    tag: 'Không khí buổi lễ',
+    description: 'Chọn tông màu phù hợp với phong cách và không gian ngày cưới.',
+    details: ['Tông màu chủ đạo', 'Màu chữ dễ đọc', 'Cân đối giữa các mặt thiệp'],
+    icon: 'palette',
+    accent: '#d1dbcb',
   },
   {
-    id: 'deckle-edge',
-    name: 'Mép Xé Rách Thủ Công (Deckle Edge)',
-    subtitle: 'Từng cạnh thiệp được thợ xé ướt thủ công tỉ mỉ',
-    tag: 'Hand-torn Deckle',
-    desc: 'Mỗi tấm thiệp mang một đường viền bất đối xứng duy nhất không lặp lại. Sự mềm mại của mép sợi giấy xé gợi nhớ phong cách thiệp cưới hoàng gia châu Âu thế kỷ 18.',
-    specs: ['Gia công: Xé ướt thủ công từng tờ', 'Độc bản: Không có 2 mép thiệp giống nhau', 'Phong cách: Vintage & Parisian Haute', 'Tương thích cả khổ gấp & khổ phẳng'],
-    visualAccent: '#d1dbcb',
-    symbol: '✂️',
+    id: 'type',
+    name: 'Kiểu chữ',
+    tag: 'Dấu ấn cá nhân',
+    description: 'Kết hợp kiểu chữ có cá tính với nội dung rõ ràng, dễ xem trên giấy và điện thoại.',
+    details: ['Tên cặp đôi', 'Tiêu đề và lời mời', 'Thông tin ngày cưới'],
+    icon: 'spark',
+    accent: '#e6d8ce',
   },
   {
-    id: 'wax-seal',
-    name: 'Con Dấu Sáp Tự Nhiên & Ruy Băng Lụa',
-    subtitle: 'Niêm phong tình yêu bằng sáp ong phối nhũ vàng nguyên chất',
-    tag: 'Bespoke Wax Seal',
-    desc: 'Được đúc tay từng con dấu với chữ cái lồng Monogram của riêng hai bạn, kết hợp dải ruy băng lụa tơ tằm mềm mại bao bọc thiệp mời, tạo nghi thức mở thiệp thiêng liêng cho khách quý.',
-    specs: ['Chất liệu: Sáp ong tự nhiên dẻo dai', 'Dấu triện: Khắc đồng gia huy/tên đôi bạn', 'Đi kèm: Ruy băng lụa tơ tằm xé mép', 'Đóng dấu: Thủ công từng phong bì'],
-    visualAccent: '#cbb6a3',
-    symbol: '💌',
+    id: 'digital',
+    name: 'Thiệp trực tuyến',
+    tag: 'Dễ chia sẻ',
+    description: 'Tạo trang mời mở trên điện thoại và theo dõi phản hồi khách mời.',
+    details: ['Thông tin sự kiện', 'Lời mời cá nhân hóa', 'Xác nhận tham dự'],
+    icon: 'envelope',
+    accent: '#d9dfd5',
   },
 ]
 
 export function CraftMaterials() {
-  const [activeId, setActiveId] = useState('bagasse-paper')
-  const active = (CRAFTS.find((c) => c.id === activeId) ?? CRAFTS[0]) as CraftItem
+  const [activeId, setActiveId] = useState(DESIGN_CHOICES[0].id)
+  const active = DESIGN_CHOICES.find((choice) => choice.id === activeId) ?? DESIGN_CHOICES[0]
 
   return (
     <div className="craft-explorer-container">
-      <div className="craft-tabs-bar">
-        {CRAFTS.map((c) => (
+      <div className="craft-tabs-bar" role="group" aria-label="Chi tiết thiết kế">
+        {DESIGN_CHOICES.map((choice) => (
           <button
-            key={c.id}
+            key={choice.id}
+            id={`choice-tab-${choice.id}`}
             type="button"
-            className={`craft-tab-btn ${c.id === activeId ? 'active' : ''}`}
-            onClick={() => setActiveId(c.id)}
+            aria-pressed={choice.id === activeId}
+            aria-controls="choice-panel"
+            className={`craft-tab-btn ${choice.id === activeId ? 'active' : ''}`}
+            onClick={() => setActiveId(choice.id)}
           >
-            <span className="craft-tab-symbol">{c.symbol}</span>
-            <span className="craft-tab-title">{c.name.split(' (')[0]}</span>
+            <MoriIcon className="craft-tab-symbol" name={choice.icon} />
+            <span>{choice.name}</span>
           </button>
         ))}
       </div>
 
-      <div className="craft-detail-stage">
-        <div className="craft-detail-preview" style={{ background: active.visualAccent }}>
+      <div className="craft-detail-stage" id="choice-panel" role="region" aria-labelledby={`choice-tab-${active.id}`}>
+        <div className="craft-detail-preview" style={{ background: active.accent }} aria-hidden="true">
           <div className="craft-preview-inner-card">
-            <span className="craft-preview-symbol">{active.symbol}</span>
+            <MoriIcon className="craft-preview-symbol" name={active.icon} />
             <span className="craft-preview-tag">{active.tag}</span>
-            <h4 className="craft-preview-title">{active.name}</h4>
-            <p className="craft-preview-sub">{active.subtitle}</p>
-            <div className="craft-preview-gold-seal">✦ MORI ATELIER 2026 ✦</div>
+            <h3 className="craft-preview-title">Tên hai bạn</h3>
+            <p className="craft-preview-sub">Ngày vui · Địa điểm</p>
+            <div className="craft-preview-gold-seal">MORI · THIỆP CƯỚI</div>
           </div>
         </div>
 
         <div className="craft-detail-info">
           <div className="craft-badge-line">
             <span className="craft-cat-badge">{active.tag}</span>
-            <span className="craft-origin-badge">Thủ công tại Xưởng MORI</span>
+            <span className="craft-origin-badge">Cá nhân hóa cùng MORI</span>
           </div>
           <h3 className="craft-main-title">{active.name}</h3>
-          <p className="craft-lead-desc">{active.desc}</p>
-
+          <p className="craft-lead-desc">{active.description}</p>
           <div className="craft-specs-block">
-            <h4 className="craft-specs-header">Tiêu chuẩn kỹ thuật atelier:</h4>
+            <h4 className="craft-specs-header">Bạn có thể trao đổi</h4>
             <ul className="craft-specs-list">
-              {active.specs.map((spec) => (
-                <li key={spec} className="craft-spec-item">
-                  <span className="craft-spec-dot">✦</span>
-                  <span>{spec}</span>
+              {active.details.map((detail) => (
+                <li key={detail} className="craft-spec-item">
+                  <span className="craft-spec-dot" aria-hidden="true">•</span>
+                  <span>{detail}</span>
                 </li>
               ))}
             </ul>
           </div>
-
-          <div className="craft-action-row">
-            <a href="/collections" className="craft-cta-link">
-              Xem các mẫu thiệp ứng dụng kỹ thuật này &rarr;
-            </a>
-          </div>
+          <a href="/collections" className="craft-cta-link">
+            Chọn mẫu để bắt đầu <MoriIcon name="arrow-right" />
+          </a>
+          <p className="craft-note">Chất liệu, giá và thời gian hoàn thiện sẽ được xác nhận theo từng mẫu.</p>
         </div>
       </div>
     </div>

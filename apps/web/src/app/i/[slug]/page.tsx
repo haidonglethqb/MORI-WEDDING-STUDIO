@@ -17,6 +17,8 @@ interface OpenInvitation {
   displayNames: [string, string]
   eventTitle: string
   greeting: string | null
+  eventLocalStart?: string
+  timeZone?: string
 }
 
 interface GatedInvitation {
@@ -45,14 +47,10 @@ async function grantedGuest(slug: string): Promise<(OpenInvitation & { partyName
 
 export default async function GuestInvitationPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ slug: string }>
-  searchParams?: Promise<{ model?: string }>
 }) {
   const { slug } = await params
-  const sParams = searchParams ? await searchParams : undefined
-  const initialModelSlug = sParams?.model ?? slug
 
   let response: Response | null = null
   try {
@@ -92,19 +90,20 @@ export default async function GuestInvitationPage({
         <GuestFragment slug={slug} />
 
         <header className="guest-header-seal">
-          <span className="guest-atelier-badge">✦ MORI ATELIER · THIỆP MỜI TRỰC TUYẾN CAO CẤP ✦</span>
+          <span className="guest-atelier-badge">MORI · THIỆP MỜI TRỰC TUYẾN</span>
         </header>
 
         <DigitalInvitationView
-          initialSlug={initialModelSlug}
+          slug={slug}
           displayNames={page.displayNames}
           eventTitle={page.eventTitle}
           greeting={page.greeting}
+          eventLocalStart={page.eventLocalStart}
+          timeZone={page.timeZone}
           partyName={guest?.partyName ?? null}
           rsvpSection={
             <GuestRsvp
               slug={slug}
-              coupleNames={`${page.displayNames[0]} & ${page.displayNames[1]}`}
             />
           }
         />

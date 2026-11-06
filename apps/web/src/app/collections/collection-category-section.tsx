@@ -1,5 +1,6 @@
 import { CollectionCard } from './collection-card'
 import type { CollectionCategory, CollectionItem } from './collection-types'
+import { MoriIcon } from '../../components/mori-icon'
 
 interface CategorySectionProps {
   category: CollectionCategory
@@ -15,7 +16,7 @@ export function CollectionCategorySection({ category, items }: CategorySectionPr
       <div className="category-section-header">
         <div className="cat-header-top">
           <span className="cat-header-badge" style={{ borderColor: category.accentColor, color: category.accentColor }}>
-            <span className="cat-badge-icon">{category.icon}</span>
+            <MoriIcon className="cat-badge-icon" name={category.icon} />
             {category.badge}
           </span>
           <span className="cat-item-count">{items.length} mẫu thiết kế</span>

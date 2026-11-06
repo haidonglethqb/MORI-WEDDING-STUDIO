@@ -2,7 +2,6 @@
 
 import type { DigitalModelProfile } from '../invitation-model-profiles'
 import { InvitationAudioPlayer } from '../invitation-audio-player'
-import { InvitationCalendarAction } from '../invitation-calendar-action'
 
 interface TemplateProps {
   profile: DigitalModelProfile
@@ -47,7 +46,7 @@ export function FloralBotanicalTemplate({
 
       {partyName ? (
         <div className="floral-guest-pill" style={{ borderColor: profile.accentColor }}>
-          <span className="leaf-icon">🌿</span>
+          <span className="leaf-icon" aria-hidden="true" />
           <span>Trân trọng kính mời: <strong>{partyName}</strong></span>
         </div>
       ) : null}
@@ -127,11 +126,10 @@ export function FloralBotanicalTemplate({
       </div>
 
       <InvitationAudioPlayer />
-      <InvitationCalendarAction title={eventTitle} venue={venue} displayNames={displayNames} />
 
       {/* Bottom Garland */}
       <div className="floral-footer-spray">
-        <span style={{ color: profile.accentColor }}>🌿 MORI BOTANICAL ATELIER · 350GSM ECO PAPER 🌿</span>
+        <span style={{ color: profile.accentColor }}>MORI · THIỆP MỜI</span>
       </div>
     </article>
   )

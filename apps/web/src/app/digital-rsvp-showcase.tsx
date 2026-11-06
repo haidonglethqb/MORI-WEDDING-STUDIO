@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { MoriIcon } from '../components/mori-icon'
 
 export function DigitalRsvpShowcase() {
   const [rsvpState, setRsvpState] = useState<'idle' | 'attending' | 'declined'>('idle')
@@ -19,32 +20,22 @@ export function DigitalRsvpShowcase() {
             </div>
 
             <div className="phone-invitation-body">
-              <span className="phone-invite-badge">✦ THIỆP CƯỚI TRỰC TUYẾN ✦</span>
-              <div className="phone-monogram">M &amp; T</div>
-              <h3 className="phone-couple-names">Minh Sơn &amp; Thảo Vy</h3>
-              <p className="phone-event-date">Chủ Nhật · 28 Tháng 11, 2026</p>
-              <p className="phone-venue">InterContinental Landmark 72 · Hà Nội</p>
+              <span className="phone-invite-badge">MẪU THIỆP MINH HỌA</span>
+              <div className="phone-monogram">MORI</div>
+              <h3 className="phone-couple-names">Tên hai bạn</h3>
+              <p className="phone-event-date">Ngày tổ chức</p>
+              <p className="phone-venue">Địa điểm · Thành phố</p>
 
               {/* Countdown Bar */}
               <div className="phone-countdown-box">
-                <div className="count-unit"><strong>42</strong><small>Ngày</small></div>
-                <div className="count-sep">:</div>
-                <div className="count-unit"><strong>14</strong><small>Giờ</small></div>
-                <div className="count-sep">:</div>
-                <div className="count-unit"><strong>28</strong><small>Phút</small></div>
+                <span className="phone-schedule-label">Lịch trình và thông tin sự kiện</span>
               </div>
 
-              {/* Audio Player Strip */}
+              {/* Personal invitation detail */}
               <div className="phone-audio-bar">
-                <span className="audio-play-icon">▶</span>
+                <MoriIcon className="audio-play-icon" name="envelope" />
                 <div className="audio-info">
-                  <span className="audio-title">Canon in D · Piano Acoustic</span>
-                  <div className="audio-waves">
-                    <span className="wave-bar w1" />
-                    <span className="wave-bar w2" />
-                    <span className="wave-bar w3" />
-                    <span className="wave-bar w4" />
-                  </div>
+                  <span className="audio-title">Lời mời dành riêng cho bạn</span>
                 </div>
               </div>
 
@@ -52,14 +43,15 @@ export function DigitalRsvpShowcase() {
               <div className="phone-rsvp-box">
                 {rsvpState === 'idle' ? (
                   <>
-                    <p className="rsvp-prompt">Bạn sẽ cùng chung vui chứ?</p>
+                    <p className="rsvp-prompt">Mô phỏng phản hồi RSVP</p>
                     <div className="rsvp-selector-row">
                       <span>Số lượng khách:</span>
                       <div className="rsvp-counter">
                         <button
                           type="button"
                           onClick={() => setPartyCount(Math.max(1, partyCount - 1))}
-                          className="counter-btn"
+                            className="counter-btn"
+                            aria-label="Giảm số khách minh họa"
                         >
                           -
                         </button>
@@ -67,7 +59,8 @@ export function DigitalRsvpShowcase() {
                         <button
                           type="button"
                           onClick={() => setPartyCount(Math.min(5, partyCount + 1))}
-                          className="counter-btn"
+                            className="counter-btn"
+                            aria-label="Tăng số khách minh họa"
                         >
                           +
                         </button>
@@ -86,17 +79,17 @@ export function DigitalRsvpShowcase() {
                         onClick={() => setRsvpState('declined')}
                         className="rsvp-no-btn"
                       >
-                        Gửi lời chúc từ xa
+                        Không thể tham dự
                       </button>
                     </div>
                   </>
                 ) : (
                   <div className="rsvp-confirmed-view">
-                    <span className="confirmed-icon">💐</span>
+                    <MoriIcon className="confirmed-icon" name="check" />
                     <strong className="confirmed-title">
                       {rsvpState === 'attending'
-                        ? `Tuyệt vời! Đã ghi nhận ${partyCount} khách tham dự.`
-                        : 'Cảm ơn lời chúc chân thành từ bạn!'}
+                        ? `Mẫu hiển thị: ${partyCount} khách tham dự.`
+                        : 'Mẫu hiển thị: không thể tham dự.'}
                     </strong>
                     <button
                       type="button"
@@ -115,42 +108,41 @@ export function DigitalRsvpShowcase() {
 
       {/* Feature Highlights on the right */}
       <div className="digital-feature-content">
-        <span className="section-eyebrow">Trải nghiệm số độc bản</span>
-        <h2>Trang thiệp cưới điện tử RSVP tương tác đa chiều</h2>
+        <span className="section-eyebrow">03 / THIỆP TRỰC TUYẾN</span>
+        <h2>Lời mời đi xa.<br />Ngày vui gần lại.</h2>
         <p className="digital-lead-text">
-          Được thiết kế đồng bộ với bộ thiệp giấy của bạn. Khách mời mở thiệp qua liên kết riêng tư, không cần cài đặt ứng dụng,
-          xác nhận số lượng người đi cùng trong vài giây và xem chỉ đường Google Maps nhanh chóng.
+          Một đường dẫn dành riêng cho ngày cưới. Khách xem lời mời và xác nhận tham dự ngay trên điện thoại.
         </p>
 
         <div className="digital-perks-list">
           <div className="digital-perk-card">
-            <div className="perk-icon-wrap">⚡</div>
+            <MoriIcon className="perk-icon-wrap" name="check" />
             <div>
-              <h4>Đồng bộ dữ liệu thời gian thực</h4>
-              <p>Mỗi lượt xác nhận RSVP được cập nhật ngay lập tức vào bảng quản lý của cô dâu chú rể, tự động tính tổng số bàn tiệc.</p>
+              <h4>Theo dõi phản hồi</h4>
+              <p>Quản lý phản hồi và số lượng khách theo từng sự kiện trong không gian làm việc.</p>
             </div>
           </div>
 
           <div className="digital-perk-card">
-            <div className="perk-icon-wrap">💌</div>
+            <MoriIcon className="perk-icon-wrap" name="envelope" />
             <div>
-              <h4>Cá nhân hóa từng vị khách quý</h4>
-              <p>Mỗi khách mời nhận một thiệp với tên riêng (ví dụ: &ldquo;Kính mời: Anh Hoàng Nam &amp; Bạn&rdquo;) đảm bảo sự trang trọng.</p>
+              <h4>Lời mời riêng cho từng khách</h4>
+              <p>Cá nhân hóa liên kết mời để khách mở đúng thông tin dành cho mình.</p>
             </div>
           </div>
 
           <div className="digital-perk-card">
-            <div className="perk-icon-wrap">🗺️</div>
+            <MoriIcon className="perk-icon-wrap" name="map-pin" />
             <div>
-              <h4>Chỉ đường &amp; Lịch tiệc thông minh</h4>
-              <p>Tích hợp bản đồ dẫn đường chính xác và nút bấm thêm sự kiện vào Google Calendar / Apple Calendar chỉ với 1 chạm.</p>
+              <h4>Địa điểm và lịch sự kiện</h4>
+              <p>Giúp khách xem thông tin ngày vui và tải lịch sự kiện khi bạn đã cập nhật thời gian.</p>
             </div>
           </div>
         </div>
 
         <div className="digital-cta-row">
-          <a href="/collections" className="home-cta">
-            Khám phá các mẫu thiệp số
+          <a href="/workspace" className="home-cta">
+            Tạo thiệp trực tuyến
           </a>
           <a href="/assistant" className="home-quiet">
             Hỏi trợ lý stylist &rarr;
