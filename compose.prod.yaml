@@ -20,6 +20,8 @@ services:
       APP_ENV: production
       DATABASE_URL: postgresql://mori:${POSTGRES_PASSWORD:-mori_prod_secret}@postgres:5432/mori_db
       REDIS_URL: redis://redis:6379
+      SMTP_HOST: ${SMTP_HOST:-mailpit}
+      SMTP_PORT: "${SMTP_PORT:-1025}"
       PORT: "4000"
       API_INTERNAL_ORIGIN: http://api:4000
       PUBLIC_APP_ORIGIN: ${PUBLIC_APP_ORIGIN:-http://43.240.117.146}
@@ -35,6 +37,8 @@ services:
       APP_ENV: production
       DATABASE_URL: postgresql://mori:${POSTGRES_PASSWORD:-mori_prod_secret}@postgres:5432/mori_db
       REDIS_URL: redis://redis:6379
+      SMTP_HOST: ${SMTP_HOST:-mailpit}
+      SMTP_PORT: "${SMTP_PORT:-1025}"
       PORT: "4000"
       API_INTERNAL_ORIGIN: http://api:4000
       MEDIA_ROOT: /var/mori/media
