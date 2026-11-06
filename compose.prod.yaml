@@ -1,0 +1,58 @@
+name: mori
+
+# Production Docker Compose overrides for MORI Wedding Studio
+# Used on the VPS: docker compose -f compose.yaml -f compose.prod.yaml up -d
+services:
+  postgres:
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mori_prod_secret}
+    restart: unless-stopped
+
+  migrate:
+    image: ${IMAGE_REGISTRY:-ghcr.io}/${IMAGE_REPO:-haidonglethqb}/mori-migrate:${IMAGE_TAG:-latest}
+    environment:
+      DATABASE_URL: postgresql://mori:${POSTGRES_PASSWORD:-mori_prod_secret}@postgres:5432/mori_db
+    restart: "no"
+
+  api:
+    image: ${IMAGE_REGISTRY:-ghcr.io}/${IMAGE_REPO:-haidonglethqb}/mori-api:${IMAGE_TAG:-latest}
+    environment:
+      APP_ENV: production
+      DATABASE_URL: postgresql://mori:${POSTGRES_PASSWORD:-mori_prod_secret}@postgres:5432/mori_db
+      REDIS_URL: redis://redis:6379
+      PORT: "4000"
+      API_INTERNAL_ORIGIN: http://api:4000
+      PUBLIC_APP_ORIGIN: ${PUBLIC_APP_ORIGIN:-http://43.240.117.146}
+      PUBLIC_INVITE_ORIGIN: ${PUBLIC_INVITE_ORIGIN:-http://43.240.117.146}
+      MEDIA_ROOT: /var/mori/media
+    ports:
+      - "127.0.0.1:4000:4000"
+    restart: unless-stopped
+
+  worker:
+    image: ${IMAGE_REGISTRY:-ghcr.io}/${IMAGE_REPO:-haidonglethqb}/mori-worker:${IMAGE_TAG:-latest}
+    environment:
+      APP_ENV: production
+      DATABASE_URL: postgresql://mori:${POSTGRES_PASSWORD:-mori_prod_secret}@postgres:5432/mori_db
+      REDIS_URL: redis://redis:6379
+      PORT: "4000"
+      API_INTERNAL_ORIGIN: http://api:4000
+      MEDIA_ROOT: /var/mori/media
+    restart: unless-stopped
+
+  web:
+    image: ${IMAGE_REGISTRY:-ghcr.io}/${IMAGE_REPO:-haidonglethqb}/mori-web:${IMAGE_TAG:-latest}
+    environment:
+      NODE_ENV: production
+      API_INTERNAL_ORIGIN: http://api:4000
+      PORT: "3000"
+    ports:
+      - "80:3000"
+      - "3000:3000"
+    restart: unless-stopped
+
+  redis:
+    restart: unless-stopped
+
+  mailpit:
+    restart: unless-stopped
