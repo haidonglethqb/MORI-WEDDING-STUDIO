@@ -29,6 +29,7 @@ export interface AssistantChatRequest {
   message: string
   history?: AssistantChatMessage[]
   context?: Partial<ConversationWeddingBrief> | null
+  sessionId?: string
 }
 
 export interface SuggestedProductCard {

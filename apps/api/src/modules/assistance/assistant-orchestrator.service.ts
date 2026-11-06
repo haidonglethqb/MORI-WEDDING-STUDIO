@@ -41,7 +41,7 @@ export class AssistantOrchestratorService {
     this.logService = logService ?? new AiLogService()
   }
 
-  async handleChat(req: AssistantChatRequest): Promise<AssistantChatResponse> {
+  async handleChat(req: AssistantChatRequest, sessionId = 'session_guest_default'): Promise<AssistantChatResponse> {
     const start = Date.now()
     const baseBrief = this.extractor.mergeBrief(
       this.extractor.createInitialBrief(),
@@ -71,25 +71,30 @@ export class AssistantOrchestratorService {
       response = this.formatLocalFallback(boostedBrief, req.message, catalog, Date.now() - start)
     }
 
-    this.logService.recordLog({
-      userMessage: req.message,
-      modelUsed: response.meta.modelUsed,
-      fallbackTier: response.meta.fallbackTier,
-      latencyMs: response.meta.latencyMs,
-      assistantReply: response.reply,
-      suggestedProducts: response.suggestedProducts.map((p) => ({
-        slug: p.slug,
-        name: p.name,
-        startingPriceVnd: p.startingPriceVnd,
-      })),
-      extractedContext: {
+    this.logService.recordTurn(
+      sessionId,
+      {
+        userMessage: req.message,
+        modelUsed: response.meta.modelUsed,
+        fallbackTier: response.meta.fallbackTier,
+        latencyMs: response.meta.latencyMs,
+        assistantReply: response.reply,
+        suggestedProducts: response.suggestedProducts.map((p) => ({
+          slug: p.slug,
+          name: p.name,
+          startingPriceVnd: p.startingPriceVnd,
+        })),
+      },
+      {
         coupleNames: response.updatedBrief.coupleNames,
         weddingDate: response.updatedBrief.weddingDate,
         location: response.updatedBrief.location,
         guestCount: response.updatedBrief.guestCount,
-        budget: response.updatedBrief.budgetRangeVnd?.max,
+        budget: response.updatedBrief.budgetRangeVnd?.max ?? null,
+        aesthetic: response.updatedBrief.aestheticIdentity,
+        targetShape: response.updatedBrief.targetShape,
       },
-    })
+    )
 
     return response
   }

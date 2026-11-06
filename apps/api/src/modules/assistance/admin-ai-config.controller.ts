@@ -7,6 +7,7 @@ import {
   Headers,
   HttpCode,
   NotFoundException,
+  Param,
   Post,
   Put,
 } from '@nestjs/common'
@@ -58,7 +59,7 @@ export class AdminAiConfigController {
   @Header('Cache-Control', PRIVATE)
   async getLogs(@Headers('cookie') cookie: string | undefined) {
     await this.verifyAdmin(cookie)
-    return this.logService.getLogs(50)
+    return this.logService.getSessions(50)
   }
 
   @Delete('logs')
@@ -66,8 +67,19 @@ export class AdminAiConfigController {
   @Header('Cache-Control', PRIVATE)
   async clearLogs(@Headers('cookie') cookie: string | undefined) {
     await this.verifyAdmin(cookie)
-    this.logService.clearLogs()
+    this.logService.clearSessions()
     return { success: true }
+  }
+
+  @Delete('sessions/:id')
+  @HttpCode(200)
+  @Header('Cache-Control', PRIVATE)
+  async deleteSession(
+    @Headers('cookie') cookie: string | undefined,
+    @Param('id') id: string,
+  ) {
+    await this.verifyAdmin(cookie)
+    return { success: this.logService.deleteSession(id) }
   }
 
   @Put()

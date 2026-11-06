@@ -8,6 +8,11 @@ import type {
 } from './assistant-types'
 
 const STORAGE_KEY = 'mori_atelier_assistant_session_v2'
+const SESSION_KEY = 'mori_atelier_chat_session_id'
+
+function createSessionId(): string {
+  return `sess_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
+}
 
 export const DEFAULT_BRIEF: ConversationWeddingBrief = {
   coupleNames: null,
@@ -42,6 +47,7 @@ export const QUICK_STARTERS = [
 export function useAssistantChat() {
   const [messages, setMessages] = useState<ChatMessageItem[]>([INITIAL_GREETING])
   const [brief, setBrief] = useState<ConversationWeddingBrief>(DEFAULT_BRIEF)
+  const [sessionId, setSessionId] = useState<string>('')
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [quickOptions, setQuickOptions] = useState<string[]>(QUICK_STARTERS)
@@ -49,6 +55,13 @@ export function useAssistantChat() {
 
   useEffect(() => {
     try {
+      let savedSession = localStorage.getItem(SESSION_KEY)
+      if (!savedSession) {
+        savedSession = createSessionId()
+        localStorage.setItem(SESSION_KEY, savedSession)
+      }
+      setSessionId(savedSession)
+
       const saved = localStorage.getItem(STORAGE_KEY)
       if (saved) {
         const parsed = JSON.parse(saved) as {
@@ -84,10 +97,11 @@ export function useAssistantChat() {
 
     try {
       const history = updatedMessages.map((m) => ({ role: m.role, content: m.content }))
+      const activeSession = sessionId || createSessionId()
       const res = await fetch('/assistant/ask', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ message: text, history, context: brief }),
+        body: JSON.stringify({ message: text, history, context: brief, sessionId: activeSession }),
       })
 
       if (!res.ok) {
@@ -130,7 +144,14 @@ export function useAssistantChat() {
   }
 
   function handleReset() {
-    localStorage.removeItem(STORAGE_KEY)
+    const nextSession = createSessionId()
+    try {
+      localStorage.removeItem(STORAGE_KEY)
+      localStorage.setItem(SESSION_KEY, nextSession)
+    } catch {
+      // Storage unavailable
+    }
+    setSessionId(nextSession)
     setMessages([INITIAL_GREETING])
     setBrief(DEFAULT_BRIEF)
     setQuickOptions(QUICK_STARTERS)

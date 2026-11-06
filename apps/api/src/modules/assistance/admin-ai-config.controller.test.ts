@@ -36,7 +36,7 @@ describe('AdminAiConfigController', () => {
   })
 
   it('records and returns interaction logs', async () => {
-    logService.recordLog({
+    logService.recordTurn('sess-test-1', {
       userMessage: 'Test user message',
       modelUsed: 'gpt-6.1-sol',
       fallbackTier: 1,
@@ -45,9 +45,10 @@ describe('AdminAiConfigController', () => {
       suggestedProducts: [],
     })
 
-    const logs = await controller.getLogs(undefined)
-    expect(logs.length).toBeGreaterThan(0)
-    expect(logs[0]?.userMessage).toBe('Test user message')
-    expect(logs[0]?.modelUsed).toBe('gpt-6.1-sol')
+    const sessions = await controller.getLogs(undefined)
+    expect(sessions.length).toBeGreaterThan(0)
+    expect(sessions[0]?.sessionId).toBe('sess-test-1')
+    expect(sessions[0]?.turns[0]?.userMessage).toBe('Test user message')
+    expect(sessions[0]?.turns[0]?.modelUsed).toBe('gpt-6.1-sol')
   })
 })

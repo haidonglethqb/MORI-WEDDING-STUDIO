@@ -9,7 +9,12 @@ function apiOrigin(): string {
 
 export async function POST(request: Request) {
   const cookieStore = await cookies()
-  let sessionId = cookieStore.get('mori_assistant_session_id')?.value
+  const raw: unknown = await request.json()
+  const body = typeof raw === 'object' && raw !== null ? (raw as Record<string, unknown>) : {}
+  const clientSessionId =
+    typeof body['sessionId'] === 'string' && body['sessionId'] ? body['sessionId'] : null
+
+  let sessionId = clientSessionId ?? cookieStore.get('mori_assistant_session_id')?.value
   let isNewSession = false
 
   if (!sessionId) {
@@ -18,15 +23,11 @@ export async function POST(request: Request) {
   }
 
   const allCookies = cookieStore.getAll()
-  const hasSession = allCookies.some((c) => c.name === 'mori_assistant_session_id')
-  const cookiePairs = allCookies.map((c) => `${c.name}=${c.value}`)
-  if (!hasSession) {
-    cookiePairs.push(`mori_assistant_session_id=${sessionId}`)
-  }
+  const filtered = allCookies.filter((c) => c.name !== 'mori_assistant_session_id')
+  const cookiePairs = filtered.map((c) => `${c.name}=${c.value}`)
+  cookiePairs.push(`mori_assistant_session_id=${sessionId}`)
   const upstreamCookie = cookiePairs.join('; ')
 
-  const raw: unknown = await request.json()
-  const body = typeof raw === 'object' && raw !== null ? (raw as Record<string, unknown>) : {}
   const forwarded = request.headers.get('x-forwarded-for') ?? '127.0.0.1'
 
   const endpoint =
@@ -41,6 +42,7 @@ export async function POST(request: Request) {
       cookie: upstreamCookie,
       origin: 'http://app.mori.localhost',
       'x-forwarded-for': forwarded,
+      'x-session-id': sessionId,
     },
     body: JSON.stringify(body),
     cache: 'no-store',

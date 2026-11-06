@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common'
-import { existsSync, mkdirSync, readFileSync, appendFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 
-export interface AiInteractionLog {
+export interface AiSessionTurn {
   id: string
+  turnIndex: number
   timestamp: string
   userMessage: string
   modelUsed: string
@@ -15,84 +16,124 @@ export interface AiInteractionLog {
     name: string
     startingPriceVnd: string
   }>
-  extractedContext?: {
-    coupleNames?: string | null
-    weddingDate?: string | null
-    location?: string | null
-    guestCount?: number | null
-    budget?: string | null
-  }
 }
 
-const MAX_MEMORY_LOGS = 100
+export interface AiConversationSession {
+  sessionId: string
+  createdAt: string
+  updatedAt: string
+  turnsCount: number
+  lastModelUsed: string
+  brief: {
+    coupleNames?: string | null | undefined
+    weddingDate?: string | null | undefined
+    location?: string | null | undefined
+    guestCount?: number | null | undefined
+    budget?: string | null | undefined
+    aesthetic?: string | null | undefined
+    targetShape?: string | null | undefined
+  }
+  turns: AiSessionTurn[]
+}
+
+const MAX_SESSIONS = 100
 
 @Injectable()
 export class AiLogService {
-  private memoryLogs: AiInteractionLog[] = []
-  private readonly logPath: string
+  private sessionsMap = new Map<string, AiConversationSession>()
+  private readonly filePath: string
 
   constructor() {
-    this.logPath = join(process.cwd(), '.data', 'ai-interaction-logs.jsonl')
-    this.loadInitialLogs()
+    this.filePath = join(process.cwd(), '.data', 'ai-sessions.json')
+    this.loadSessions()
   }
 
-  recordLog(entry: Omit<AiInteractionLog, 'id' | 'timestamp'>): AiInteractionLog {
-    const item: AiInteractionLog = {
-      id: `log_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
-      timestamp: new Date().toISOString(),
-      ...entry,
-    }
+  recordTurn(
+    sessionId: string,
+    turnData: Omit<AiSessionTurn, 'id' | 'turnIndex' | 'timestamp'>,
+    context?: AiConversationSession['brief'],
+  ): AiConversationSession {
+    const cleanSessionId = sessionId || 'session_guest_default'
+    const now = new Date().toISOString()
 
-    this.memoryLogs.unshift(item)
-    if (this.memoryLogs.length > MAX_MEMORY_LOGS) {
-      this.memoryLogs.pop()
-    }
-
-    this.persistLog(item)
-    return item
-  }
-
-  getLogs(limit = 50): AiInteractionLog[] {
-    return this.memoryLogs.slice(0, limit)
-  }
-
-  clearLogs(): void {
-    this.memoryLogs = []
-    try {
-      if (existsSync(this.logPath)) {
-        writeFileSync(this.logPath, '', 'utf-8')
+    let session = this.sessionsMap.get(cleanSessionId)
+    if (!session) {
+      session = {
+        sessionId: cleanSessionId,
+        createdAt: now,
+        updatedAt: now,
+        turnsCount: 0,
+        lastModelUsed: turnData.modelUsed,
+        brief: context ?? {},
+        turns: [],
       }
-    } catch {
-      // Ignore
     }
+
+    const turnIndex = session.turns.length + 1
+    const newTurn: AiSessionTurn = {
+      id: `turn_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+      turnIndex,
+      timestamp: now,
+      ...turnData,
+    }
+
+    session.turns.push(newTurn)
+    session.turnsCount = session.turns.length
+    session.updatedAt = now
+    session.lastModelUsed = turnData.modelUsed
+    if (context) {
+      session.brief = { ...session.brief, ...context }
+    }
+
+    this.sessionsMap.set(cleanSessionId, session)
+    this.persistSessions()
+    return session
   }
 
-  private loadInitialLogs(): void {
+  getSessions(limit = 50): AiConversationSession[] {
+    const list = Array.from(this.sessionsMap.values())
+    list.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+    return list.slice(0, limit)
+  }
+
+  getSession(sessionId: string): AiConversationSession | null {
+    return this.sessionsMap.get(sessionId) ?? null
+  }
+
+  clearSessions(): void {
+    this.sessionsMap.clear()
+    this.persistSessions()
+  }
+
+  deleteSession(sessionId: string): boolean {
+    const deleted = this.sessionsMap.delete(sessionId)
+    if (deleted) this.persistSessions()
+    return deleted
+  }
+
+  private loadSessions(): void {
     try {
-      if (!existsSync(this.logPath)) return
-      const content = readFileSync(this.logPath, 'utf-8')
-      const lines = content.split('\n').filter((l) => l.trim().length > 0)
-      const parsed: AiInteractionLog[] = []
-      for (let i = lines.length - 1; i >= 0 && parsed.length < MAX_MEMORY_LOGS; i--) {
-        try {
-          parsed.push(JSON.parse(lines[i] as string) as AiInteractionLog)
-        } catch {
-          // Ignore corrupt lines
+      if (!existsSync(this.filePath)) return
+      const raw = readFileSync(this.filePath, 'utf-8')
+      const parsed = JSON.parse(raw) as AiConversationSession[]
+      if (Array.isArray(parsed)) {
+        for (const s of parsed) {
+          if (s.sessionId) this.sessionsMap.set(s.sessionId, s)
         }
       }
-      this.memoryLogs = parsed
     } catch {
-      this.memoryLogs = []
+      this.sessionsMap.clear()
     }
   }
 
-  private persistLog(item: AiInteractionLog): void {
+  private persistSessions(): void {
     try {
-      const dir = dirname(this.logPath)
-      if (!existsSync(dir)) {
-        mkdirSync(dir, { recursive: true })
-      }
-      appendFileSync(this.logPath, `${JSON.stringify(item)}\n`, 'utf-8')
+      const dir = dirname(this.filePath)
+      if (!existsSync(dir)) mkdirSync(dir, { recursive: true })
+      const list = Array.from(this.sessionsMap.values())
+        .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+        .slice(0, MAX_SESSIONS)
+      writeFileSync(this.filePath, JSON.stringify(list, null, 2), 'utf-8')
     } catch {
       // Ignore
     }

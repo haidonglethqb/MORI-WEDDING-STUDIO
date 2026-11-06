@@ -49,11 +49,13 @@ export class AssistantController {
   async chat(
     @Headers('cookie') cookie: string | undefined,
     @Headers('x-forwarded-for') forwarded: string | undefined,
+    @Headers('x-session-id') xSessionId: string | undefined,
     @Body() body: AssistantChatRequest,
   ) {
     const actor = await this.actor(cookie, forwarded)
     await this.quota.reserve(actor.subject, actor.limit)
-    return this.orchestrator.handleChat(body)
+    const effectiveSessionId = body.sessionId || xSessionId || actor.subject
+    return this.orchestrator.handleChat(body, effectiveSessionId)
   }
 
   private async actor(cookie: string | undefined, forwarded: string | undefined) {
