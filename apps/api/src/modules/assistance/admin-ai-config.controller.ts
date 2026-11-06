@@ -131,7 +131,7 @@ export class AdminAiConfigController {
 
     try {
       const controller = new AbortController()
-      const timer = setTimeout(() => controller.abort(), 10000)
+      const timer = setTimeout(() => controller.abort(), 25000)
 
       const response = await fetch(endpoint, {
         method: 'POST',
@@ -141,10 +141,9 @@ export class AdminAiConfigController {
         },
         body: JSON.stringify({
           model: targetModel,
-          messages: [
-            { role: 'user', content: 'Xin chào nghệ nhân MORI!' },
-          ],
+          messages: [{ role: 'user', content: 'Xin chào nghệ nhân MORI!' }],
           temperature: 0.3,
+          max_tokens: 30,
         }),
         signal: controller.signal,
       }).finally(() => clearTimeout(timer))
