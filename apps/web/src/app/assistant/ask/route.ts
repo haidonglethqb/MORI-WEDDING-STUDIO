@@ -8,7 +8,20 @@ function apiOrigin(): string {
 }
 
 export async function POST(request: Request) {
-  const cookie = (await cookies()).toString()
+  const cookieStore = await cookies()
+  let sessionId = cookieStore.get('mori_assistant_session_id')?.value
+  let isNewSession = false
+
+  if (!sessionId) {
+    sessionId = `sess_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`
+    isNewSession = true
+  }
+
+  const existingCookieStr = cookieStore.toString()
+  const upstreamCookie = existingCookieStr.includes('mori_assistant_session_id')
+    ? existingCookieStr
+    : `${existingCookieStr ? `${existingCookieStr}; ` : ''}mori_assistant_session_id=${sessionId}`
+
   const raw: unknown = await request.json()
   const body = typeof raw === 'object' && raw !== null ? (raw as Record<string, unknown>) : {}
   const forwarded = request.headers.get('x-forwarded-for') ?? '127.0.0.1'
@@ -22,16 +35,27 @@ export async function POST(request: Request) {
     method: 'POST',
     headers: {
       'content-type': 'application/json',
-      cookie,
+      cookie: upstreamCookie,
       origin: 'http://app.mori.localhost',
       'x-forwarded-for': forwarded,
     },
     body: JSON.stringify(body),
     cache: 'no-store',
   })
+
   const payload = (await upstream.text()) || '{}'
-  return new NextResponse(payload, {
+  const response = new NextResponse(payload, {
     status: upstream.status,
     headers: { 'cache-control': 'private, no-store', 'content-type': 'application/json' },
   })
+
+  if (isNewSession) {
+    response.cookies.set('mori_assistant_session_id', sessionId, {
+      path: '/',
+      httpOnly: true,
+      maxAge: 30 * 24 * 60 * 60,
+    })
+  }
+
+  return response
 }

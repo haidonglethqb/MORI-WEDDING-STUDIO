@@ -89,9 +89,21 @@ export function AssistantForm() {
         body: JSON.stringify({ message: text, history, context: brief }),
       })
 
-      if (!res.ok) throw new Error(`HTTP ${res.status}`)
-      const data = (await res.json()) as AssistantChatApiResponse
+      if (!res.ok) {
+        if (res.status === 409) {
+          const quotaMsg: ChatMessageItem = {
+            id: `quota-${Date.now()}`,
+            role: 'assistant',
+            content:
+              'Bạn đã sử dụng hết hạn mức 5 lượt tư vấn hôm nay dành cho khách vãng lai. Vui lòng đăng nhập tài khoản MORI để tiếp tục trò chuyện (30 lượt/ngày), hoặc quay lại vào ngày mai nhé ✦',
+          }
+          setMessages((prev) => [...prev, quotaMsg])
+          return
+        }
+        throw new Error(`HTTP ${res.status}`)
+      }
 
+      const data = (await res.json()) as AssistantChatApiResponse
       const botMsg: ChatMessageItem = {
         id: `a-${Date.now()}`,
         role: 'assistant',
