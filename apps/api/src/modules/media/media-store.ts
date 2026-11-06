@@ -1,7 +1,6 @@
 import { createHash } from 'node:crypto'
 import { mkdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs'
 import { dirname, join } from 'node:path'
-import { tmpdir } from 'node:os'
 import { ConflictException } from '@nestjs/common'
 
 export function writeImmutable(assetId: string, checksum: string, bytes: Buffer): string {

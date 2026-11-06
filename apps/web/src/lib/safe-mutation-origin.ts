@@ -1,11 +1,27 @@
 import { NextResponse } from 'next/server'
 
-const ALLOWED_ORIGINS = new Set([
-  'http://app.mori.localhost',
-  'http://invite.mori.localhost',
-  'http://localhost:3000',
-  'http://127.0.0.1:3000',
-])
+function getAllowedOrigins(): Set<string> {
+  const allowed = new Set([
+    'http://app.mori.localhost',
+    'http://invite.mori.localhost',
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+  ])
+  if (process.env['PUBLIC_APP_ORIGIN']) {
+    allowed.add(process.env['PUBLIC_APP_ORIGIN'].trim().replace(/\/+$/, ''))
+  }
+  if (process.env['PUBLIC_INVITE_ORIGIN']) {
+    allowed.add(process.env['PUBLIC_INVITE_ORIGIN'].trim().replace(/\/+$/, ''))
+  }
+  return allowed
+}
+
+function resolveUpstreamOrigin(origin: string): string {
+  if (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
+    return process.env['PUBLIC_APP_ORIGIN']?.trim().replace(/\/+$/, '') || 'http://app.mori.localhost'
+  }
+  return origin
+}
 
 export function validateBffOrigin(request: Request): {
   ok: true
@@ -14,9 +30,21 @@ export function validateBffOrigin(request: Request): {
   ok: false
   response: NextResponse
 } {
+  const secFetchSite = request.headers.get('sec-fetch-site')
+  if (secFetchSite === 'cross-site') {
+    return {
+      ok: false,
+      response: new NextResponse(
+        JSON.stringify({ code: 'CROSS_SITE_REJECTED', message: 'Cross-site request rejected' }),
+        { status: 403, headers: { 'content-type': 'application/json' } },
+      ),
+    }
+  }
+
+  const allowed = getAllowedOrigins()
   const origin = request.headers.get('origin')
   if (origin) {
-    if (!ALLOWED_ORIGINS.has(origin)) {
+    if (!allowed.has(origin)) {
       return {
         ok: false,
         response: new NextResponse(
@@ -25,18 +53,14 @@ export function validateBffOrigin(request: Request): {
         ),
       }
     }
-    const upstreamOrigin =
-      origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')
-        ? 'http://app.mori.localhost'
-        : origin
-    return { ok: true, upstreamOrigin }
+    return { ok: true, upstreamOrigin: resolveUpstreamOrigin(origin) }
   }
 
   const referer = request.headers.get('referer')
   if (referer) {
     try {
       const parsedOrigin = new URL(referer).origin
-      if (!ALLOWED_ORIGINS.has(parsedOrigin)) {
+      if (!allowed.has(parsedOrigin)) {
         return {
           ok: false,
           response: new NextResponse(
@@ -45,6 +69,7 @@ export function validateBffOrigin(request: Request): {
           ),
         }
       }
+      return { ok: true, upstreamOrigin: resolveUpstreamOrigin(parsedOrigin) }
     } catch {
       return {
         ok: false,
@@ -56,5 +81,11 @@ export function validateBffOrigin(request: Request): {
     }
   }
 
-  return { ok: true, upstreamOrigin: 'http://app.mori.localhost' }
+  return {
+    ok: false,
+    response: new NextResponse(
+      JSON.stringify({ code: 'CROSS_SITE_REJECTED', message: 'Missing origin and referer headers' }),
+      { status: 403, headers: { 'content-type': 'application/json' } },
+    ),
+  }
 }

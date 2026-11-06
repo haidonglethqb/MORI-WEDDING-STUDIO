@@ -6,8 +6,10 @@ import {
   Header,
   Headers,
   Post,
+  Req,
   UnprocessableEntityException,
 } from '@nestjs/common'
+import { z } from 'zod'
 import { SESSION_COOKIE } from '@mori/contracts'
 import type { CataloguePreference } from '@mori/domain'
 import { IdentityService } from '../identity/identity.service.js'
@@ -19,6 +21,36 @@ import { AssistantOrchestratorService } from './assistant-orchestrator.service.j
 import type { AssistantChatRequest } from './assistant-types.js'
 
 const PRIVATE = 'private, no-store'
+
+const AssistantChatRequestSchema = z.object({
+  message: z
+    .string()
+    .trim()
+    .min(1, 'Message cannot be empty')
+    .max(4000, 'Message cannot exceed 4000 characters'),
+  sessionId: z.string().optional(),
+  clientMessageId: z.string().uuid().optional(),
+  context: z.record(z.string(), z.unknown()).optional(),
+  history: z
+    .array(
+      z.object({
+        role: z.enum(['user', 'assistant']),
+        content: z.string(),
+      }),
+    )
+    .optional(),
+})
+
+function validateChatRequest(raw: unknown): AssistantChatRequest {
+  const result = AssistantChatRequestSchema.safeParse(raw)
+  if (!result.success) {
+    const issue = result.error.issues[0]
+    throw new UnprocessableEntityException(
+      issue ? `${issue.path.join('.')}: ${issue.message}` : 'Invalid chat request',
+    )
+  }
+  return result.data as AssistantChatRequest
+}
 
 @Controller('assistant')
 export class AssistantController {
@@ -34,12 +66,12 @@ export class AssistantController {
   @Header('Cache-Control', PRIVATE)
   async recommend(
     @Headers('cookie') cookie: string | undefined,
-    @Headers('x-forwarded-for') forwarded: string | undefined,
+    @Req() req: { ip?: string; socket?: { remoteAddress?: string } },
     @Body() body: AssistantBody,
   ) {
     if (body.tool) this.tools.run(body.tool)
     const preference = parsePreference(body)
-    const actor = await this.actor(cookie, forwarded)
+    const actor = await this.actor(cookie, req)
     await this.quota.reserve(actor.subject, actor.limit)
     return this.recommendations.recommend(preference)
   }
@@ -48,17 +80,21 @@ export class AssistantController {
   @Header('Cache-Control', PRIVATE)
   async chat(
     @Headers('cookie') cookie: string | undefined,
-    @Headers('x-forwarded-for') forwarded: string | undefined,
     @Headers('x-session-id') xSessionId: string | undefined,
-    @Body() body: AssistantChatRequest,
+    @Req() req: { ip?: string; socket?: { remoteAddress?: string } },
+    @Body() body: unknown,
   ) {
-    const actor = await this.actor(cookie, forwarded)
+    const validRequest = validateChatRequest(body)
+    const actor = await this.actor(cookie, req)
     await this.quota.reserve(actor.subject, actor.limit)
-    const effectiveSessionId = body.sessionId || xSessionId || actor.subject
-    return this.orchestrator.handleChat(body, effectiveSessionId)
+    const effectiveSessionId = validRequest.sessionId || xSessionId || actor.subject
+    return this.orchestrator.handleChat(validRequest, effectiveSessionId)
   }
 
-  private async actor(cookie: string | undefined, forwarded: string | undefined) {
+  private async actor(
+    cookie: string | undefined,
+    req?: { ip?: string; socket?: { remoteAddress?: string } },
+  ) {
     try {
       const user = await this.identity.currentUser(readCookie(cookie, SESSION_COOKIE))
       if (user.status === 'ACTIVE') return { subject: `user:${user.id}`, limit: 30 }
@@ -66,7 +102,12 @@ export class AssistantController {
       if (error instanceof ForbiddenException) throw error
     }
     const isDev = process.env['APP_ENV'] !== 'production'
-    const ip = forwarded?.split(',')[0]?.trim() || '127.0.0.1'
+    const sessionCookie = readCookie(cookie, 'mori_assistant_session_id')
+    if (sessionCookie) {
+      const hash = createHash('sha256').update(`sess:${sessionCookie}`).digest('hex')
+      return { subject: `anon:${hash}`, limit: isDev ? 1000 : 5 }
+    }
+    const ip = req?.ip || req?.socket?.remoteAddress || '127.0.0.1'
     const hash = createHash('sha256').update(`anon:${ip}`).digest('hex')
     return { subject: `anon:${hash}`, limit: isDev ? 1000 : 5 }
   }

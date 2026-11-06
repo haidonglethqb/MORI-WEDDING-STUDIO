@@ -53,7 +53,7 @@ describe('Tier 4: Scenarios T16 - T22 (Resiliency, Auth, Security, Concurrency)'
 
   // T18: Client spoofs X-Forwarded-For
   it('T18: Quota binds to trusted reverse proxy boundary, preventing XFF spoofing bypass', () => {
-    let anonUsageCount = 5
+    const anonUsageCount = 5
     const limit = 5
 
     const checkQuota = (trustedClientIp: string) => {

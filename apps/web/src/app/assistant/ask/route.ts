@@ -18,7 +18,7 @@ export async function POST(request: Request) {
   const clientSessionId =
     typeof body['sessionId'] === 'string' && body['sessionId'] ? body['sessionId'] : null
 
-  let sessionId = clientSessionId ?? cookieStore.get('mori_assistant_session_id')?.value
+  let sessionId = cookieStore.get('mori_assistant_session_id')?.value ?? clientSessionId
   let isNewSession = false
 
   if (!sessionId) {
@@ -62,6 +62,8 @@ export async function POST(request: Request) {
     response.cookies.set('mori_assistant_session_id', sessionId, {
       path: '/',
       httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env['NODE_ENV'] === 'production',
       maxAge: 30 * 24 * 60 * 60,
     })
   }

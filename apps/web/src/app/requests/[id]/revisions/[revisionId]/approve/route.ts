@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
+import { validateBffOrigin } from '../../../../../../lib/safe-mutation-origin'
 
 export const dynamic = 'force-dynamic'
 
@@ -11,6 +12,9 @@ export async function POST(
   request: Request,
   context: { params: Promise<{ id: string; revisionId: string }> },
 ) {
+  const originCheck = validateBffOrigin(request)
+  if (!originCheck.ok) return originCheck.response
+
   const { id, revisionId } = await context.params
   const cookie = (await cookies()).toString()
   const body: unknown = await request.json()
@@ -19,7 +23,7 @@ export async function POST(
     headers: {
       'content-type': 'application/json',
       cookie,
-      origin: 'http://app.mori.localhost',
+      origin: originCheck.upstreamOrigin,
     },
     body: JSON.stringify(body),
     cache: 'no-store',

@@ -28,4 +28,6 @@ export const PROBLEM_TYPES = {
   NOT_FOUND: 'https://mori.app/errors/not-found',
   INTERNAL: 'https://mori.app/errors/internal',
   CONFLICT: 'https://mori.app/errors/conflict',
+  RATE_LIMITED: 'https://mori.app/errors/rate-limited',
+  SERVICE_UNAVAILABLE: 'https://mori.app/errors/service-unavailable',
 } as const

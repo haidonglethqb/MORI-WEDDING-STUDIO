@@ -152,16 +152,17 @@ export class AssistantOrchestratorService {
     const estimatedBudget = this.estimator.calculateBudget(brief)
 
     const coupleGreeting = brief.coupleNames ? `Chào ${brief.coupleNames}, ` : 'Kính chào bạn, '
-    const venueNote = brief.venueCategory === 'OUTDOOR_GARDEN' ? 'sân vườn gần gũi thiên nhiên' : 'ngày trọng đại'
+    const venueNote =
+      brief.venueCategory === 'OUTDOOR_GARDEN' ? 'không gian tiệc ngoài trời' : 'ngày cưới trọng đại'
 
     return {
-      reply: `${coupleGreeting}Master Pierre-Minh & Vũ Cầm từ MORI Atelier đã tiếp nhận chia sẻ: "${message}". Để hoàn hảo cho ${venueNote}, chúng mình trân trọng gợi ý các thiết kế chế tác trên giấy bã mía hữu cơ 350gsm ngà tự nhiên, ép kim nhiệt 160°C hoặc mép xé thủ công dưới đây. Mọi bộ thiệp đều được tặng kèm trang thiệp cưới số RSVP trị giá 1.200.000 ₫.`,
+      reply: `${coupleGreeting}kết nối trực tiếp với trợ lý AI tạm thời gián đoạn hoặc phản hồi chậm. MORI Atelier xin gửi gợi ý các thiết kế tiêu chuẩn phù hợp cho ${venueNote} để bạn tham khảo. Bạn cũng có thể liên hệ trực tiếp xưởng may đo để nhận bảng giá chính xác.`,
       updatedBrief: brief,
       suggestedProducts: suggestedCards,
       estimatedBudget,
-      quickFollowUps: ['Xem chi tiết 3D mẫu này', 'Tư vấn tiệc ngoài trời', 'Báo giá 100 bộ thiệp'],
+      quickFollowUps: ['Xem chi tiết mẫu này', 'Tư vấn tiệc ngoài trời', 'Báo giá 100 bộ thiệp'],
       meta: {
-        modelUsed: 'deterministic/local-mori-atelier',
+        modelUsed: 'fallback/catalog-offline',
         fallbackTier: 4,
         latencyMs,
         groundedProductCount: catalog.length,

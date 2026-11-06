@@ -16,6 +16,7 @@ import { IdentityService } from '../identity/identity.service.js'
 import { readCookie } from '../identity/read-cookie.js'
 import { AiConfigService, type AiSystemConfig } from './ai-config.service.js'
 import { AiLogService } from './ai-log.service.js'
+import { AiProviderTesterService } from './ai-provider-tester.service.js'
 
 const PRIVATE = 'private, no-store'
 
@@ -41,6 +42,7 @@ export class AdminAiConfigController {
     private readonly configService: AiConfigService,
     private readonly logService: AiLogService,
     private readonly identity: IdentityService,
+    private readonly testerService: AiProviderTesterService,
   ) {}
 
   @Get()
@@ -110,67 +112,7 @@ export class AdminAiConfigController {
     },
   ) {
     await this.verifyAdmin(cookie)
-    const cfg = this.configService.getConfig()
-    const targetProvider = body.provider ?? cfg.provider
-    const targetKey = body.apiKey && body.apiKey.trim()
-      ? body.apiKey.trim()
-      : targetProvider === 'CODEX' ? cfg.codexApiKey : cfg.groqApiKey
-    const targetBaseUrl = body.baseUrl && body.baseUrl.trim()
-      ? body.baseUrl.trim()
-      : targetProvider === 'CODEX' ? cfg.codexBaseUrl : 'https://api.groq.com/openai/v1'
-    const targetModel = body.model && body.model.trim()
-      ? body.model.trim()
-      : targetProvider === 'CODEX' ? cfg.codexPrimaryModel : cfg.groqPrimaryModel
-
-    if (!targetKey) {
-      return { ok: false, error: 'Chưa có API Key được cấu hình' }
-    }
-
-    const endpoint = `${targetBaseUrl.replace(/\/+$/, '')}/chat/completions`
-    const start = Date.now()
-
-    try {
-      const controller = new AbortController()
-      const timer = setTimeout(() => controller.abort(), 25000)
-
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${targetKey}`,
-        },
-        body: JSON.stringify({
-          model: targetModel,
-          messages: [{ role: 'user', content: 'Xin chào nghệ nhân MORI!' }],
-          temperature: 0.3,
-          max_tokens: 30,
-        }),
-        signal: controller.signal,
-      }).finally(() => clearTimeout(timer))
-
-      if (!response.ok) {
-        const text = await response.text()
-        return { ok: false, status: response.status, error: text.slice(0, 200) }
-      }
-
-      const json = (await response.json()) as {
-        choices?: Array<{ message?: { content?: string } }>
-      }
-      const reply = json.choices?.[0]?.message?.content ?? ''
-
-      return {
-        ok: true,
-        latencyMs: Date.now() - start,
-        model: targetModel,
-        sampleReply: reply.slice(0, 150),
-      }
-    } catch (err) {
-      return {
-        ok: false,
-        latencyMs: Date.now() - start,
-        error: err instanceof Error ? err.message : String(err),
-      }
-    }
+    return this.testerService.testConnection(body)
   }
 
   private async verifyAdmin(cookie: string | undefined): Promise<void> {

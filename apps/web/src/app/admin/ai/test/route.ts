@@ -10,9 +10,7 @@ function apiOrigin(): string {
 
 export async function POST(request: Request) {
   const originCheck = validateBffOrigin(request)
-  if (!originCheck.ok) {
-    return NextResponse.json({ message: 'This action was refused' }, { status: 403 })
-  }
+  if (!originCheck.ok) return originCheck.response
 
   const cookie = (await cookies()).toString()
   const body: unknown = await request.json()

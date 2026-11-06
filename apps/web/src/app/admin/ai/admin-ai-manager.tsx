@@ -165,7 +165,9 @@ export function AdminAiManager({ initial }: { initial: InitialConfigPayload }) {
             <button
               type="button"
               className="btn-secondary"
-              onClick={handleTest}
+              onClick={() => {
+                void handleTest()
+              }}
               disabled={testing || saving}
             >
               {testing ? 'Đang kiểm tra kết nối...' : '✦ Kiểm tra kết nối (Live Test)'}
@@ -173,7 +175,9 @@ export function AdminAiManager({ initial }: { initial: InitialConfigPayload }) {
             <button
               type="button"
               className="btn-primary"
-              onClick={handleSave}
+              onClick={() => {
+                void handleSave()
+              }}
               disabled={saving}
             >
               {saving ? 'Đang lưu cấu hình...' : 'Lưu cấu hình hệ thống'}

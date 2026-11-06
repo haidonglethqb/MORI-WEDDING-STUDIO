@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
+import { validateBffOrigin } from '../../../../../lib/safe-mutation-origin'
 
 export const dynamic = 'force-dynamic'
 
@@ -8,6 +9,9 @@ function apiOrigin(): string {
 }
 
 export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
+  const originCheck = validateBffOrigin(request)
+  if (!originCheck.ok) return originCheck.response
+
   const { id } = await context.params
   const cookie = (await cookies()).toString()
   const key = request.headers.get('idempotency-key') ?? ''
@@ -17,7 +21,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     headers: {
       'content-type': 'application/json',
       cookie,
-      origin: 'http://app.mori.localhost',
+      origin: originCheck.upstreamOrigin,
       'idempotency-key': key,
     },
     body: JSON.stringify(body),

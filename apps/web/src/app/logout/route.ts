@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { SESSION_COOKIE } from '@mori/contracts'
+import { validateBffOrigin } from '../../lib/safe-mutation-origin'
 
 export const dynamic = 'force-dynamic'
 
@@ -14,14 +15,14 @@ function resolveRedirectUrl(request: Request): string {
   return `${proto}://${cleanHost}/login`
 }
 
-export async function GET(request: Request) {
+async function performLogout(request: Request, upstreamOrigin: string) {
   const cookie = request.headers.get('cookie') ?? ''
   try {
     await fetch(`${apiOrigin()}/api/v1/auth/logout`, {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
-        origin: 'http://app.mori.localhost',
+        origin: upstreamOrigin,
         cookie,
       },
       cache: 'no-store',
@@ -37,6 +38,12 @@ export async function GET(request: Request) {
   return response
 }
 
+export async function GET(request: Request) {
+  return performLogout(request, 'http://app.mori.localhost')
+}
+
 export async function POST(request: Request) {
-  return GET(request)
+  const originCheck = validateBffOrigin(request)
+  if (!originCheck.ok) return originCheck.response
+  return performLogout(request, originCheck.upstreamOrigin)
 }

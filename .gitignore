@@ -38,3 +38,4 @@ prisma/migrations/**/.gitkeep
 *.log
 npm-debug.log*
 pnpm-debug.log*
+/.agents/teamwork

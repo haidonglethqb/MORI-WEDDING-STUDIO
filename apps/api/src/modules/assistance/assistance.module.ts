@@ -14,12 +14,14 @@ import { AssistantOrchestratorService } from './assistant-orchestrator.service.j
 import { AiConfigService } from './ai-config.service.js'
 import { AiLogService } from './ai-log.service.js'
 import { AdminAiConfigController } from './admin-ai-config.controller.js'
+import { AiProviderTesterService } from './ai-provider-tester.service.js'
 
 @Module({
   imports: [IdentityModule],
   controllers: [AssistantController, AdminAiConfigController],
   providers: [
     AiConfigService,
+    AiProviderTesterService,
     AiLogService,
     RecommendationService,
     AssistantQuotaService,

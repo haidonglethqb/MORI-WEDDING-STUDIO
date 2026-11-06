@@ -28,13 +28,32 @@ export interface MaskedAiConfig {
   timeoutMs: number
 }
 
+function readSecret(envVarName: string, secretFileName: string): string {
+  const directEnv = process.env[envVarName]?.trim()
+  if (directEnv) return directEnv
+
+  const fileEnv = process.env[`${envVarName}_FILE`]?.trim()
+  const candidateFiles = [fileEnv, `/run/secrets/${secretFileName}`].filter(Boolean) as string[]
+  for (const filePath of candidateFiles) {
+    try {
+      if (existsSync(filePath)) {
+        const val = readFileSync(filePath, 'utf-8').trim()
+        if (val) return val
+      }
+    } catch {
+      // Ignore read errors
+    }
+  }
+  return ''
+}
+
 const DEFAULT_CONFIG: AiSystemConfig = {
   provider: 'CODEX',
-  codexApiKey: process.env['CODEX_API_KEY'] ?? '',
+  codexApiKey: readSecret('CODEX_API_KEY', 'CODEX_API_KEY'),
   codexBaseUrl: process.env['CODEX_BASE_URL'] ?? 'https://api.modelapi.vn/v1',
   codexPrimaryModel: 'gpt-6.1-sol',
   codexFallbackModel: 'gpt-6.1-terra',
-  groqApiKey: process.env['GROQ_API_KEY'] ?? '',
+  groqApiKey: readSecret('GROQ_API_KEY', 'GROQ_API_KEY'),
   groqPrimaryModel: 'openai/gpt-oss-120b',
   temperature: 0.3,
   timeoutMs: 28000,
@@ -95,16 +114,24 @@ export class AiConfigService {
   }
 
   private loadConfig(): AiSystemConfig {
+    const baseDefaults: AiSystemConfig = {
+      ...DEFAULT_CONFIG,
+      codexApiKey: readSecret('CODEX_API_KEY', 'CODEX_API_KEY'),
+      groqApiKey: readSecret('GROQ_API_KEY', 'GROQ_API_KEY'),
+    }
+
     try {
       if (existsSync(this.configPath)) {
         const raw = readFileSync(this.configPath, 'utf-8')
         const parsed = JSON.parse(raw) as Partial<AiSystemConfig>
-        return { ...DEFAULT_CONFIG, ...parsed }
+        delete parsed.codexApiKey
+        delete parsed.groqApiKey
+        return { ...baseDefaults, ...parsed }
       }
     } catch {
       // Fallback to default
     }
-    return { ...DEFAULT_CONFIG }
+    return baseDefaults
   }
 
   private saveConfig(cfg: AiSystemConfig): void {
@@ -113,7 +140,8 @@ export class AiConfigService {
       if (!existsSync(dir)) {
         mkdirSync(dir, { recursive: true })
       }
-      writeFileSync(this.configPath, JSON.stringify(cfg, null, 2), 'utf-8')
+      const { codexApiKey: _c, groqApiKey: _g, ...sanitized } = cfg
+      writeFileSync(this.configPath, JSON.stringify(sanitized, null, 2), 'utf-8')
     } catch {
       // Ignore save errors
     }

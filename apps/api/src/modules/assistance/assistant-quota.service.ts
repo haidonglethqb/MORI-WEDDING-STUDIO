@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common'
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { getPrismaClient } from '@mori/database'
 
 @Injectable()
@@ -22,17 +22,28 @@ export class AssistantQuotaService {
         const existing = await tx.aiUsageBucket.findUnique({
           where: { subject_day: { subject, day } },
         })
-        if (existing) throw new ConflictException('The assistant quota for today is full')
+        if (existing) {
+          throw new HttpException(
+            { code: 'AI_QUOTA_EXCEEDED', message: 'The assistant quota for today is full' },
+            HttpStatus.TOO_MANY_REQUESTS,
+          )
+        }
         await tx.aiUsageBucket.create({ data: { subject, day, count: 1 } })
       })
     } catch (err) {
-      if (err instanceof ConflictException) throw err
+      if (err instanceof HttpException) throw err
       if (process.env['NODE_ENV'] === 'production' || process.env['APP_ENV'] === 'production') {
-        throw new ConflictException('Assistant quota verification temporarily unavailable')
+        throw new HttpException(
+          { code: 'ASSISTANT_UNAVAILABLE', message: 'Assistant quota verification temporarily unavailable' },
+          HttpStatus.SERVICE_UNAVAILABLE,
+        )
       }
       const current = this.memoryBuckets.get(key) ?? 0
       if (current >= limit) {
-        throw new ConflictException('The assistant quota for today is full')
+        throw new HttpException(
+          { code: 'AI_QUOTA_EXCEEDED', message: 'The assistant quota for today is full' },
+          HttpStatus.TOO_MANY_REQUESTS,
+        )
       }
       this.memoryBuckets.set(key, current + 1)
     }

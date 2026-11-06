@@ -2,16 +2,18 @@ import { describe, expect, it } from 'vitest'
 import { AdminAiConfigController } from './admin-ai-config.controller.js'
 import { AiConfigService } from './ai-config.service.js'
 import { AiLogService } from './ai-log.service.js'
+import { AiProviderTesterService } from './ai-provider-tester.service.js'
 import type { IdentityService } from '../identity/identity.service.js'
 
 describe('AdminAiConfigController', () => {
   const configService = new AiConfigService()
+  const testerService = new AiProviderTesterService(configService)
   const logService = new AiLogService()
   const mockIdentity = {
     currentUser: () => Promise.resolve({ id: 'admin-1', role: 'ADMIN', status: 'ACTIVE' }),
   } as unknown as IdentityService
 
-  const controller = new AdminAiConfigController(configService, logService, mockIdentity)
+  const controller = new AdminAiConfigController(configService, logService, mockIdentity, testerService)
 
   const adminCookie = '__Host-mori_session=test-admin-token'
 
@@ -58,5 +60,25 @@ describe('AdminAiConfigController', () => {
     expect(sessions[0]?.sessionId).toBe('sess-test-1')
     expect(sessions[0]?.turns[0]?.userMessage).toBe('Test user message')
     expect(sessions[0]?.turns[0]?.modelUsed).toBe('gpt-6.1-sol')
+  })
+
+  it('blocks SSRF attempts in testConnection', async () => {
+    const metaRes = await controller.testConnection(adminCookie, {
+      baseUrl: 'http://169.254.169.254/latest/meta-data',
+    })
+    expect(metaRes.ok).toBe(false)
+    expect(metaRes.error).toContain('SSRF validation failed')
+
+    const loopbackRes = await controller.testConnection(adminCookie, {
+      baseUrl: 'http://127.0.0.1:4000',
+    })
+    expect(loopbackRes.ok).toBe(false)
+    expect(loopbackRes.error).toContain('SSRF validation failed')
+
+    const hostRes = await controller.testConnection(adminCookie, {
+      baseUrl: 'https://attacker.example.com',
+    })
+    expect(hostRes.ok).toBe(false)
+    expect(hostRes.error).toContain('SSRF validation failed')
   })
 })
