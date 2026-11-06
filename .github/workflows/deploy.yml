@@ -79,12 +79,18 @@ jobs:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           PUBLIC_APP_ORIGIN: https://moriwedding.xyz
           PUBLIC_INVITE_ORIGIN: https://moriwedding.xyz
+          SMTP_HOST: mail.moriwedding.xyz
+          SMTP_PORT: "465"
+          SMTP_SECURE: "true"
+          SMTP_USER: mori@moriwedding.xyz
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          SMTP_FROM: 'MORI Wedding Studio <mori@moriwedding.xyz>'
         with:
           host: ${{ secrets.SSH_HOST }}
           port: ${{ secrets.SSH_PORT }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          envs: REPO_OWNER,GHCR_USER,GHCR_TOKEN,SERVER_HOST,IMAGE_TAG,CODEX_API_KEY,CODEX_BASE_URL,GROQ_API_KEY,PUBLIC_APP_ORIGIN,PUBLIC_INVITE_ORIGIN
+          envs: REPO_OWNER,GHCR_USER,GHCR_TOKEN,SERVER_HOST,IMAGE_TAG,CODEX_API_KEY,CODEX_BASE_URL,GROQ_API_KEY,PUBLIC_APP_ORIGIN,PUBLIC_INVITE_ORIGIN,SMTP_HOST,SMTP_PORT,SMTP_SECURE,SMTP_USER,SMTP_PASSWORD,SMTP_FROM
           script: |
             tr -d '\r' < /opt/mori/scripts/deploy-compose.sh > /opt/mori/deploy.sh
             tr -d '\r' < /opt/mori/scripts/clean-vps.sh > /opt/mori/clean-vps.sh

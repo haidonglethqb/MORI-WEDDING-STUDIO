@@ -34,6 +34,12 @@ IMAGE_REPO=${REPO_OWNER:-haidonglethqb}
 IMAGE_TAG=${IMAGE_TAG:-latest}
 PUBLIC_APP_ORIGIN=https://moriwedding.xyz
 PUBLIC_INVITE_ORIGIN=https://moriwedding.xyz
+SMTP_HOST=${SMTP_HOST:-mail.moriwedding.xyz}
+SMTP_PORT=${SMTP_PORT:-465}
+SMTP_SECURE=${SMTP_SECURE:-true}
+SMTP_USER=${SMTP_USER:-mori@moriwedding.xyz}
+SMTP_PASSWORD=
+SMTP_FROM="${SMTP_FROM:-MORI Wedding Studio <mori@moriwedding.xyz>}"
 API_INTERNAL_ORIGIN=http://api:4000
 PORT=4000
 EOF
@@ -48,11 +54,27 @@ sync_env_var() {
   local key="$1"
   local val="${!key:-}"
   if [ -n "$val" ]; then
-    if grep -q "^${key}=" .env; then
-      sed -i "s|^${key}=.*|${key}=${val}|" .env
-    else
-      echo "${key}=${val}" >> .env
-    fi
+    python3 - "$DEPLOY_DIR/.env" "$key" <<'PY'
+import os
+import pathlib
+import sys
+
+path = pathlib.Path(sys.argv[1])
+key = sys.argv[2]
+value = os.environ[key]
+escaped = value.replace("\\", "\\\\").replace('"', '\\"').replace("$", "\\$")
+escaped = escaped.replace("\n", "\\n").replace("\r", "\\r")
+lines = path.read_text().splitlines()
+prefix = f"{key}="
+for index, line in enumerate(lines):
+    if line.startswith(prefix):
+        lines[index] = f'{key}="{escaped}"'
+        break
+else:
+    lines.append(f'{key}="{escaped}"')
+path.write_text("\n".join(lines) + "\n")
+path.chmod(0o600)
+PY
   fi
 }
 
@@ -62,6 +84,17 @@ sync_env_var "GROQ_API_KEY"
 sync_env_var "IMAGE_TAG"
 sync_env_var "PUBLIC_APP_ORIGIN"
 sync_env_var "PUBLIC_INVITE_ORIGIN"
+sync_env_var "SMTP_HOST"
+sync_env_var "SMTP_PORT"
+sync_env_var "SMTP_SECURE"
+sync_env_var "SMTP_USER"
+sync_env_var "SMTP_PASSWORD"
+sync_env_var "SMTP_FROM"
+
+if [ -z "${SMTP_PASSWORD:-}" ] && ! grep -qE '^SMTP_PASSWORD=.+$' .env; then
+  echo "SMTP_PASSWORD is missing; add the OxMail mailbox password as a GitHub Actions secret."
+  exit 1
+fi
 
 # 2. GHCR authentication (if token provided by GitHub Actions)
 if [ -n "${GHCR_TOKEN:-}" ] && [ -n "${GHCR_USER:-}" ]; then

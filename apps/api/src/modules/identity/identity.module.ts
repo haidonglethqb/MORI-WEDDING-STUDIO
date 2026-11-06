@@ -24,10 +24,30 @@ import { IdentityService } from './identity.service.js'
           return new LoggingAccountMail()
         }
         const port = Number(process.env['SMTP_PORT'] ?? '1025')
-        return new SmtpAccountMail({ host, port, from: 'noreply@mori.localhost' })
+        const user = process.env['SMTP_USER'] ?? ''
+        const password = process.env['SMTP_PASSWORD'] ?? ''
+        const from = process.env['SMTP_FROM'] ?? user
+        const secureValue = process.env['SMTP_SECURE']
+        const secure = secureValue ? parseBoolean(secureValue) : port === 465
+        if (!Number.isInteger(port) || port < 1 || port > 65535) {
+          throw new Error('SMTP_PORT must be a valid TCP port')
+        }
+        if (!user || !password || !from) {
+          throw new Error('SMTP_USER, SMTP_PASSWORD, and SMTP_FROM are required when SMTP is enabled')
+        }
+        if (!secure && port === 465) {
+          throw new Error('SMTP port 465 requires implicit TLS (SMTP_SECURE=true)')
+        }
+        return new SmtpAccountMail({ host, port, secure, user, password, from })
       },
     },
   ],
   exports: [IdentityService],
 })
 export class IdentityModule {}
+
+function parseBoolean(value: string): boolean {
+  if (value === 'true') return true
+  if (value === 'false') return false
+  throw new Error('SMTP_SECURE must be true or false')
+}

@@ -35,6 +35,7 @@ describe('SmtpAccountMail', () => {
     const mail = new SmtpAccountMail({
       host: '127.0.0.1',
       port: 1025,
+      secure: false,
       from: 'noreply@mori.localhost',
     })
 

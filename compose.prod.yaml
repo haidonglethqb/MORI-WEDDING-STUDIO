@@ -20,8 +20,12 @@ services:
       APP_ENV: production
       DATABASE_URL: postgresql://mori:${POSTGRES_PASSWORD:-mori_prod_secret}@postgres:5432/mori_db
       REDIS_URL: redis://redis:6379
-      SMTP_HOST: ${SMTP_HOST:-mailpit}
-      SMTP_PORT: "${SMTP_PORT:-1025}"
+      SMTP_HOST: "${SMTP_HOST:-mail.moriwedding.xyz}"
+      SMTP_PORT: "${SMTP_PORT:-465}"
+      SMTP_SECURE: "${SMTP_SECURE:-true}"
+      SMTP_USER: "${SMTP_USER:-mori@moriwedding.xyz}"
+      SMTP_PASSWORD: "${SMTP_PASSWORD:-}"
+      SMTP_FROM: "${SMTP_FROM:-MORI Wedding Studio <mori@moriwedding.xyz>}"
       CODEX_API_KEY: ${CODEX_API_KEY:-}
       CODEX_BASE_URL: ${CODEX_BASE_URL:-https://api.modelapi.vn/v1}
       GROQ_API_KEY: ${GROQ_API_KEY:-}
