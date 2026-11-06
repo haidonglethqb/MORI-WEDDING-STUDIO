@@ -16,6 +16,7 @@
     "test:unit": "corepack pnpm -r test:unit",
     "test:integration": "node scripts/test-integration.mjs",
     "test:e2e": "node scripts/test-e2e.mjs",
+    "test:ai-e2e": "node scripts/test-ai-e2e.mjs",
     "test:security": "node scripts/test-security.mjs",
     "test:performance": "node scripts/test-performance.mjs",
     "check:boundaries": "node scripts/check-import-boundaries.mjs",
