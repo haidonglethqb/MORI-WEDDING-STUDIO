@@ -1,6 +1,13 @@
 import { createHash } from 'node:crypto'
-import { Body, Controller, Header, Headers, Post, UnprocessableEntityException } from '@nestjs/common'
-import { ForbiddenException } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  ForbiddenException,
+  Header,
+  Headers,
+  Post,
+  UnprocessableEntityException,
+} from '@nestjs/common'
 import { SESSION_COOKIE } from '@mori/contracts'
 import type { CataloguePreference } from '@mori/domain'
 import { IdentityService } from '../identity/identity.service.js'
@@ -8,6 +15,8 @@ import { readCookie } from '../identity/read-cookie.js'
 import { AiToolBoundary } from './ai-tool-boundary.js'
 import { AssistantQuotaService } from './assistant-quota.service.js'
 import { RecommendationService } from './recommendation.service.js'
+import { AssistantOrchestratorService } from './assistant-orchestrator.service.js'
+import type { AssistantChatRequest } from './assistant-types.js'
 
 const PRIVATE = 'private, no-store'
 
@@ -18,6 +27,7 @@ export class AssistantController {
     private readonly quota: AssistantQuotaService,
     private readonly tools: AiToolBoundary,
     private readonly identity: IdentityService,
+    private readonly orchestrator: AssistantOrchestratorService,
   ) {}
 
   @Post('recommendations')
@@ -32,6 +42,18 @@ export class AssistantController {
     const actor = await this.actor(cookie, forwarded)
     await this.quota.reserve(actor.subject, actor.limit)
     return this.recommendations.recommend(preference)
+  }
+
+  @Post('chat')
+  @Header('Cache-Control', PRIVATE)
+  async chat(
+    @Headers('cookie') cookie: string | undefined,
+    @Headers('x-forwarded-for') forwarded: string | undefined,
+    @Body() body: AssistantChatRequest,
+  ) {
+    const actor = await this.actor(cookie, forwarded)
+    await this.quota.reserve(actor.subject, actor.limit)
+    return this.orchestrator.handleChat(body)
   }
 
   private async actor(cookie: string | undefined, forwarded: string | undefined) {

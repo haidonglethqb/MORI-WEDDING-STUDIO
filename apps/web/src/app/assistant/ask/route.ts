@@ -9,9 +9,16 @@ function apiOrigin(): string {
 
 export async function POST(request: Request) {
   const cookie = (await cookies()).toString()
-  const body: unknown = await request.json()
+  const raw: unknown = await request.json()
+  const body = typeof raw === 'object' && raw !== null ? (raw as Record<string, unknown>) : {}
   const forwarded = request.headers.get('x-forwarded-for') ?? '127.0.0.1'
-  const upstream = await fetch(`${apiOrigin()}/api/v1/assistant/recommendations`, {
+
+  const endpoint =
+    typeof body['message'] === 'string'
+      ? `${apiOrigin()}/api/v1/assistant/chat`
+      : `${apiOrigin()}/api/v1/assistant/recommendations`
+
+  const upstream = await fetch(endpoint, {
     method: 'POST',
     headers: {
       'content-type': 'application/json',

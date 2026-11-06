@@ -1,149 +1,189 @@
 'use client'
 
-import { useState } from 'react'
-import { getBespokeProfile } from '../collections/collection-catalog-data'
+import { useEffect, useRef, useState } from 'react'
+import type {
+  AssistantChatApiResponse,
+  ChatMessageItem,
+  ConversationWeddingBrief,
+} from './assistant-types'
+import { AssistantChatBubble } from './assistant-chat-bubble'
+import { AssistantContextBar } from './assistant-context-bar'
 
-interface Recommendation {
-  slug: string
-  name: string
-  isFixture: boolean
-  merchandiseVnd: string | null
+const STORAGE_KEY = 'mori_atelier_assistant_session_v2'
+
+const DEFAULT_BRIEF: ConversationWeddingBrief = {
+  coupleNames: null,
+  weddingDate: null,
+  season: null,
+  venueCategory: null,
+  location: null,
+  aestheticIdentity: null,
+  targetShape: null,
+  guestCount: null,
+  estimatedSuites: null,
+  budgetRangeVnd: null,
+  preferredFinishes: [],
+  shortlistedSlugs: [],
+  lastDiscussedSlug: null,
 }
 
-const STYLE_OPTIONS = [
-  { id: 'editorial', label: 'Editorial Vogue', icon: '✦', sub: 'High Fashion Paris' },
-  { id: 'floral', label: 'Floral Botanical', icon: '❀', sub: 'Thảo mộc thanh nhã' },
-  { id: 'traditional', label: 'Heritage Á Đông', icon: '囍', sub: 'Cung đình & Cát tường' },
-  { id: 'minimalist', label: 'Minimalist Japandi', icon: '✤', sub: 'Wabi-Sabi tinh giản' },
-  { id: 'modern', label: 'Modern Calligraphy', icon: '✒', sub: 'Thư pháp phóng khoáng' },
+const INITIAL_GREETING: ChatMessageItem = {
+  id: 'greeting-0',
+  role: 'assistant',
+  content:
+    'Kính chào bạn, mình là Master Pierre-Minh & Vũ Cầm từ xưởng chế tác MORI Haute Papeterie Atelier. Hãy chia sẻ về ngày trọng đại của bạn — phong cách yêu thích, không gian tiệc cưới (sân vườn, bãi biển, tư gia hay khách sạn), hoặc số lượng khách mời để chúng mình đồng hành kiến tạo bộ thiệp độc bản nhé.',
+}
+
+const QUICK_STARTERS = [
+  'Tiệc sân vườn ngoài trời Đà Lạt 120 khách',
+  'Lễ cưới truyền thống Song Hỷ Á Đông',
+  'Phong cách Editorial Vogue Paris sang trọng',
+  'Tư vấn chi phí theo số lượng khách',
 ]
 
-const QUANTITY_OPTIONS = ['30', '50', '100', '200', '300']
-
 export function AssistantForm() {
-  const [quantity, setQuantity] = useState('50')
-  const [selectedStyle, setSelectedStyle] = useState('traditional')
+  const [messages, setMessages] = useState<ChatMessageItem[]>([INITIAL_GREETING])
+  const [brief, setBrief] = useState<ConversationWeddingBrief>(DEFAULT_BRIEF)
+  const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
-  const [statusNote, setStatusNote] = useState<string | null>(null)
-  const [results, setResults] = useState<Recommendation[]>([])
+  const [quickOptions, setQuickOptions] = useState<string[]>(QUICK_STARTERS)
+  const scrollAnchorRef = useRef<HTMLDivElement>(null)
 
-  async function ask() {
-    setLoading(true)
-    setStatusNote('Đang xếp mẫu từ xưởng...')
+  useEffect(() => {
     try {
-      const response = await fetch('/assistant/ask', {
+      const saved = localStorage.getItem(STORAGE_KEY)
+      if (saved) {
+        const parsed = JSON.parse(saved) as { messages: ChatMessageItem[]; brief: ConversationWeddingBrief }
+        if (parsed.messages?.length) setMessages(parsed.messages)
+        if (parsed.brief) setBrief(parsed.brief)
+      }
+    } catch {
+      // Local storage unreadable
+    }
+  }, [])
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ messages, brief }))
+    } catch {
+      // Local storage quota exceeded
+    }
+    scrollAnchorRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages, brief])
+
+  async function sendMessage(textToSend: string) {
+    const text = textToSend.trim()
+    if (!text || loading) return
+
+    const userMsg: ChatMessageItem = { id: `u-${Date.now()}`, role: 'user', content: text }
+    const updatedMessages = [...messages, userMsg]
+    setMessages(updatedMessages)
+    setInput('')
+    setLoading(true)
+
+    try {
+      const history = updatedMessages.map((m) => ({ role: m.role, content: m.content }))
+      const res = await fetch('/assistant/ask', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({
-          productType: 'PAPER',
-          shape: 'FLAT',
-          styles: [selectedStyle],
-          colours: [],
-          quantity: Number(quantity) || 50,
-          budgetVnd: null,
-          budgetBasis: 'TOTAL',
-        }),
+        body: JSON.stringify({ message: text, history, context: brief }),
       })
-      const payload = (await response.json()) as { clarification?: string | null; results?: Recommendation[] }
-      setLoading(false)
-      if (!response.ok) {
-        setResults([])
-        setStatusNote(response.status === 409 ? 'Đã đạt giới hạn hỏi trong ngày.' : 'Chưa xếp được mẫu phù hợp.')
-        return
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      const data = (await res.json()) as AssistantChatApiResponse
+
+      const botMsg: ChatMessageItem = {
+        id: `a-${Date.now()}`,
+        role: 'assistant',
+        content: data.reply,
+        products: data.suggestedProducts,
+        budget: data.estimatedBudget,
+        meta: data.meta,
       }
-      setResults(payload.results ?? [])
-      setStatusNote(
-        payload.clarification
-          ? 'Cần xác định thêm thông tin ngân sách.'
-          : `Đã tìm thấy ${(payload.results ?? []).length} mẫu thiệp phù hợp nhất với phong cách của bạn.`,
-      )
+
+      setMessages((prev) => [...prev, botMsg])
+      if (data.updatedBrief) setBrief(data.updatedBrief)
+      if (data.quickFollowUps?.length) setQuickOptions(data.quickFollowUps)
     } catch {
+      const errorMsg: ChatMessageItem = {
+        id: `err-${Date.now()}`,
+        role: 'assistant',
+        content: 'MORI xin lỗi, kết nối tới xưởng chế tác đang gián đoạn. Bạn vui lòng thử lại sau giây lát.',
+      }
+      setMessages((prev) => [...prev, errorMsg])
+    } finally {
       setLoading(false)
-      setStatusNote('Lỗi kết nối máy chủ.')
     }
   }
 
+  function handleReset() {
+    localStorage.removeItem(STORAGE_KEY)
+    setMessages([INITIAL_GREETING])
+    setBrief(DEFAULT_BRIEF)
+    setQuickOptions(QUICK_STARTERS)
+  }
+
   return (
-    <div>
-      <div className="assistant-card">
-        <h3 className="assistant-section-title">1. Chọn số lượng thiệp dự kiến</h3>
-        <div className="quantity-pills">
-          {QUANTITY_OPTIONS.map((q) => (
-            <button
-              key={q}
-              type="button"
-              className={`quantity-pill-btn ${quantity === q ? 'active' : ''}`}
-              onClick={() => setQuantity(q)}
-            >
-              {q} bộ thiệp
-            </button>
+    <div className="assistant-container">
+      <AssistantContextBar brief={brief} onReset={handleReset} />
+
+      <div className="chat-window-pane">
+        <div className="chat-messages-flow">
+          {messages.map((m) => (
+            <AssistantChatBubble key={m.id} message={m} />
           ))}
-        </div>
-
-        <h3 className="assistant-section-title">2. Chọn phong cách chủ đạo hôn lễ</h3>
-        <div className="style-chips-grid">
-          {STYLE_OPTIONS.map((opt) => (
-            <button
-              key={opt.id}
-              type="button"
-              className={`style-chip-btn ${selectedStyle === opt.id ? 'active' : ''}`}
-              onClick={() => setSelectedStyle(opt.id)}
-            >
-              <span className="style-chip-icon">{opt.icon}</span>
-              <span className="style-chip-title">{opt.label}</span>
-              <small style={{ fontSize: '11px', color: '#7a8174', display: 'block', marginTop: '2px' }}>
-                {opt.sub}
-              </small>
-            </button>
-          ))}
-        </div>
-
-        <button type="button" className="assistant-submit-btn" disabled={loading} onClick={() => void ask()}>
-          {loading ? 'Đang tìm mẫu phù hợp...' : '✦ Xếp mẫu thiết kế phù hợp ngay'}
-        </button>
-
-        {statusNote && (
-          <p style={{ textAlign: 'center', fontSize: '13px', color: '#55634f', margin: '14px 0 0' }}>
-            {statusNote}
-          </p>
-        )}
-      </div>
-
-      {results.length > 0 && (
-        <div className="results-section-wrap">
-          <h2 style={{ fontFamily: 'var(--font-serif, "Lora", Georgia, serif)', fontSize: '24px', color: '#242823' }}>
-            Gợi ý dành riêng cho bạn
-          </h2>
-          <div className="results-grid">
-            {results.map((item) => {
-              const profile = getBespokeProfile(item.slug)
-              const title = profile?.title ?? item.name
-              const subtitle = profile?.subtitle ?? 'Chế tác thủ công giấy bã mía 350gsm'
-              const formattedPrice = item.merchandiseVnd
-                ? `${Number(item.merchandiseVnd).toLocaleString('vi-VN')} ₫`
-                : 'Từ 25.000 ₫'
-
-              return (
-                <div key={item.slug} className="recommend-item-card">
-                  <div>
-                    <span style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#b38e46', fontWeight: 700 }}>
-                      ATELIER CURATED
-                    </span>
-                    <h4 className="recommend-item-title">{title}</h4>
-                    <p style={{ fontSize: '13px', color: '#687063', margin: '0 0 12px' }}>{subtitle}</p>
-                  </div>
-                  <div>
-                    <div className="recommend-item-price">{formattedPrice}</div>
-                    <a href={`/products/${item.slug}`} className="recommend-item-cta">
-                      Xem chi tiết &amp; 3D Studio &rarr;
-                    </a>
-                  </div>
+          {loading && (
+            <div className="chat-row assistant-row">
+              <div className="assistant-avatar">⚜️</div>
+              <div className="assistant-bubble-container">
+                <div className="typing-indicator-bar">
+                  <span className="typing-dot" />
+                  <span className="typing-dot" />
+                  <span className="typing-dot" />
+                  <span className="typing-label">Master Pierre-Minh đang chọn mẫu và phối chất liệu...</span>
                 </div>
-              )
-            })}
-          </div>
+              </div>
+            </div>
+          )}
+          <div ref={scrollAnchorRef} />
         </div>
-      )}
+
+        <div className="chat-input-dock">
+          <div className="quick-chips-row">
+            {quickOptions.map((opt) => (
+              <button
+                key={opt}
+                type="button"
+                className="quick-chip-button"
+                disabled={loading}
+                onClick={() => void sendMessage(opt)}
+              >
+                ✦ {opt}
+              </button>
+            ))}
+          </div>
+
+          <form
+            className="chat-input-form"
+            onSubmit={(e) => {
+              e.preventDefault()
+              void sendMessage(input)
+            }}
+          >
+            <input
+              type="text"
+              className="chat-input-field"
+              placeholder="Nhắn tin với Nghệ nhân MORI (vd: Tụi mình cưới ở Đà Lạt, 120 khách...)"
+              value={input}
+              disabled={loading}
+              onChange={(e) => setInput(e.target.value)}
+            />
+            <button type="submit" className="chat-send-btn" disabled={loading || !input.trim()}>
+              {loading ? 'Đang gửi...' : 'Gửi ✦'}
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
   )
 }

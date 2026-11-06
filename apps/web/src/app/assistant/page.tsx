@@ -10,10 +10,10 @@ export default function AssistantPage() {
       <HomeNav />
       <main className="assistant-page">
         <header className="assistant-header">
-          <span className="assistant-badge">ATELIER STYLIST AI</span>
-          <h1>Trợ lý gợi ý mẫu thiệp cưới</h1>
+          <span className="assistant-badge">MORI HAUTE PAPETERIE · MULTI-AGENT AI</span>
+          <h1>Trợ lý Nghệ nhân May đo Thiệp Cưới</h1>
           <p>
-            Chọn số lượng khách mời và phong cách hôn lễ để nghệ nhân xưởng MORI gợi ý các mẫu thiệp độc bản phù hợp nhất.
+            Trò chuyện trực tiếp cùng Master Pierre-Minh &amp; Vũ Cầm. Chia sẻ câu chuyện tình yêu, không gian tiệc cưới và ngân sách để cùng kiến tạo bộ thiệp độc bản trên giấy bã mía 350gsm.
           </p>
         </header>
 
