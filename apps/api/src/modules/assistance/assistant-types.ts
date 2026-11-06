@@ -75,4 +75,5 @@ export interface CatalogProductItem {
   colourTags: string[]
   unitPriceVnd: bigint
   formattedPriceVnd: string
+  isFixture?: boolean
 }
