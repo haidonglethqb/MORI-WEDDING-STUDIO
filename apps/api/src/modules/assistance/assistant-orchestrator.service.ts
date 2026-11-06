@@ -73,7 +73,24 @@ export class AssistantOrchestratorService {
   ): AssistantChatResponse {
     const sanitizedReply = this.guardrail.sanitizeArtisanReply(raw.reply)
     const updatedBrief = this.extractor.mergeBrief(currentBrief, raw.updatedBrief)
-    const matchedProducts = this.matcher.rankProducts(catalog, updatedBrief, raw.suggestedSlugs)
+
+    // Detect if specific product names were mentioned directly in the reply text
+    const mentionedFromReply: { slug: string; index: number }[] = []
+    const lowerReply = sanitizedReply.toLowerCase()
+    for (const item of catalog) {
+      const idx = lowerReply.indexOf(item.name.toLowerCase())
+      if (idx !== -1) {
+        mentionedFromReply.push({ slug: item.slug, index: idx })
+      }
+    }
+    mentionedFromReply.sort((a, b) => a.index - b.index)
+
+    const effectiveSlugs =
+      mentionedFromReply.length > 0
+        ? mentionedFromReply.map((m) => m.slug)
+        : raw.suggestedSlugs
+
+    const matchedProducts = this.matcher.rankProducts(catalog, updatedBrief, effectiveSlugs)
     const suggestedCards = this.guardrail.buildProductCards(matchedProducts)
     const estimatedBudget = this.estimator.calculateBudget(updatedBrief)
 

@@ -19,7 +19,7 @@ describe('ScoringMatcher', () => {
     {
       id: 'p2',
       slug: 'traditional-bifold-01',
-      name: 'Song Hỷ Hoàng Triều',
+      name: 'Song Hỷ Cung Đình',
       shape: 'BIFOLD',
       styleTags: ['traditional', 'heritage', 'indochine'],
       colourTags: ['red', 'gold'],
@@ -72,7 +72,7 @@ describe('ScoringMatcher', () => {
 
   it('prioritizes suggested slugs when provided and valid', () => {
     const results = matcher.rankProducts(dummyCatalog, baseBrief, ['minimalist-flat-01'])
+    expect(results).toHaveLength(1)
     expect(results[0]?.slug).toBe('minimalist-flat-01')
-    expect(results.some((r) => r.slug === 'floral-bifold-01')).toBe(true)
   })
 })

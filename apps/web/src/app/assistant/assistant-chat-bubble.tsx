@@ -26,15 +26,13 @@ export function AssistantChatBubble({ message }: ChatBubbleProps) {
 
   return (
     <div className="chat-row assistant-row">
-      <div className="assistant-avatar">⚜️</div>
+      <div className="atelier-avatar" aria-hidden="true">
+        <span>M</span>
+      </div>
       <div className="assistant-bubble-container">
         <div className="assistant-bubble-header">
-          <span className="atelier-name">Master Pierre-Minh &amp; Vũ Cầm</span>
-          {message.meta && (
-            <span className="model-telemetry-badge" title={`Thời gian xử lý: ${message.meta.latencyMs}ms`}>
-              ⚡ {message.meta.modelUsed.replace('openai/', '').replace('qwen/', '')} · {message.meta.latencyMs}ms
-            </span>
-          )}
+          <span className="atelier-name">Pierre-Minh &amp; Vũ Cầm</span>
+          <span className="atelier-role">Nghệ nhân MORI</span>
         </div>
 
         <div className="assistant-bubble-content">
@@ -52,7 +50,7 @@ export function AssistantChatBubble({ message }: ChatBubbleProps) {
         {message.budget && (
           <div className="embedded-budget-card">
             <div className="budget-header">
-              <span className="budget-title">📊 DỰ TOÁN CHI PHÍ MAY ĐO ATELIER</span>
+              <span className="budget-title">Dự toán may đo ước tính</span>
               <span className="budget-shape-badge">
                 {message.budget.quantity} bộ thiệp ({message.budget.shape})
               </span>
@@ -68,14 +66,15 @@ export function AssistantChatBubble({ message }: ChatBubbleProps) {
                 <strong>{formatVnd(message.budget.finishesAmountVnd)}</strong>
               </div>
               <div className="budget-row budget-total-row">
-                <span>Tổng chi phí ước tính:</span>
+                <span>Tổng chi phí dự kiến:</span>
                 <strong className="total-gold-text">{formatVnd(message.budget.totalAmountVnd)}</strong>
               </div>
             </div>
 
             {message.budget.giftComplimentary && (
-              <div className="budget-gift-pill">
-                🎁 <span>{message.budget.giftComplimentary}</span>
+              <div className="budget-gift-card">
+                <span className="gift-badge">Đặc quyền đính kèm</span>
+                <span className="gift-text">{message.budget.giftComplimentary}</span>
               </div>
             )}
           </div>

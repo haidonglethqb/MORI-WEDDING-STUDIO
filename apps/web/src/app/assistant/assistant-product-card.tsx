@@ -20,7 +20,6 @@ export function AssistantProductCard({ item }: ProductCardProps) {
   const title = profile?.title ?? item.title ?? item.name
   const subtitle = profile?.subtitle ?? item.subtitle ?? 'Chế tác giấy bã mía 350gsm'
   const silhouetteLabel = profile?.silhouette ? SILHOUETTE_MAP[profile.silhouette] : null
-  const accentColor = profile?.accentColor ?? '#b38e46'
 
   const displayPrice = item.startingPriceVnd.includes('₫')
     ? item.startingPriceVnd
@@ -29,9 +28,7 @@ export function AssistantProductCard({ item }: ProductCardProps) {
   return (
     <div className="embedded-product-card">
       <div className="embedded-product-header">
-        <span className="curated-badge" style={{ color: accentColor }}>
-          ✦ ATELIER HAUTE
-        </span>
+        <span className="collection-kicker">Bộ sưu tập MORI</span>
         {silhouetteLabel && <span className="silhouette-badge">{silhouetteLabel}</span>}
       </div>
 
@@ -44,11 +41,7 @@ export function AssistantProductCard({ item }: ProductCardProps) {
           <span className="price-value">{displayPrice}</span>
         </div>
 
-        <Link
-          href={`/products/${item.slug}`}
-          className="embedded-product-action"
-          style={{ borderColor: accentColor }}
-        >
+        <Link href={`/products/${item.slug}`} className="embedded-product-action">
           Mở 3D Studio &rarr;
         </Link>
       </div>

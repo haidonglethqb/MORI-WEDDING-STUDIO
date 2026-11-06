@@ -12,7 +12,7 @@ const STYLE_KEYWORDS: Record<string, string[]> = {
   HERITAGE_INDOCHINE: ['traditional', 'heritage', 'indochine', 'song-hy', 'red'],
   FLORAL_BOTANICAL: ['floral', 'botanical', 'garden', 'nature', 'wildflower'],
   MINIMALIST_JAPANDI: ['minimalist', 'japandi', 'wabi-sabi', 'zen', 'pure'],
-  MODERN_CALLIGRAPHY: ['calligraphy', 'modern', 'script', 'minimal'],
+  MODERN_CALLIGRAPHY: ['calligraphy', 'typography', 'script', 'letterpress'],
 }
 
 @Injectable()
@@ -22,35 +22,24 @@ export class ScoringMatcher {
     brief: ConversationWeddingBrief,
     suggestedSlugs?: string[],
   ): CatalogProductItem[] {
-    const scoredList = catalog.map((item) => this.calculateAffinity(item, brief))
-    scoredList.sort((a, b) => b.score - a.score)
-
-    if (!suggestedSlugs?.length) {
-      return scoredList.slice(0, 3).map((s) => s.product)
-    }
-
-    const validSuggested: CatalogProductItem[] = []
     const catalogMap = new Map(catalog.map((c) => [c.slug, c]))
 
-    for (const slug of suggestedSlugs) {
-      const found = catalogMap.get(slug)
-      if (found && !validSuggested.some((v) => v.slug === slug)) {
-        validSuggested.push(found)
+    if (suggestedSlugs && suggestedSlugs.length > 0) {
+      const matchedFromAi: CatalogProductItem[] = []
+      for (const slug of suggestedSlugs) {
+        const found = catalogMap.get(slug)
+        if (found && !matchedFromAi.some((m) => m.slug === slug)) {
+          matchedFromAi.push(found)
+        }
+      }
+      if (matchedFromAi.length > 0) {
+        return matchedFromAi.slice(0, 3)
       }
     }
 
-    if (validSuggested.length >= 3) {
-      return validSuggested.slice(0, 3)
-    }
-
-    for (const scored of scoredList) {
-      if (!validSuggested.some((v) => v.slug === scored.product.slug)) {
-        validSuggested.push(scored.product)
-      }
-      if (validSuggested.length >= 3) break
-    }
-
-    return validSuggested
+    const scoredList = catalog.map((item) => this.calculateAffinity(item, brief))
+    scoredList.sort((a, b) => b.score - a.score)
+    return scoredList.slice(0, 2).map((s) => s.product)
   }
 
   private calculateAffinity(
@@ -60,7 +49,6 @@ export class ScoringMatcher {
     let score = 0
     const reasons: string[] = []
 
-    // 1. Style Affinity (40%)
     const targetAesthetic = brief.aestheticIdentity
     if (targetAesthetic) {
       const keywords = STYLE_KEYWORDS[targetAesthetic] ?? []
@@ -75,7 +63,6 @@ export class ScoringMatcher {
       score += 25
     }
 
-    // 2. Shape Affinity (20%)
     if (brief.targetShape) {
       if (product.shape === brief.targetShape) {
         score += 20
@@ -85,7 +72,6 @@ export class ScoringMatcher {
       score += 15
     }
 
-    // 3. Budget Fit (20%)
     if (brief.budgetRangeVnd) {
       const maxBudget = Number(brief.budgetRangeVnd.max)
       const suites = brief.estimatedSuites ?? 50
@@ -100,7 +86,6 @@ export class ScoringMatcher {
       score += 15
     }
 
-    // 4. Finishes / Venue Synergy (20%)
     if (brief.venueCategory === 'OUTDOOR_GARDEN' && product.styleTags.includes('floral')) {
       score += 20
       reasons.push('Hài hòa tiệc sân vườn thiên nhiên')
