@@ -39,3 +39,4 @@ prisma/migrations/**/.gitkeep
 npm-debug.log*
 pnpm-debug.log*
 /.agents/teamwork
+!.env.production.example

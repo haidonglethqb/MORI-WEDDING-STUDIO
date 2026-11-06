@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   test:
-    name: Lint, Typecheck & Tests
+    name: Lint, Typecheck & Test
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -117,59 +117,31 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Copy Docker Compose files to VPS
+      - name: Copy Compose and Deploy Scripts to VPS
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SSH_HOST }}
           port: ${{ secrets.SSH_PORT }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          source: "compose.yaml,compose.prod.yaml"
+          source: "compose.yaml,compose.prod.yaml,scripts/deploy-compose.sh"
           target: "/opt/mori"
 
-      - name: Deploy containers via SSH
+      - name: Execute Automated Deployment on VPS
         uses: appleboy/ssh-action@v1.2.0
         env:
           REPO_OWNER: ${{ github.repository_owner }}
           GHCR_USER: ${{ github.actor }}
           GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SERVER_HOST: ${{ secrets.SSH_HOST }}
+          IMAGE_TAG: latest
         with:
           host: ${{ secrets.SSH_HOST }}
           port: ${{ secrets.SSH_PORT }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          envs: REPO_OWNER,GHCR_USER,GHCR_TOKEN
+          envs: REPO_OWNER,GHCR_USER,GHCR_TOKEN,SERVER_HOST,IMAGE_TAG
           script: |
-            set -euo pipefail
-            cd /opt/mori
-
-            # Generate default .env if not exists
-            if [ ! -f .env ]; then
-              echo "Generating initial /opt/mori/.env..."
-              cat <<ENVEOF > .env
-            APP_ENV=production
-            NODE_ENV=production
-            POSTGRES_USER=mori
-            POSTGRES_DB=mori_db
-            POSTGRES_PASSWORD=$(openssl rand -hex 16)
-            IMAGE_REGISTRY=ghcr.io
-            IMAGE_REPO=${REPO_OWNER,,}
-            IMAGE_TAG=latest
-            PUBLIC_APP_ORIGIN=http://${{ secrets.SSH_HOST }}
-            PUBLIC_INVITE_ORIGIN=http://${{ secrets.SSH_HOST }}
-            API_INTERNAL_ORIGIN=http://api:4000
-            ENVEOF
-            fi
-
-            # Pull images and start services
-            echo "Pulling newest images from GHCR..."
-            docker compose -f compose.yaml -f compose.prod.yaml pull || true
-
-            echo "Starting containers..."
-            docker compose -f compose.yaml -f compose.prod.yaml up -d --remove-orphans
-
-            echo "Deployment verification:"
-            docker compose -f compose.yaml -f compose.prod.yaml ps
-
-            echo "Cleaning dangling images..."
-            docker image prune -f
+            tr -d '\r' < /opt/mori/scripts/deploy-compose.sh > /opt/mori/deploy.sh
+            chmod +x /opt/mori/deploy.sh
+            /opt/mori/deploy.sh
