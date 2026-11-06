@@ -52,6 +52,11 @@ export async function HomeNav() {
                 Hàng đợi xưởng
               </Link>
             ) : null}
+            {user.role === 'ADMIN' ? (
+              <Link className="nav-link-staff" href="/admin/ai">
+                Cấu hình AI
+              </Link>
+            ) : null}
             <Link className="nav-link-item" href="/workspace">
               Việc của tôi
             </Link>

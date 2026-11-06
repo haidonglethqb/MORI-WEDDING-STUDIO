@@ -55,7 +55,7 @@ export default async function StudioPage() {
         <HomeNav />
         <main className="studio-page">
           <div className="studio-empty">
-            <p>Vui lòng đăng nhập bằng tài khoản nghệ nhân/xưởng studio.</p>
+            <p>Vui lòng đăng nhập bằng tài khoản nghệ nhân của xưởng.</p>
             <a href="/login" className="workspace-btn-primary" style={{ display: 'inline-block', marginTop: '12px' }}>
               Đăng nhập tài khoản xưởng
             </a>
@@ -65,15 +65,15 @@ export default async function StudioPage() {
     )
   }
 
-  if (response.status === 403 || response.status === 404) {
+  if (response.status === 404 || response.status === 403) {
     return (
       <>
         <HomeNav />
         <main className="studio-page">
           <div className="studio-empty">
-            <p>Trang này chỉ dành cho tài khoản nghệ nhân studio (vai trò STUDIO / ADMIN).</p>
-            <a href="/workspace" className="workspace-btn-outline" style={{ display: 'inline-block', marginTop: '12px' }}>
-              Về trang khách hàng
+            <p>Tài khoản hiện tại không có quyền truy cập xưởng chế tác.</p>
+            <a href="/workspace" className="workspace-btn-secondary" style={{ display: 'inline-block', marginTop: '12px' }}>
+              Về việc của tôi
             </a>
           </div>
         </main>
@@ -104,6 +104,9 @@ export default async function StudioPage() {
             <p>Quản lý các yêu cầu thiết kế riêng và bản in ấn thiệp cưới đang xử lý.</p>
           </div>
           <div className="studio-actions">
+            <a href="/admin/ai" className="workspace-btn-secondary" style={{ marginRight: '8px' }}>
+              ✦ Cấu hình AI
+            </a>
             <a href="/studio/orders" className="workspace-btn-primary">
               Danh sách đơn in ấn →
             </a>

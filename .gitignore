@@ -32,3 +32,6 @@ prisma/migrations/**/.gitkeep
 *.log
 npm-debug.log*
 pnpm-debug.log*
+
+.data/
+apps/api/.data/

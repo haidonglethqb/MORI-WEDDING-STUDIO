@@ -11,11 +11,14 @@ import { ScoringMatcher } from './scoring-matcher.js'
 import { BespokeEstimator } from './bespoke-estimator.js'
 import { SupervisorGuardrail } from './supervisor-guardrail.js'
 import { AssistantOrchestratorService } from './assistant-orchestrator.service.js'
+import { AiConfigService } from './ai-config.service.js'
+import { AdminAiConfigController } from './admin-ai-config.controller.js'
 
 @Module({
   imports: [IdentityModule],
-  controllers: [AssistantController],
+  controllers: [AssistantController, AdminAiConfigController],
   providers: [
+    AiConfigService,
     RecommendationService,
     AssistantQuotaService,
     AiToolBoundary,
@@ -27,6 +30,6 @@ import { AssistantOrchestratorService } from './assistant-orchestrator.service.j
     SupervisorGuardrail,
     AssistantOrchestratorService,
   ],
-  exports: [AssistantOrchestratorService],
+  exports: [AssistantOrchestratorService, AiConfigService],
 })
 export class AssistanceModule {}

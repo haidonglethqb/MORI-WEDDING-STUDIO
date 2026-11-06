@@ -1,13 +1,21 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { GroqAiGateway } from './groq-ai-gateway.js'
+import { AiConfigService } from './ai-config.service.js'
 
 describe('GroqAiGateway', () => {
+  let configService: AiConfigService
+
   beforeEach(() => {
-    process.env['GROQ_API_KEY'] = 'test-mock-key'
+    configService = new AiConfigService()
+    configService.updateConfig({
+      provider: 'GROQ',
+      groqApiKey: 'test-mock-key',
+      groqPrimaryModel: 'openai/gpt-oss-120b',
+    })
   })
 
   it('parses valid json wrapped in markdown code fences', async () => {
-    const gateway = new GroqAiGateway()
+    const gateway = new GroqAiGateway(configService)
     const mockJson = { message: 'Xin chào', score: 10 }
     const spy = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
       ok: true,
@@ -28,7 +36,7 @@ describe('GroqAiGateway', () => {
   })
 
   it('fails over to secondary model when primary fails', async () => {
-    const gateway = new GroqAiGateway()
+    const gateway = new GroqAiGateway(configService)
     const mockSecondResult = { reply: 'Fallback thành công' }
 
     const spy = vi
@@ -54,7 +62,7 @@ describe('GroqAiGateway', () => {
   })
 
   it('throws descriptive error when all failover models fail', async () => {
-    const gateway = new GroqAiGateway()
+    const gateway = new GroqAiGateway(configService)
     const spy = vi.spyOn(globalThis, 'fetch').mockResolvedValue({
       ok: false,
       status: 500,
