@@ -40,11 +40,12 @@ jobs:
           context: .
           file: infra/docker/Dockerfile.${{ matrix.service }}
           push: true
+          provenance: false
           tags: |
             ghcr.io/${{ github.repository_owner }}/mori-${{ matrix.service }}:latest
             ghcr.io/${{ github.repository_owner }}/mori-${{ matrix.service }}:${{ github.sha }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=${{ matrix.service }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.service }}
 
   deploy:
     name: Deploy to Remote VPS
@@ -73,12 +74,15 @@ jobs:
           GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SERVER_HOST: ${{ secrets.SSH_HOST }}
           IMAGE_TAG: latest
+          CODEX_API_KEY: ${{ secrets.CODEX_API_KEY }}
+          CODEX_BASE_URL: ${{ secrets.CODEX_BASE_URL }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         with:
           host: ${{ secrets.SSH_HOST }}
           port: ${{ secrets.SSH_PORT }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          envs: REPO_OWNER,GHCR_USER,GHCR_TOKEN,SERVER_HOST,IMAGE_TAG
+          envs: REPO_OWNER,GHCR_USER,GHCR_TOKEN,SERVER_HOST,IMAGE_TAG,CODEX_API_KEY,CODEX_BASE_URL,GROQ_API_KEY
           script: |
             tr -d '\r' < /opt/mori/scripts/deploy-compose.sh > /opt/mori/deploy.sh
             chmod +x /opt/mori/deploy.sh

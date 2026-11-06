@@ -7,7 +7,7 @@ echo "=== [1/6] Preparing Deployment Directory ==="
 mkdir -p "$DEPLOY_DIR/media"
 cd "$DEPLOY_DIR"
 
-# 1. Ensure .env exists; if already present, NEVER overwrite existing credentials
+# 1. Ensure .env exists; if already present, preserve existing credentials
 echo "=== [2/6] Verifying Environment Configuration ==="
 if [ ! -f .env ]; then
   echo "No existing .env found. Generating initial configuration..."
@@ -31,6 +31,25 @@ EOF
 else
   echo ".env file already exists. Preserving existing database and secrets."
 fi
+
+# Synchronize AI and Origin Secrets if provided
+sync_env_var() {
+  local key="$1"
+  local val="${!key:-}"
+  if [ -n "$val" ]; then
+    if grep -q "^${key}=" .env; then
+      sed -i "s|^${key}=.*|${key}=${val}|" .env
+    else
+      echo "${key}=${val}" >> .env
+    fi
+  fi
+}
+
+sync_env_var "CODEX_API_KEY"
+sync_env_var "CODEX_BASE_URL"
+sync_env_var "GROQ_API_KEY"
+sync_env_var "PUBLIC_APP_ORIGIN"
+sync_env_var "PUBLIC_INVITE_ORIGIN"
 
 # 2. GHCR authentication (if token provided by GitHub Actions)
 if [ -n "${GHCR_TOKEN:-}" ] && [ -n "${GHCR_USER:-}" ]; then

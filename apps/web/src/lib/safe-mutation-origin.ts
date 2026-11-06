@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 
-function getAllowedOrigins(): Set<string> {
+function getAllowedOrigins(request?: Request): Set<string> {
   const allowed = new Set([
     'http://app.mori.localhost',
     'http://invite.mori.localhost',
@@ -13,12 +13,21 @@ function getAllowedOrigins(): Set<string> {
   if (process.env['PUBLIC_INVITE_ORIGIN']) {
     allowed.add(process.env['PUBLIC_INVITE_ORIGIN'].trim().replace(/\/+$/, ''))
   }
+  if (request) {
+    const host = request.headers.get('host')
+    if (host) {
+      allowed.add(`http://${host}`)
+      allowed.add(`https://${host}`)
+    }
+  }
   return allowed
 }
 
 function resolveUpstreamOrigin(origin: string): string {
+  const configured = process.env['PUBLIC_APP_ORIGIN']?.trim().replace(/\/+$/, '')
+  if (configured) return configured
   if (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
-    return process.env['PUBLIC_APP_ORIGIN']?.trim().replace(/\/+$/, '') || 'http://app.mori.localhost'
+    return 'http://app.mori.localhost'
   }
   return origin
 }
@@ -41,7 +50,7 @@ export function validateBffOrigin(request: Request): {
     }
   }
 
-  const allowed = getAllowedOrigins()
+  const allowed = getAllowedOrigins(request)
   const origin = request.headers.get('origin')
   if (origin) {
     if (!allowed.has(origin)) {
