@@ -1,0 +1,4 @@
+.portal-reviews { max-width: 1440px; margin: 0 auto; padding: 112px 5%; border-top: 1px solid rgba(237,231,220,.2); color: #ede7dc; }
+.portal-reviews h2 { font: 600 clamp(36px,4vw,62px)/1.15 'Syne',sans-serif; letter-spacing: -.04em; margin: 24px 0; color: #ede7dc; }
+.portal-reviews h2 em { color: #e9a65e; font-style: normal; }.portal-reviews p { max-width: 560px; color: #b7bdba; line-height: 1.8; }.portal-reviews a { color: #ede7dc; display: inline-flex; min-height: 48px; align-items: center; text-underline-offset: 5px; }
+@media (max-width: 600px) { .portal-reviews { padding: 64px 20px; } }

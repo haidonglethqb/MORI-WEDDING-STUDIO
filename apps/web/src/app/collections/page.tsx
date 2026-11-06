@@ -1,7 +1,9 @@
 import { HomeNav } from '../home-nav'
 import { CollectionFilters } from './collection-filters'
 import { buildCuratedItem, type CollectionItem } from './collection-types'
+import { PriceCalculator } from './price-calculator'
 import './collections.css'
+import './masonry-gallery.css'
 
 export const dynamic = 'force-dynamic'
 
@@ -70,7 +72,10 @@ export default async function CollectionsPage() {
           ) : null}
         </header>
 
-        <CollectionFilters items={items} />
+        <a href="#du-toan" className="calculator-jump">Xem dự toán theo số lượng ↓</a><CollectionFilters items={items} />
+        <PriceCalculator options={products.flatMap((product) => product.variants
+          .filter((variant) => variant.availability !== 'UNAVAILABLE' && variant.shape !== 'TRIFOLD')
+          .map((variant) => ({ id: variant.id, label: `${product.name} · ${variant.shape === 'BIFOLD' ? 'Gấp đôi' : 'Phẳng'}`, isFixture: product.isFixture })))} />
       </main>
     </>
   )

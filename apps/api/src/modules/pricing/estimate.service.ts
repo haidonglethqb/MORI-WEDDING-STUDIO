@@ -24,11 +24,12 @@ export class EstimateService {
       throw new BadRequestException('This configuration cannot be estimated')
     }
     if (variant.availability === 'QUOTE_REQUIRED') {
-      return { currency: 'VND', quantity: input.quantity, quoteRequired: true, ...EMPTY }
+      return { currency: 'VND', quantity: input.quantity, quoteRequired: true, ...EMPTY, isFixture: variant.product.isFixture }
     }
 
     const rules = await prisma.priceRule.findMany({
       where: { variantId: variant.id, priceBook: { state: 'PUBLISHED' } },
+      include: { priceBook: { select: { isFixture: true } } },
     })
     const priced = estimatePrice({
       quantity: input.quantity,
@@ -41,6 +42,6 @@ export class EstimateService {
       shippingVnd: null,
       taxVnd: null,
     })
-    return { currency: 'VND', quoteRequired: false, ...priced }
+    return { currency: 'VND', quoteRequired: false, ...priced, isFixture: variant.product.isFixture || rules.some((rule) => rule.priceBook.isFixture) }
   }
 }

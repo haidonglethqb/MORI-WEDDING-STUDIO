@@ -68,6 +68,7 @@ export type EstimateRequest = z.infer<typeof EstimateRequestSchema>
 
 export const EstimateResponseSchema = z.object({
   currency: z.literal('VND'),
+  isFixture: z.boolean().optional(),
   quantity: z.number().int(),
   merchandiseVnd: z.string().nullable(),
   shippingVnd: z.string().nullable(),

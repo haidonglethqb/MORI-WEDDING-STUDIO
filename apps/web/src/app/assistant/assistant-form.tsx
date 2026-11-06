@@ -91,7 +91,7 @@ export function AssistantForm() {
           </div>
 
           <form
-            className="chat-input-form"
+            className="chat-input-form radiant-prompt"
             onSubmit={(e) => {
               e.preventDefault()
               void sendMessage(input)
@@ -102,7 +102,7 @@ export function AssistantForm() {
               id="assistant-message"
               type="text"
               className="chat-input-field"
-              placeholder="Nhắn tin với Nghệ nhân MORI (vd: Tụi mình cưới ở Đà Lạt, 120 khách...)"
+              placeholder="Bạn muốn hỏi MORI điều gì?"
               value={input}
               disabled={loading}
               onChange={(e) => setInput(e.target.value)}
@@ -126,8 +126,7 @@ export function AssistantForm() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 >
-                  <line x1="22" y1="2" x2="11" y2="13" />
-                  <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                  <path d="M12 19V5M5 12l7-7 7 7" />
                 </svg>
               )}
             </button>

@@ -4,9 +4,8 @@ import type { CollectionItem } from './collection-types'
 export type { CollectionItem }
 
 export function CollectionCard({ item }: { item: CollectionItem }) {
-  const isBifold = item.shape === 'BIFOLD'
   const formattedPrice = !item.isFixture && item.minPriceVnd
-    ? `Từ ${Number(item.minPriceVnd).toLocaleString('vi-VN')} ₫`
+    ? `Từ ${BigInt(item.minPriceVnd).toLocaleString('vi-VN')} ₫`
     : item.isFixture ? 'Mẫu minh họa' : 'Đang cập nhật'
 
   return (
@@ -23,7 +22,7 @@ export function CollectionCard({ item }: { item: CollectionItem }) {
         <div className="artisan-card-body">
           <div className="artisan-specs-row">
             <span className="spec-shape-pill">
-              {isBifold ? 'Khổ gấp đôi 2 mặt' : 'Khổ đơn phẳng 2 mặt'}
+              {item.shape === 'BIFOLD' ? 'Khổ gấp đôi' : item.shape === 'TRIFOLD' ? 'Khổ gấp ba' : 'Khổ đơn phẳng'}
             </span>
             {item.isFixture ? <span className="spec-material-tag">Thông tin mẫu</span> : null}
           </div>

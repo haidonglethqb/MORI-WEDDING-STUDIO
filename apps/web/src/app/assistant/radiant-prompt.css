@@ -1,0 +1,37 @@
+@property --mori-prompt-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+@keyframes mori-prompt-rotate { to { --mori-prompt-angle: 360deg; } }
+body .chat-input-dock .radiant-prompt {
+  --mori-prompt-gradient: conic-gradient(from var(--mori-prompt-angle, 0deg), #4385d0, #cb6759, #e9bf5c, #64ac80, #4385d0);
+  position: relative; isolation: isolate; display: flex; align-items: center; gap: 8px;
+  min-height: 60px; padding: 6px; border: 3px solid transparent; border-radius: 999px;
+  background: linear-gradient(#fffefa, #fffefa) padding-box, var(--mori-prompt-gradient) border-box;
+  animation: mori-prompt-rotate 5s linear infinite;
+}
+body .chat-input-dock .radiant-prompt::after {
+  content: ''; position: absolute; z-index: -1; inset: -5px; border-radius: inherit;
+  padding: 4px; background: var(--mori-prompt-gradient); filter: blur(8px); opacity: .35; pointer-events: none;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+}
+body .chat-input-dock .radiant-prompt:focus-within { outline: 2px solid #334e3a; outline-offset: 4px; }
+body .chat-input-dock .radiant-prompt .chat-input-field {
+  min-width: 0; min-height: 44px; padding: 8px 12px 8px 18px; background: transparent;
+  border: 0; border-radius: 999px; box-shadow: none; color: #202820; font-size: 15px; outline: none;
+}
+body .chat-input-dock .radiant-prompt .chat-input-field::placeholder { color: #687365; opacity: 1; }
+body .chat-input-dock .radiant-prompt .chat-send-btn {
+  width: 44px; height: 44px; border-radius: 50%; background: #293c30; color: #fff; flex-shrink: 0;
+}
+body .chat-input-dock .radiant-prompt .chat-send-btn:disabled { background: #e2e6df; color: #566257; opacity: 1; }
+body .chat-input-dock .radiant-prompt .chat-send-btn:focus-visible { outline: 2px solid #334e3a; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) {
+  body .chat-input-dock .radiant-prompt { animation: none; }
+  body .chat-input-dock .radiant-prompt::after { filter: none; opacity: .15; }
+}
+@media (max-width: 480px) {
+  body .chat-input-dock .radiant-prompt .chat-input-field { font-size: 16px; padding-left: 12px; }
+}

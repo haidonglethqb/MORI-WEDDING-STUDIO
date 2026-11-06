@@ -12,7 +12,7 @@ export interface SmtpTarget {
 
 /** Sends account verification and password reset messages through authenticated SMTP. */
 export class SmtpAccountMail implements AccountMail {
-  private readonly transporter: nodemailer.Transporter
+  private readonly transporter: ReturnType<typeof nodemailer.createTransport>
 
   constructor(private readonly target: SmtpTarget) {
     this.transporter = nodemailer.createTransport({

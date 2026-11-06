@@ -1,6 +1,7 @@
 import { HomeNav } from '../home-nav'
 import { AssistantForm } from './assistant-form'
 import './assistant.css'
+import './radiant-prompt.css'
 
 export const dynamic = 'force-dynamic'
 

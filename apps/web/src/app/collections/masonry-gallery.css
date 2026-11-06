@@ -1,0 +1,10 @@
+/* CSS masonry preserves document order and works without client animation. */
+body .collections-wrap .collections-artisan-grid { display: block; columns: 3; column-gap: 24px; }
+body .collections-wrap .artisan-collection-card { display: inline-block; width: 100%; break-inside: avoid; margin: 0 0 32px; vertical-align: top; }
+body .collections-wrap .artisan-collection-card:nth-child(3n + 2) .card-stage-container { height: 310px; }
+body .collections-wrap .artisan-collection-card:nth-child(3n + 3) .card-stage-container { height: 280px; }
+body .collections-wrap .card-stage-container { height: 250px; }
+body .collections-wrap .artisan-card-link:focus-visible { outline: 2px solid #e9a65e; outline-offset: 4px; }
+@media (prefers-reduced-motion: no-preference) { body .collections-wrap .artisan-collection-card { animation: mori-gallery-arrive .45s ease both; } @keyframes mori-gallery-arrive { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } } }
+@media (max-width: 900px) { body .collections-wrap .collections-artisan-grid { columns: 2; column-gap: 16px; } }
+@media (max-width: 480px) { body .collections-wrap .collections-artisan-grid { columns: 1; } }
