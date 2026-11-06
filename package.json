@@ -10,7 +10,7 @@
   },
   "scripts": {
     "dev": "echo 'Use: docker compose -f compose.yaml -f compose.dev.yaml up'",
-    "build": "corepack pnpm -r --filter './apps/*' build",
+    "build": "corepack pnpm --filter './packages/*' build && corepack pnpm -r --filter './apps/*' build",
     "lint": "eslint .",
     "typecheck": "corepack pnpm -r typecheck",
     "test:unit": "corepack pnpm -r test:unit",

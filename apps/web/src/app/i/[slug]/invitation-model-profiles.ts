@@ -59,10 +59,11 @@ export function resolveModelProfile(slugOrModel: string): DigitalModelProfile {
   const match = ALL_30_MODELS.find((m) => m.slug === slugOrModel)
   if (match) return match
 
-  if (slugOrModel.includes('traditional') || slugOrModel.includes('hy-su')) return ALL_30_MODELS[10]!
-  if (slugOrModel.includes('floral') || slugOrModel.includes('botanical')) return ALL_30_MODELS[5]!
-  if (slugOrModel.includes('minimalist') || slugOrModel.includes('wabi')) return ALL_30_MODELS[15]!
-  if (slugOrModel.includes('typography') || slugOrModel.includes('calligraphy')) return ALL_30_MODELS[20]!
-  if (slugOrModel.includes('modern')) return ALL_30_MODELS[25]!
-  return ALL_30_MODELS[0]!
+  const fallback = ALL_30_MODELS[0] as DigitalModelProfile
+  if (slugOrModel.includes('traditional') || slugOrModel.includes('hy-su')) return ALL_30_MODELS[10] ?? fallback
+  if (slugOrModel.includes('floral') || slugOrModel.includes('botanical')) return ALL_30_MODELS[5] ?? fallback
+  if (slugOrModel.includes('minimalist') || slugOrModel.includes('wabi')) return ALL_30_MODELS[15] ?? fallback
+  if (slugOrModel.includes('typography') || slugOrModel.includes('calligraphy')) return ALL_30_MODELS[20] ?? fallback
+  if (slugOrModel.includes('modern')) return ALL_30_MODELS[25] ?? fallback
+  return fallback
 }

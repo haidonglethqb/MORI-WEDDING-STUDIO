@@ -1,6 +1,5 @@
 'use client'
 
-import type { ReactNode } from 'react'
 import type { DigitalModelProfile } from '../invitation-model-profiles'
 import { InvitationAudioPlayer } from '../invitation-audio-player'
 import { InvitationCalendarAction } from '../invitation-calendar-action'

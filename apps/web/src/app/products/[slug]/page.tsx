@@ -114,7 +114,10 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             </div>
 
             <div style={{ marginTop: '24px' }}>
-              <a href="/workspace" className="product-order-cta">
+              <a
+                href={`/workspace?product=${encodeURIComponent(slug)}&shape=${encodeURIComponent(orderable[0]?.shape ?? 'FLAT')}`}
+                className="product-order-cta"
+              >
                 Bắt đầu thiết kế &amp; Đặt in mẫu này &rarr;
               </a>
             </div>

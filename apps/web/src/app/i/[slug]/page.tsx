@@ -1,5 +1,6 @@
 import { GUEST_COOKIE } from '@mori/contracts'
 import { cookies } from 'next/headers'
+import { notFound } from 'next/navigation'
 import { GuestFragment } from './guest-fragment'
 import { GuestRsvp } from './guest-rsvp'
 import { PasscodeForm } from './passcode-form'
@@ -62,17 +63,11 @@ export default async function GuestInvitationPage({
     response = null
   }
 
-  // Graceful fallback for demonstration / offline preview
-  const body = response && response.ok
-    ? ((await response.json()) as OpenInvitation | GatedInvitation)
-    : {
-        gated: false as const,
-        displayNames: ['Minh Sơn', 'Thảo Vy'] as [string, string],
-        eventTitle: 'Lễ Thành Hôn & Tiệc Cưới Thân Mật',
-        greeting:
-          'Khoảnh khắc chúng mình chính thức bước vào chặng đường mới sẽ trở nên trọn vẹn và ý nghĩa hơn rất nhiều khi có sự hiện diện chung vui của quý khách.',
-      }
+  if (!response || !response.ok) {
+    notFound()
+  }
 
+  const body = (await response.json()) as OpenInvitation | GatedInvitation
   const guest = await grantedGuest(slug)
 
   if (body.gated && !guest) {
@@ -106,7 +101,12 @@ export default async function GuestInvitationPage({
           eventTitle={page.eventTitle}
           greeting={page.greeting}
           partyName={guest?.partyName ?? null}
-          rsvpSection={<GuestRsvp slug={slug} />}
+          rsvpSection={
+            <GuestRsvp
+              slug={slug}
+              coupleNames={`${page.displayNames[0]} & ${page.displayNames[1]}`}
+            />
+          }
         />
 
         <ReportInvitation slug={slug} />

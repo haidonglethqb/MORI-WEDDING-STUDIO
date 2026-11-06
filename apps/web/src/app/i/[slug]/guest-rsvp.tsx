@@ -7,7 +7,7 @@ interface RsvpSheet {
   events: { eventId: string; title: string }[]
 }
 
-export function GuestRsvp({ slug }: { slug: string }) {
+export function GuestRsvp({ slug, coupleNames }: { slug: string; coupleNames?: string }) {
   const [sheet, setSheet] = useState<RsvpSheet | null>(null)
   const [status, setStatus] = useState('')
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
@@ -140,7 +140,7 @@ export function GuestRsvp({ slug }: { slug: string }) {
             <textarea
               value={wish}
               onChange={(e) => setWish(e.target.value)}
-              placeholder="Viết lời chúc phúc chân thành gửi đến Minh Sơn &amp; Thảo Vy..."
+              placeholder={`Viết lời chúc phúc chân thành gửi đến ${coupleNames || 'đôi uyên ương'}...`}
               rows={3}
               className="wishes-textarea"
             />

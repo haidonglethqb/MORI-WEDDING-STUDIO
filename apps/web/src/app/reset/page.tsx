@@ -4,12 +4,17 @@ import '../login/login.css'
 
 export const dynamic = 'force-dynamic'
 
-export default function ResetPage() {
+export default async function ResetPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ token?: string }>
+}) {
+  const params = searchParams ? await searchParams : undefined
   return (
     <>
       <HomeNav />
       <main className="login">
-        <ResetForm />
+        <ResetForm initialToken={params?.token ?? ''} />
       </main>
     </>
   )

@@ -4,12 +4,17 @@ import '../login/login.css'
 
 export const dynamic = 'force-dynamic'
 
-export default function VerifyPage() {
+export default async function VerifyPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ token?: string }>
+}) {
+  const params = searchParams ? await searchParams : undefined
   return (
     <>
       <HomeNav />
       <main className="login">
-        <VerifyForm />
+        <VerifyForm initialToken={params?.token ?? ''} />
       </main>
     </>
   )

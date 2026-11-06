@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 const checks = [
@@ -22,6 +23,7 @@ export function ApproveProof({
   sequence: number
   manifestHash: string
 }) {
+  const router = useRouter()
   const [ack, setAck] = useState({
     names: false,
     dates: false,
@@ -31,21 +33,34 @@ export function ApproveProof({
     version: false,
   })
   const [status, setStatus] = useState(`Bản ${sequence}. Mã bản in ${manifestHash}.`)
+  const [loading, setLoading] = useState(false)
   const ready = Object.values(ack).every(Boolean)
 
   async function approve() {
-    setStatus('Đang duyệt')
-    const response = await fetch(`/requests/${requestId}/revisions/${revisionId}/approve`, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({
-        manifestHash,
-        scopeFingerprint: manifestHash,
-        acknowledgementVersion: 'ack-1',
-        acknowledgement: ack,
-      }),
-    })
-    setStatus(response.ok ? 'Đã duyệt bản in này.' : 'Chưa duyệt được. Hãy xác nhận đủ các mục.')
+    setLoading(true)
+    setStatus('Đang ghi nhận phê duyệt bản in...')
+    try {
+      const response = await fetch(`/requests/${requestId}/revisions/${revisionId}/approve`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          manifestHash,
+          scopeFingerprint: manifestHash,
+          acknowledgementVersion: 'ack-1',
+          acknowledgement: ack,
+        }),
+      })
+      setLoading(false)
+      if (response.ok) {
+        setStatus('✦ Đã duyệt bản in này thành công! Đang cập nhật trạng thái...')
+        router.refresh()
+      } else {
+        setStatus('Chưa duyệt được. Hãy xác nhận đủ các mục.')
+      }
+    } catch {
+      setLoading(false)
+      setStatus('Đã xảy ra lỗi mạng khi duyệt.')
+    }
   }
 
   return (
@@ -65,8 +80,8 @@ export function ApproveProof({
           {label}
         </label>
       ))}
-      <button type="submit" disabled={!ready}>
-        Duyệt bản {sequence}
+      <button type="submit" disabled={!ready || loading}>
+        {loading ? 'Đang ghi nhận...' : `Duyệt bản ${sequence}`}
       </button>
       <p>{status}</p>
     </form>

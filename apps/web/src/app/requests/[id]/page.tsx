@@ -105,6 +105,7 @@ export default async function CustomerRequestPage({ params }: { params: Promise<
                     totalAmountVnd={quote.totalAmountVnd}
                     requestKind={quote.requestKind}
                     addresses={addresses}
+                    isReadyToOrder={quote.requestKind === 'DIGITAL' || proofs.some((p) => p.state === 'APPROVED')}
                   />
                 )}
               </div>

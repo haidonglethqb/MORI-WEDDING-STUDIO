@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 
-export function VerifyForm() {
-  const [token, setToken] = useState('')
+export function VerifyForm({ initialToken = '' }: { initialToken?: string }) {
+  const [token, setToken] = useState(initialToken)
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [resending, setResending] = useState(false)

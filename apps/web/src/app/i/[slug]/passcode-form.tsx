@@ -40,7 +40,13 @@ export function PasscodeForm({ slug }: { slug: string }) {
   }
 
   return (
-    <form onSubmit={submitPasscode} className="passcode-card-form">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault()
+        void submitPasscode(e)
+      }}
+      className="passcode-card-form"
+    >
       <div className="passcode-icon">🔒</div>
       <h2 className="passcode-title">Thiệp cưới được bảo vệ</h2>
       <p className="passcode-desc">

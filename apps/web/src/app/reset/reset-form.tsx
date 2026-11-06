@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 
-export function ResetForm() {
-  const [token, setToken] = useState('')
+export function ResetForm({ initialToken = '' }: { initialToken?: string } = {}) {
+  const [token, setToken] = useState(initialToken)
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [status, setStatus] = useState<string | null>(null)
