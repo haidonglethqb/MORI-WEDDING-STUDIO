@@ -47,9 +47,11 @@ then deploys that exact tag to the VPS. Configure these GitHub Actions repositor
 The host installs Docker Engine and Compose v2 if either is missing, starts PostgreSQL/Redis, waits for PostgreSQL
 health, runs the one-shot Prisma migration service, then starts the app and checks API readiness plus the HTTPS web
 origin. Caddy listens on ports 80/443, obtains and renews certificates, and reverse-proxies to the private web
-container port. Set Cloudflare SSL/TLS to Full (Strict). Cleanup runs only after health checks succeed. It removes
-unused containers/images/build cache, apt cache, and old journal entries; named Docker volumes and
-`/opt/mori/media` are retained. Production deployment does not run the development seed or create predictable demo
+container port. Set Cloudflare SSL/TLS to Full (Strict). After health checks succeed, cleanup removes obsolete tags
+from the four MORI image repositories without forcing removal. The current Compose images, including the one-shot
+migration image, are kept. Images used by containers, other repositories, volumes and `/opt/mori/media` are retained.
+If cleanup fails, the deployment job reports failure even if the application is already healthy. Production deployment
+does not run the development seed or create predictable demo
 accounts. OxMail uses `mail.moriwedding.xyz`; set `mail` to DNS-only in Cloudflare. The API uses authenticated SMTP
 with implicit TLS on port 465 by default; the password is injected from the GitHub secret and never committed.
 

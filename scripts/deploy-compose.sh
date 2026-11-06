@@ -161,8 +161,8 @@ if [ "$READY" -ne 1 ]; then
   exit 1
 fi
 
-# Cleanup runs only after the deployment has passed health checks. It prunes
-# unused Docker resources and OS caches, never named volumes or application data.
+# Cleanup only follows successful health checks and only targets obsolete MORI
+# image tags. Current application and migration references remain available.
 echo "=== [7/7] Cleaning Stale Images and Temporary Files ==="
 if [ -x "$DEPLOY_DIR/clean-vps.sh" ]; then
   "$DEPLOY_DIR/clean-vps.sh"

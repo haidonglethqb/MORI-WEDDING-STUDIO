@@ -34,7 +34,7 @@ export const INITIAL_GREETING: ChatMessageItem = {
   id: 'greeting-0',
   role: 'assistant',
   content:
-    'Kính chào bạn, mình là Master Pierre-Minh & Vũ Cầm từ MORI Haute Papeterie Atelier. Hãy chia sẻ về ngày trọng đại của bạn — phong cách yêu thích, không gian tiệc cưới (sân vườn, bãi biển, tư gia hay khách sạn), hoặc số lượng khách mời để chúng mình đồng hành kiến tạo bộ thiệp độc bản nhé.',
+    'Chào bạn, mình là trợ lý MORI. Hãy chia sẻ phong cách yêu thích hoặc số lượng khách mời, mình sẽ giúp bạn tìm hướng thiết kế phù hợp nhé.',
 }
 
 export const QUICK_STARTERS = [

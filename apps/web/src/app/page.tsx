@@ -1,16 +1,16 @@
 import type { CatalogueProduct } from '@mori/contracts'
 import { HomeNav } from './home-nav'
-import { HeroShowcase } from './hero-showcase'
-import { CraftMaterials } from './craft-materials'
-import { SampleShowcase, type ShowcaseProduct } from './sample-showcase'
-import { DigitalRsvpShowcase } from './digital-rsvp-showcase'
-import { HomeSteps } from './home-steps'
-import { HomeFaq } from './home-faq'
+import { PortalHero } from './portal-hero'
+import { PortalDeck } from './portal-deck'
+import { type ShowcaseProduct } from './sample-showcase'
 import { HomeFooter } from './home-footer'
 import './home.css'
 import './collections/collections.css'
 import './landing-editorial.css'
 import './landing-responsive.css'
+import './portal-fonts.css'
+import './portal-landing.css'
+import './portal-responsive.css'
 
 export const dynamic = 'force-dynamic'
 
@@ -33,39 +33,16 @@ async function loadProducts(): Promise<ShowcaseProduct[]> {
 export default async function HomePage() {
   const products = await loadProducts()
   return (
-    <div className="home home-editorial">
+    <div className="home home-editorial portal-home">
       <a className="landing-skip" href="#landing-main">Đến nội dung chính</a>
       <HomeNav />
       <main id="landing-main">
-        <section className="home-hero" aria-labelledby="landing-title">
-          <div className="hero-content">
-            <p className="landing-eyebrow"><span className="landing-hairline" /> MORI WEDDING STUDIO</p>
-            <h1 id="landing-title">Ngày chung đôi.<br /><em>Một lời mời</em><br />rất riêng.</h1>
-            <p className="hero-lead-text">Trước khi ngày vui bắt đầu, hãy để tấm thiệp kể đôi điều về hai bạn.</p>
-            <div className="home-actions">
-              <a className="home-cta" href="/collections">Tìm mẫu thiệp của bạn <span aria-hidden="true">↗</span></a>
-              <a className="home-quiet" href="#che-tac">Gặp tinh thần MORI</a>
-            </div>
-            <div className="hero-editor-note"><span>THIỆP GIẤY & THIỆP TRỰC TUYẾN</span><p>Từ nét chữ đầu tiên đến lời mời được gửi đi.</p></div>
-          </div>
-          <HeroShowcase />
-        </section>
-        <div className="landing-colophon"><span>Một lời mời. Một dấu ấn.</span><span>ĐƯỢC SẮP RIÊNG CHO HAI BẠN</span><a href="#bo-suu-tap">Khám phá bên dưới <span aria-hidden="true">↓</span></a></div>
-        <section className="home-band landing-selection" id="bo-suu-tap" aria-labelledby="collection-heading">
-          <div className="landing-section-heading"><div><span className="landing-eyebrow">01 / BỘ SƯU TẬP</span><h2 id="collection-heading">Bắt đầu từ<br /><em>một rung động.</em></h2></div><div><p>Một nét tối giản, một sắc màu quen, hay chút lãng mạn. Chọn thiết kế khiến bạn thấy mình trong đó.</p><a className="landing-text-link" href="/collections">Xem toàn bộ bộ sưu tập <span aria-hidden="true">↗</span></a></div></div>
-          <SampleShowcase products={products} />
-        </section>
-        <section className="home-band landing-craft" id="che-tac" aria-labelledby="craft-heading">
-          <div className="landing-section-heading"><div><span className="landing-eyebrow">02 / DẤU ẤN RIÊNG</span><h2 id="craft-heading">Đẹp từ những điều<br /><em>thật nhỏ.</em></h2></div><p>Tên hai bạn, một tông màu, cách đặt lời mời. Những chi tiết nhỏ làm nên một tấm thiệp có cá tính.</p></div>
-          <CraftMaterials />
-        </section>
-        <section className="home-band-dark" id="thiep-so"><div className="band-dark-inner"><DigitalRsvpShowcase /></div></section>
-        <section className="home-steps" id="quy-trinh" aria-labelledby="process-heading">
-          <div className="landing-section-heading"><div><span className="landing-eyebrow">04 / CÙNG MORI</span><h2 id="process-heading">Từng bước,<br /><em>cùng hai bạn.</em></h2></div><p>Không cần có sẵn mọi câu trả lời. Hãy bắt đầu với một ý tưởng, phần còn lại mình cùng trao đổi.</p></div>
-          <HomeSteps />
-        </section>
-        <section className="home-band landing-faq" id="faq" aria-labelledby="faq-heading"><div><span className="landing-eyebrow">TRƯỚC KHI BẮT ĐẦU</span><h2 id="faq-heading">Có thể bạn<br /><em>đang băn khoăn.</em></h2><p>Thông tin giúp bạn dễ dàng chọn bước tiếp theo.</p></div><HomeFaq /></section>
-        <section className="landing-invitation" id="du-toan"><span className="landing-eyebrow">MORI · WEDDING STUDIO</span><h2>Mọi ngày vui đều bắt đầu<br />từ <em>một lời mời.</em></h2><a className="home-cta" href="/collections">Tìm thiết kế dành cho hai bạn <span aria-hidden="true">↗</span></a><a className="landing-text-link" href="/assistant">Chưa biết chọn gì? Cùng tìm ý tưởng</a></section>
+        <PortalHero />
+        <section className="portal-statement" id="che-tac"><span className="portal-kicker">01 / MỘT LỜI MỜI</span><h2>Có những câu chuyện bắt đầu bằng <em>một tấm thiệp.</em></h2><p>Từ những nét chữ đầu tiên đến lời mời gửi trao, MORI đồng hành cùng hai bạn tạo nên một dấu ấn riêng cho ngày chung đôi.</p><span className="portal-outline" aria-hidden="true">01</span></section>
+        <section className="portal-releases" id="bo-suu-tap"><div className="portal-release-copy"><span className="portal-kicker">02 / BỘ SƯU TẬP</span><h2>Mỗi thiết kế.<br /><em>Một câu chuyện.</em></h2><p>Tìm cảm hứng từ những mẫu thiệp có sẵn, rồi cùng MORI hoàn thiện lời mời của hai bạn.</p><div className="portal-actions"><a className="portal-button" href="/collections">Khám phá bộ sưu tập ↗</a><a className="portal-link" href="/assistant">Cùng tìm ý tưởng →</a></div></div><PortalDeck products={products} /></section>
+        <section className="portal-roster" id="thiep-so"><div className="portal-section-top"><span className="portal-kicker">03 / CÙNG MORI</span><h2>Chọn cách<br />kể chuyện.</h2></div><a href="/collections"><span>01 / THIẾT KẾ</span><strong>Thiệp cưới</strong><span>KHÁM PHÁ ↗</span></a><a href="/workspace"><span>02 / TRỰC TUYẾN</span><strong>Thiệp số & RSVP</strong><span>BẮT ĐẦU ↗</span></a><a href="/assistant"><span>03 / CẢM HỨNG</span><strong>Trợ lý gợi ý</strong><span>TRÒ CHUYỆN ↗</span></a></section>
+        <section className="portal-process" id="quy-trinh"><div><span className="portal-kicker">04 / TỪ Ý TƯỞNG ĐẾN NGÀY VUI</span><h2>Từng bước,<br /><em>cùng hai bạn.</em></h2></div><div className="portal-process-rows"><div><span>01</span><strong>Chọn hướng thiết kế</strong><p>Khám phá mẫu hoặc trò chuyện cùng trợ lý.</p></div><div><span>02</span><strong>Hoàn thiện chi tiết</strong><p>Trao đổi nội dung, số lượng và quy cách cùng xưởng.</p></div><div><span>03</span><strong>Duyệt trước khi gửi</strong><p>Kiểm tra thông tin và theo dõi các bước tiếp theo.</p></div></div></section>
+        <section className="portal-close"><span className="portal-kicker">MORI / WEDDING STUDIO</span><div><h2>Ngày vui bắt đầu<br />từ <em>một lời mời.</em></h2><div className="portal-actions"><a className="portal-button" href="/collections">Tìm mẫu thiệp ↗</a><a className="portal-link" href="/workspace">Không gian của bạn →</a></div></div><p>THIỆP GIẤY & THIỆP TRỰC TUYẾN · THIẾT KẾ THEO CÂU CHUYỆN CỦA BẠN</p><div className="portal-close-mark" aria-hidden="true">MORI<span>.</span></div></section>
       </main>
       <HomeFooter />
     </div>

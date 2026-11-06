@@ -155,7 +155,13 @@ export function CollectionFilters({ items }: { items: CollectionItem[] }) {
       </div>
 
       {/* Categorized View (Default) vs Filtered Grid */}
-      {!isFiltering ? (
+      {items.length === 0 ? (
+        <div className="collections-empty-box" role="status">
+          <p className="empty-title">Bộ sưu tập đang được cập nhật</p>
+          <p className="empty-sub">Bạn có thể trao đổi với MORI để tìm hướng thiết kế phù hợp.</p>
+          <a href="/assistant" className="empty-reset-btn">Trao đổi với MORI</a>
+        </div>
+      ) : !isFiltering ? (
         <div className="categorized-sections-wrap">
           {COLLECTION_CATEGORIES.map((category) => {
             const catItems = items.filter((it) => it.categoryId === category.id)
