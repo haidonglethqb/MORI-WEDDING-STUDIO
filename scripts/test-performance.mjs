@@ -32,7 +32,8 @@ if (violations > 0) {
 process.stdout.write(`[test:performance] ✓ Hard rule 10 satisfied: all ${allCode.length} code files are < 200 lines.\n`)
 
 // 2. OpenAPI Drift Check
-const driftCheck = spawnSync('corepack', ['pnpm', '--filter', '@mori/api', 'run', 'api:check-drift'], {
+const driftCheck = spawnSync('corepack pnpm --filter @mori/api run api:check-drift', {
+  shell: true,
   stdio: 'inherit',
 })
 if (driftCheck.status !== 0) {

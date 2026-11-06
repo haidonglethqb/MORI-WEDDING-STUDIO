@@ -22,6 +22,10 @@ export function AssistantProductCard({ item }: ProductCardProps) {
   const silhouetteLabel = profile?.silhouette ? SILHOUETTE_MAP[profile.silhouette] : null
   const accentColor = profile?.accentColor ?? '#b38e46'
 
+  const displayPrice = item.startingPriceVnd.includes('₫')
+    ? item.startingPriceVnd
+    : `${item.startingPriceVnd} ₫`
+
   return (
     <div className="embedded-product-card">
       <div className="embedded-product-header">
@@ -37,7 +41,7 @@ export function AssistantProductCard({ item }: ProductCardProps) {
       <div className="embedded-product-footer">
         <div className="embedded-product-price">
           <span className="price-label">Giá khởi điểm</span>
-          <span className="price-value">{item.startingPriceVnd} ₫</span>
+          <span className="price-value">{displayPrice}</span>
         </div>
 
         <Link

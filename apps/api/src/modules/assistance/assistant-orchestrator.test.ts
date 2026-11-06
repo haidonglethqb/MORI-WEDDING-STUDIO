@@ -2,7 +2,10 @@ import { describe, expect, it, vi } from 'vitest'
 import { ContextExtractor } from './context-extractor.js'
 import { AssistantOrchestratorService } from './assistant-orchestrator.service.js'
 import { GroqAiGateway } from './groq-ai-gateway.js'
-import { RecommendationService } from './recommendation.service.js'
+import { CatalogProvider } from './catalog-provider.js'
+import { ScoringMatcher } from './scoring-matcher.js'
+import { BespokeEstimator } from './bespoke-estimator.js'
+import { SupervisorGuardrail } from './supervisor-guardrail.js'
 
 describe('ContextExtractor', () => {
   const extractor = new ContextExtractor()
@@ -29,21 +32,29 @@ describe('ContextExtractor', () => {
     const base = extractor.createInitialBrief()
     const boosted = extractor.boostFromText(
       base,
-      'Tụi mình cưới ở Đà Lạt, tiệc ngoài trời khoảng 150 khách nhé',
+      'Tụi mình là Huy & Trang, cưới ở Đà Lạt tháng 12, tiệc ngoài trời khoảng 150 khách nhé',
     )
+    expect(boosted.coupleNames).toBe('Huy & Trang')
     expect(boosted.location).toBe('Đà Lạt')
+    expect(boosted.season).toBe('WINTER')
     expect(boosted.venueCategory).toBe('OUTDOOR_GARDEN')
     expect(boosted.guestCount).toBe(150)
+    expect(boosted.estimatedSuites).toBe(98)
   })
 })
 
 describe('AssistantOrchestratorService', () => {
-  it('sanitizes banned payment keywords (INV-13)', async () => {
+  const extractor = new ContextExtractor()
+  const matcher = new ScoringMatcher()
+  const estimator = new BespokeEstimator()
+  const guardrail = new SupervisorGuardrail()
+
+  it('sanitizes banned payment keywords (INV-13) and generates cards', async () => {
     const mockGateway = {
       executeCompletion: vi.fn().mockResolvedValue({
         data: {
           reply: 'Vui lòng chuyển khoản đặt cọc qua số tài khoản để hoàn tất thanh toán online.',
-          suggestedSlugs: [],
+          suggestedSlugs: ['floral-bifold-01'],
         },
         modelUsed: 'openai/gpt-oss-120b',
         fallbackTier: 1,
@@ -51,45 +62,73 @@ describe('AssistantOrchestratorService', () => {
       }),
     } as unknown as GroqAiGateway
 
-    const mockFallback = {
-      recommend: vi.fn(),
-    } as unknown as RecommendationService
+    const mockCatalogProvider = {
+      getActiveProducts: vi.fn().mockResolvedValue([
+        {
+          id: '1',
+          slug: 'floral-bifold-01',
+          name: 'Botanical Herbarium',
+          shape: 'BIFOLD',
+          styleTags: ['floral'],
+          colourTags: ['sage'],
+          unitPriceVnd: 35000n,
+          formattedPriceVnd: '35.000 ₫',
+        },
+      ]),
+    } as unknown as CatalogProvider
 
     const orchestrator = new AssistantOrchestratorService(
       mockGateway,
-      new ContextExtractor(),
-      mockFallback,
+      extractor,
+      mockCatalogProvider,
+      matcher,
+      estimator,
+      guardrail,
     )
 
     const res = await orchestrator.handleChat({ message: 'Tư vấn thiệp' })
     expect(res.reply).not.toContain('chuyển khoản')
     expect(res.reply).not.toContain('đặt cọc')
     expect(res.reply).not.toContain('số tài khoản')
-    expect(res.reply).not.toContain('thanh toán online')
+    expect(res.reply).toContain('quy trình may đo')
+    expect(res.suggestedProducts.length).toBeGreaterThan(0)
+    expect(res.suggestedProducts[0]?.slug).toBe('floral-bifold-01')
   })
 
-  it('activates local fallback gracefully when Groq fails', async () => {
+  it('activates deterministic local fallback gracefully when Groq fails', async () => {
     const mockGateway = {
       executeCompletion: vi.fn().mockRejectedValue(new Error('Groq network timeout')),
     } as unknown as GroqAiGateway
 
-    const mockFallback = {
-      recommend: vi.fn().mockResolvedValue({
-        clarification: null,
-        provider: 'DISABLED',
-        results: [{ slug: 'editorial-bifold-01', name: 'Vogue', merchandiseVnd: '45000' }],
-      }),
-    } as unknown as RecommendationService
+    const mockCatalogProvider = {
+      getActiveProducts: vi.fn().mockResolvedValue([
+        {
+          id: '1',
+          slug: 'floral-bifold-01',
+          name: 'Botanical Herbarium',
+          shape: 'BIFOLD',
+          styleTags: ['floral'],
+          colourTags: ['sage'],
+          unitPriceVnd: 35000n,
+          formattedPriceVnd: '35.000 ₫',
+        },
+      ]),
+    } as unknown as CatalogProvider
 
     const orchestrator = new AssistantOrchestratorService(
       mockGateway,
-      new ContextExtractor(),
-      mockFallback,
+      extractor,
+      mockCatalogProvider,
+      matcher,
+      estimator,
+      guardrail,
     )
 
-    const res = await orchestrator.handleChat({ message: 'Tiệc sân vườn' })
+    const res = await orchestrator.handleChat({ message: 'Tiệc sân vườn Đà Lạt 120 khách' })
     expect(res.meta.fallbackTier).toBe(4)
     expect(res.meta.modelUsed).toBe('deterministic/local-mori-atelier')
-    expect(res.reply).toContain('Master Pierre-Minh')
+    expect(res.reply).toContain('Master Pierre-Minh & Vũ Cầm')
+    expect(res.estimatedBudget).not.toBeNull()
+    expect(res.estimatedBudget?.giftComplimentary).toContain('1.200.000 ₫')
   })
 })

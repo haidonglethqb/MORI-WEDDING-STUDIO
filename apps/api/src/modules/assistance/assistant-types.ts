@@ -44,7 +44,7 @@ export interface SuggestedProductCard {
 
 export interface EstimatedBudgetSummary {
   quantity: number
-  shape: string
+  shape: 'BIFOLD' | 'FLAT'
   baseAmountVnd: string
   finishesAmountVnd: string
   totalAmountVnd: string
@@ -61,5 +61,17 @@ export interface AssistantChatResponse {
     modelUsed: string
     fallbackTier: number
     latencyMs: number
+    groundedProductCount?: number
   }
+}
+
+export interface CatalogProductItem {
+  id: string
+  slug: string
+  name: string
+  shape: string
+  styleTags: string[]
+  colourTags: string[]
+  unitPriceVnd: bigint
+  formattedPriceVnd: string
 }

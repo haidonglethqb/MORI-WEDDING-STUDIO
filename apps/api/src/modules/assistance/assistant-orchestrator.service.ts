@@ -1,36 +1,38 @@
 import { Injectable } from '@nestjs/common'
-import { getPrismaClient } from '@mori/database'
 import type {
   AssistantChatRequest,
   AssistantChatResponse,
+  CatalogProductItem,
   ConversationWeddingBrief,
-  SuggestedProductCard,
 } from './assistant-types.js'
 import { ContextExtractor } from './context-extractor.js'
 import { GroqAiGateway } from './groq-ai-gateway.js'
+import { CatalogProvider } from './catalog-provider.js'
+import { ScoringMatcher } from './scoring-matcher.js'
+import { BespokeEstimator } from './bespoke-estimator.js'
+import { SupervisorGuardrail } from './supervisor-guardrail.js'
 import {
   ATELIER_MASTER_SYSTEM_PROMPT,
   buildUserPrompt,
   formatGroundedCatalog,
 } from './assistant-prompts.js'
-import { RecommendationService } from './recommendation.service.js'
 
 interface ModelRawOutput {
   reply: string
   updatedBrief?: Partial<ConversationWeddingBrief>
   suggestedSlugs?: string[]
-  estimatedBudget?: AssistantChatResponse['estimatedBudget']
   quickFollowUps?: string[]
 }
-
-const BANNED_TERMS = ['chuyển khoản', 'đặt cọc', 'số tài khoản', 'thanh toán online', 'stk']
 
 @Injectable()
 export class AssistantOrchestratorService {
   constructor(
     private readonly groqGateway: GroqAiGateway,
     private readonly extractor: ContextExtractor,
-    private readonly localFallbackService: RecommendationService,
+    private readonly catalogProvider: CatalogProvider,
+    private readonly matcher: ScoringMatcher,
+    private readonly estimator: BespokeEstimator,
+    private readonly guardrail: SupervisorGuardrail,
   ) {}
 
   async handleChat(req: AssistantChatRequest): Promise<AssistantChatResponse> {
@@ -40,30 +42,10 @@ export class AssistantOrchestratorService {
       req.context,
     )
     const boostedBrief = this.extractor.boostFromText(baseBrief, req.message)
-    const history = req.history?.slice(-6) ?? []
+    const history = req.history?.slice(-8) ?? []
+    const catalog = await this.catalogProvider.getActiveProducts()
 
-    const products = await getPrismaClient().product.findMany({
-      where: { state: 'ACTIVE' },
-      include: {
-        variants: {
-          include: { priceRules: { where: { priceBook: { state: 'PUBLISHED' } } } },
-        },
-      },
-    })
-
-    const catalogItems = products.map((p) => {
-      const v = p.variants[0]
-      const price = v?.priceRules[0]?.unitAmountVnd?.toString() ?? '25000'
-      return {
-        slug: p.slug,
-        name: p.name,
-        shape: v?.shape ?? 'FLAT',
-        styles: p.styleTags,
-        priceVnd: Number(price).toLocaleString('vi-VN'),
-      }
-    })
-
-    const catalogGrounding = formatGroundedCatalog(catalogItems)
+    const catalogGrounding = formatGroundedCatalog(catalog)
     const systemPrompt = `${ATELIER_MASTER_SYSTEM_PROMPT}\n\n${catalogGrounding}`
     const userPrompt = buildUserPrompt(boostedBrief, history, req.message)
 
@@ -72,40 +54,36 @@ export class AssistantOrchestratorService {
         systemPrompt,
         userPrompt,
       )
-      return this.formatSuccessResponse(completion.data, boostedBrief, products, {
+      return this.formatSuccessResponse(completion.data, boostedBrief, catalog, {
         modelUsed: completion.modelUsed,
         fallbackTier: completion.fallbackTier,
         latencyMs: completion.latencyMs,
+        groundedProductCount: catalog.length,
       })
     } catch {
-      return this.formatLocalFallback(boostedBrief, req.message, products, Date.now() - start)
+      return this.formatLocalFallback(boostedBrief, req.message, catalog, Date.now() - start)
     }
   }
 
   private formatSuccessResponse(
     raw: ModelRawOutput,
     currentBrief: ConversationWeddingBrief,
-    products: Array<{ id: string; slug: string; name: string; variants: Array<{ shape: string; priceRules: Array<{ unitAmountVnd: bigint }> }> }>,
-    meta: { modelUsed: string; fallbackTier: number; latencyMs: number },
+    catalog: CatalogProductItem[],
+    meta: { modelUsed: string; fallbackTier: number; latencyMs: number; groundedProductCount: number },
   ): AssistantChatResponse {
-    let sanitizedReply = raw.reply || 'MORI rất hân hạnh được đồng hành cùng bạn.'
-    for (const term of BANNED_TERMS) {
-      sanitizedReply = sanitizedReply.replaceAll(new RegExp(term, 'gi'), '[quy trình may đo proof]')
-    }
-
+    const sanitizedReply = this.guardrail.sanitizeArtisanReply(raw.reply)
     const updatedBrief = this.extractor.mergeBrief(currentBrief, raw.updatedBrief)
-    const validSlugs = new Set(products.map((p) => p.slug))
-    const chosenSlugs = (raw.suggestedSlugs ?? []).filter((s) => validSlugs.has(s)).slice(0, 3)
-
-    const suggestedProducts = chosenSlugs.map((slug) => this.mapProductCard(slug, products))
+    const matchedProducts = this.matcher.rankProducts(catalog, updatedBrief, raw.suggestedSlugs)
+    const suggestedCards = this.guardrail.buildProductCards(matchedProducts)
+    const estimatedBudget = this.estimator.calculateBudget(updatedBrief)
 
     return {
       reply: sanitizedReply,
       updatedBrief,
-      suggestedProducts,
-      estimatedBudget: raw.estimatedBudget ?? null,
+      suggestedProducts: suggestedCards,
+      estimatedBudget,
       quickFollowUps: raw.quickFollowUps?.slice(0, 3) ?? [
-        'Dáng thiệp gập đôi hay dạng phẳng?',
+        'Dáng thiệp gập đôi hay phẳng?',
         'Tư vấn chi phí theo số lượng khách',
         'Tìm hiểu giấy bã mía 350gsm',
       ],
@@ -113,52 +91,31 @@ export class AssistantOrchestratorService {
     }
   }
 
-  private async formatLocalFallback(
+  private formatLocalFallback(
     brief: ConversationWeddingBrief,
     message: string,
-    products: Array<{ id: string; slug: string; name: string; variants: Array<{ shape: string; priceRules: Array<{ unitAmountVnd: bigint }> }> }>,
+    catalog: CatalogProductItem[],
     latencyMs: number,
-  ): Promise<AssistantChatResponse> {
-    const local = await this.localFallbackService.recommend({
-      productType: 'PAPER',
-      shape: brief.targetShape === 'BIFOLD' ? 'BIFOLD' : 'FLAT',
-      styles: brief.aestheticIdentity ? [brief.aestheticIdentity.toLowerCase()] : [],
-      colours: [],
-      quantity: brief.estimatedSuites ?? 50,
-      budgetVnd: null,
-      budgetBasis: 'TOTAL',
-    })
+  ): AssistantChatResponse {
+    const matched = this.matcher.rankProducts(catalog, brief)
+    const suggestedCards = this.guardrail.buildProductCards(matched)
+    const estimatedBudget = this.estimator.calculateBudget(brief)
 
-    const suggestedProducts = local.results.slice(0, 2).map((r) => this.mapProductCard(r.slug, products))
+    const coupleGreeting = brief.coupleNames ? `Chào ${brief.coupleNames}, ` : 'Kính chào bạn, '
+    const venueNote = brief.venueCategory === 'OUTDOOR_GARDEN' ? 'sân vườn gần gũi thiên nhiên' : 'ngày trọng đại'
 
     return {
-      reply: `Chào bạn, Master Pierre-Minh và MORI Atelier đã tiếp nhận thông tin tiệc cưới của bạn: "${message}". MORI trân trọng gợi ý các thiết kế chế tác trên giấy bã mía hữu cơ 350gsm dày dặn, kết hợp ép kim nhiệt dập chìm 160°C tinh xảo dưới đây. Mọi bộ thiệp đều được tặng kèm trang thiệp số RSVP đồng bộ trị giá 1.200.000 ₫.`,
+      reply: `${coupleGreeting}Master Pierre-Minh & Vũ Cầm từ MORI Atelier đã tiếp nhận chia sẻ: "${message}". Để hoàn hảo cho ${venueNote}, chúng mình trân trọng gợi ý các thiết kế chế tác trên giấy bã mía hữu cơ 350gsm ngà tự nhiên, ép kim nhiệt 160°C hoặc mép xé thủ công dưới đây. Mọi bộ thiệp đều được tặng kèm trang thiệp cưới số RSVP trị giá 1.200.000 ₫.`,
       updatedBrief: brief,
-      suggestedProducts,
-      estimatedBudget: null,
+      suggestedProducts: suggestedCards,
+      estimatedBudget,
       quickFollowUps: ['Xem chi tiết 3D mẫu này', 'Tư vấn tiệc ngoài trời', 'Báo giá 100 bộ thiệp'],
       meta: {
         modelUsed: 'deterministic/local-mori-atelier',
         fallbackTier: 4,
         latencyMs,
+        groundedProductCount: catalog.length,
       },
-    }
-  }
-
-  private mapProductCard(
-    slug: string,
-    products: Array<{ id: string; slug: string; name: string; variants: Array<{ shape: string; priceRules: Array<{ unitAmountVnd: bigint }> }> }>,
-  ): SuggestedProductCard {
-    const prod = products.find((p) => p.slug === slug)
-    const shape = prod?.variants[0]?.shape ?? 'FLAT'
-    const price = prod?.variants[0]?.priceRules[0]?.unitAmountVnd?.toString() ?? '25000'
-    return {
-      slug,
-      name: prod?.name ?? slug,
-      title: prod?.name ?? slug,
-      subtitle: 'Chế tác thủ công giấy bã mía 350gsm & ép kim nhiệt 160°C',
-      shape,
-      startingPriceVnd: Number(price).toLocaleString('vi-VN'),
     }
   }
 }

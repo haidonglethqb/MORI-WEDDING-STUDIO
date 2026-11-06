@@ -7,6 +7,10 @@ interface ChatBubbleProps {
   message: ChatMessageItem
 }
 
+function formatVnd(val: string): string {
+  return val.includes('₫') ? val : `${val} ₫`
+}
+
 export function AssistantChatBubble({ message }: ChatBubbleProps) {
   const isUser = message.role === 'user'
 
@@ -57,15 +61,15 @@ export function AssistantChatBubble({ message }: ChatBubbleProps) {
             <div className="budget-breakdown">
               <div className="budget-row">
                 <span>Phôi thiệp giấy bã mía 350gsm:</span>
-                <strong>{message.budget.baseAmountVnd} ₫</strong>
+                <strong>{formatVnd(message.budget.baseAmountVnd)}</strong>
               </div>
               <div className="budget-row">
                 <span>Gia công ép kim 160°C &amp; mép xé:</span>
-                <strong>{message.budget.finishesAmountVnd} ₫</strong>
+                <strong>{formatVnd(message.budget.finishesAmountVnd)}</strong>
               </div>
               <div className="budget-row budget-total-row">
                 <span>Tổng chi phí ước tính:</span>
-                <strong className="total-gold-text">{message.budget.totalAmountVnd} ₫</strong>
+                <strong className="total-gold-text">{formatVnd(message.budget.totalAmountVnd)}</strong>
               </div>
             </div>
 

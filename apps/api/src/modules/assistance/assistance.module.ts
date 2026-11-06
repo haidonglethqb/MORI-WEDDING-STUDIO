@@ -6,6 +6,10 @@ import { AssistantQuotaService } from './assistant-quota.service.js'
 import { RecommendationService } from './recommendation.service.js'
 import { GroqAiGateway } from './groq-ai-gateway.js'
 import { ContextExtractor } from './context-extractor.js'
+import { CatalogProvider } from './catalog-provider.js'
+import { ScoringMatcher } from './scoring-matcher.js'
+import { BespokeEstimator } from './bespoke-estimator.js'
+import { SupervisorGuardrail } from './supervisor-guardrail.js'
 import { AssistantOrchestratorService } from './assistant-orchestrator.service.js'
 
 @Module({
@@ -17,6 +21,10 @@ import { AssistantOrchestratorService } from './assistant-orchestrator.service.j
     AiToolBoundary,
     GroqAiGateway,
     ContextExtractor,
+    CatalogProvider,
+    ScoringMatcher,
+    BespokeEstimator,
+    SupervisorGuardrail,
     AssistantOrchestratorService,
   ],
   exports: [AssistantOrchestratorService],

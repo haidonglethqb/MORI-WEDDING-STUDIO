@@ -18,9 +18,9 @@ if (!dbUrl) {
 process.stdout.write('[test:integration] Running PostgreSQL integration test suites...\n')
 
 const result = spawnSync(
-  'corepack',
-  ['pnpm', '--filter', '@mori/api', 'exec', 'vitest', 'run', '--passWithNoTests'],
+  'corepack pnpm --filter @mori/api exec vitest run --passWithNoTests',
   {
+    shell: true,
     stdio: 'inherit',
     env: { ...process.env, DATABASE_URL: dbUrl },
   },
