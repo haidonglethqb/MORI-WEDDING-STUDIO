@@ -28,6 +28,10 @@ export class SupervisorGuardrail {
     let sanitized = rawReply || 'MORI rất hân hạnh được đồng hành cùng ngày trọng đại của bạn.'
     let triggered = false
 
+    // Strip internal slug leaks like "(slug: traditional-bifold-01)"
+    sanitized = sanitized.replace(/\s*\([a-z\s]*slug:\s*[^)]+\)/gi, '')
+    sanitized = sanitized.replace(/\s*\(mã:\s*[^)]+\)/gi, '')
+
     for (const term of BANNED_PAYMENT_TERMS) {
       if (new RegExp(term, 'i').test(sanitized)) {
         triggered = true

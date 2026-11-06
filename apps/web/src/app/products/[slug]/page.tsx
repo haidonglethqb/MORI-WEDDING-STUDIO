@@ -2,7 +2,11 @@ import { notFound } from 'next/navigation'
 import { HomeNav } from '../../home-nav'
 import { ProductPreview } from '../../../features/preview/product-preview'
 import { getBespokeProfile } from '../../collections/collection-catalog-data'
-import { COLLECTION_CATEGORIES, resolveCategoryId, resolveSampleCouple } from '../../collections/collection-types'
+import {
+  COLLECTION_CATEGORIES,
+  resolveCategoryId,
+  resolveSampleCouple,
+} from '../../collections/collection-types'
 import { ProductMetaHeader } from './product-meta-header'
 import './product.css'
 
@@ -45,7 +49,27 @@ async function loadProducts(): Promise<CatalogueProduct[]> {
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const products = await loadProducts()
-  const product = products.find((item) => item.slug === slug)
+  let product = products.find((item) => item.slug === slug)
+
+  if (!product) {
+    const profile = getBespokeProfile(slug)
+    if (profile) {
+      const bifold = slug.includes('bifold')
+      product = {
+        slug,
+        name: profile.title,
+        isFixture: true,
+        variants: [
+          {
+            shape: bifold ? 'BIFOLD' : 'FLAT',
+            availability: 'AVAILABLE',
+            unitAmountVnd: bifold ? '38000' : '28000',
+          },
+        ],
+      }
+    }
+  }
+
   if (!product) notFound()
 
   const orderable = product.variants.filter((variant) => variant.availability !== 'UNAVAILABLE')
@@ -64,14 +88,20 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           <span>/</span>
           <a href="/collections">Bộ sưu tập</a>
           <span>/</span>
-          <a href={`/collections#${categoryId}`}>{cat?.title.replace('Bộ sưu tập ', '') ?? 'Tác phẩm'}</a>
+          <a href={`/collections#${categoryId}`}>
+            {cat?.title.replace('Bộ sưu tập ', '') ?? 'Tác phẩm'}
+          </a>
           <span>/</span>
           <span style={{ color: '#252a24', fontWeight: 500 }}>{curatedTitle}</span>
         </div>
 
         <div className="product-layout">
           <div className="product-preview-card">
-            <ProductPreview slug={slug} name={resolveSampleCouple(slug)} shape={orderable[0]?.shape ?? 'FLAT'} />
+            <ProductPreview
+              slug={slug}
+              name={resolveSampleCouple(slug)}
+              shape={orderable[0]?.shape ?? 'FLAT'}
+            />
           </div>
 
           <div className="product-info-panel">
@@ -84,17 +114,28 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             />
 
             <p className="product-desc">
-              Thiệp cưới cao cấp từ MORI Studio được in trên nền giấy bã mía sinh thái bền vững, ép kim chìm nhiệt độ cao
-              và hoàn thiện hoàn toàn thủ công từ đôi bàn tay của các nghệ nhân xưởng.
+              Thiệp cưới cao cấp từ MORI Studio được in trên nền giấy bã mía sinh thái bền vững,
+              ép kim chìm nhiệt độ cao và hoàn thiện hoàn toàn thủ công từ đôi bàn tay của các
+              nghệ nhân xưởng.
             </p>
 
             <div className="product-variants-box">
-              <h3 style={{ fontSize: '13px', margin: '0 0 12px', color: '#252a24', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+              <h3
+                style={{
+                  fontSize: '13px',
+                  margin: '0 0 12px',
+                  color: '#252a24',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.06em',
+                }}
+              >
                 Quy cách &amp; Giá cơ bản
               </h3>
               {orderable.map((variant) => (
                 <div key={variant.shape} className="product-variant-item">
-                  <span className="product-variant-shape">{shapeLabel[variant.shape] ?? variant.shape}</span>
+                  <span className="product-variant-shape">
+                    {shapeLabel[variant.shape] ?? variant.shape}
+                  </span>
                   <span className="product-variant-price">
                     {variant.unitAmountVnd === null
                       ? 'Liên hệ báo giá'
@@ -105,7 +146,9 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             </div>
 
             <div className="product-specs">
-              <p style={{ margin: '0 0 6px', fontWeight: 600, color: '#32462f' }}>Chất liệu &amp; Quy chuẩn xưởng:</p>
+              <p style={{ margin: '0 0 6px', fontWeight: 600, color: '#32462f' }}>
+                Chất liệu &amp; Quy chuẩn xưởng:
+              </p>
               <ul style={{ margin: 0, paddingLeft: '18px' }}>
                 <li>Giấy bã mía tự nhiên 350gsm màu ngà ấm áp.</li>
                 <li>Mực in khoáng gốc đậu nành an toàn thân thiện môi trường.</li>

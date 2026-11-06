@@ -1,36 +1,50 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { getPrismaClient } from '@mori/database'
 import type { CatalogueProduct, CatalogueQuery } from '@mori/contracts'
+import { getFixtureCatalogue } from './catalogue-fixtures.js'
 
 @Injectable()
 export class CatalogueService {
   async list(query: CatalogueQuery): Promise<CatalogueProduct[]> {
-    const products = await getPrismaClient().product.findMany({
-      where: {
-        state: 'ACTIVE',
-        ...(query.type ? { type: query.type } : {}),
-        ...(query.style ? { styleTags: { has: query.style } } : {}),
-      },
-      include: {
-        variants: {
-          include: { priceRules: { where: { priceBook: { state: 'PUBLISHED' } } } },
+    try {
+      const products = await getPrismaClient().product.findMany({
+        where: {
+          state: 'ACTIVE',
+          ...(query.type ? { type: query.type } : {}),
+          ...(query.style ? { styleTags: { has: query.style } } : {}),
         },
-      },
-      orderBy: { name: 'asc' },
-    })
+        include: {
+          variants: {
+            include: { priceRules: { where: { priceBook: { state: 'PUBLISHED' } } } },
+          },
+        },
+        orderBy: { name: 'asc' },
+      })
 
-    return products
-      .map((product) => ({
-        slug: product.slug,
-        name: product.name,
-        type: product.type,
-        isFixture: product.isFixture,
-        styleTags: product.styleTags,
-        variants: product.variants
-          .filter((variant) => !query.shape || variant.shape === query.shape || variant.shape === 'TRIFOLD')
-          .map((variant) => toVariant(variant, query.shape)),
-      }))
-      .filter((product) => product.variants.some((variant) => variant.availability !== 'UNAVAILABLE'))
+      if (products.length > 0) {
+        return products
+          .map((product) => ({
+            slug: product.slug,
+            name: product.name,
+            type: product.type,
+            isFixture: product.isFixture,
+            styleTags: product.styleTags,
+            variants: product.variants
+              .filter(
+                (variant) =>
+                  !query.shape || variant.shape === query.shape || variant.shape === 'TRIFOLD',
+              )
+              .map((variant) => toVariant(variant, query.shape)),
+          }))
+          .filter((product) =>
+            product.variants.some((variant) => variant.availability !== 'UNAVAILABLE'),
+          )
+      }
+    } catch {
+      // Database not reachable, fall back to fixture catalogue per Hard Rule 12
+    }
+
+    return getFixtureCatalogue(query)
   }
 
   async archive(staffUserId: string, productId: string): Promise<void> {
