@@ -82,6 +82,21 @@ function formatHumanBrief(brief: ConversationWeddingBrief): string {
   if (brief.targetShape) {
     parts.push(`- Dáng thiệp ưu tiên: ${brief.targetShape === 'BIFOLD' ? 'Gập đôi (Bi-fold)' : 'Khổ phẳng (Flat)'}`)
   }
+  if (brief.preferredFinishes && brief.preferredFinishes.length > 0) {
+    const finishMap: Record<string, string> = {
+      HOT_FOIL_160C: 'Ép kim nhiệt 160°C',
+      DECKLE_EDGE: 'Mép xé thủ công Wabi-Sabi',
+      WAX_SEAL: 'Con dấu sáp ong tự nhiên',
+      VELLUM_WRAP: 'Áo giấy can mờ vellum',
+      SILK_RIBBON: 'Ruy băng lụa tơ tằm',
+    }
+    const humanFinishes = brief.preferredFinishes
+      .map((f) => finishMap[f] ?? f)
+      .filter(Boolean)
+    if (humanFinishes.length > 0) {
+      parts.push(`- Kỹ thuật gia công yêu thích: ${humanFinishes.join(', ')}`)
+    }
+  }
 
   return parts.length > 0 ? parts.join('\n') : '(Chưa có thông tin cụ thể)'
 }

@@ -23,6 +23,23 @@ describe('SupervisorGuardrail', () => {
     expect(result).toBe(clean)
   })
 
+  it('eliminates raw enums, slug leaks in parentheses, and normalizes pricing units', () => {
+    const raw =
+      'Dưới đây là ba mẫu BIFOLD phù hợp với phong cách Heritage-Indochine và các hoàn thiện (HOT_FOIL_160C, DECKLE_EDGE, WAX_SEAL):\n1. "Song Hỷ Cung Đình" (traditional-bifold-01) giá 38.000 đ/tờ;\nMọi mẫu đều được dập HOT FOIL và viền DECKLE EDGE.'
+    const result = guardrail.sanitizeArtisanReply(raw)
+
+    expect(result).not.toContain('HOT_FOIL_160C')
+    expect(result).not.toContain('DECKLE_EDGE')
+    expect(result).not.toContain('WAX_SEAL')
+    expect(result).not.toContain('traditional-bifold-01')
+    expect(result).not.toContain('đ/tờ')
+    expect(result).toContain('38.000 ₫ / bộ thiệp')
+    expect(result).toContain('gập đôi')
+    expect(result).toContain('truyền thống Á Đông')
+    expect(result).toContain('ép kim nhiệt 160°C')
+    expect(result).toContain('mép xé thủ công Wabi-Sabi')
+  })
+
   it('builds product cards matching schema', () => {
     const cards = guardrail.buildProductCards([
       {
