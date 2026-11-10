@@ -19,6 +19,7 @@ import './portal-responsive.css'
 import './portal-reviews.css'
 import './portal-editorial.css'
 import './portal-editorial-responsive.css'
+import './portal-motion.css'
 
 export const dynamic = 'force-dynamic'
 
@@ -42,6 +43,7 @@ export default async function HomePage() {
   const products = await loadProducts()
   return (
     <div className="home home-editorial portal-home">
+      <div className="portal-scroll-progress" aria-hidden="true" />
       <a className="landing-skip" href="#landing-main">Đến nội dung chính</a>
       <HomeNav />
       <main id="landing-main">

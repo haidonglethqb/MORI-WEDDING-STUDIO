@@ -17,11 +17,11 @@ export function PortalStatement() {
         <p className="statement-sign">— Xưởng thiệp MORI</p>
       </div>
       <div className="statement-collage">
-        <figure className="collage-main portal-parallax" data-reveal>
+        <figure className="collage-main portal-parallax portal-unveil">
           <Image src={craft.src} alt={craft.alt} width={craft.width} height={craft.height}
             sizes="(max-width: 900px) 80vw, 34vw" />
         </figure>
-        <figure className="collage-detail" data-reveal>
+        <figure className="collage-detail portal-fade">
           <Image src={detail.src} alt={detail.alt} width={detail.width} height={detail.height}
             sizes="(max-width: 900px) 42vw, 16vw" />
         </figure>

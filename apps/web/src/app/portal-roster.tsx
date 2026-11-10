@@ -1,3 +1,6 @@
+'use client'
+
+import type { PointerEvent } from 'react'
 import Image from 'next/image'
 import { landingPhotos, type LandingPhoto } from './landing-photos'
 
@@ -15,6 +18,14 @@ const rows: RosterRow[] = [
   { href: '/assistant', index: '03 / CẢM HỨNG', title: 'Trợ lý gợi ý', action: 'TRÒ CHUYỆN ↗', photo: landingPhotos.rosterIdeas },
 ]
 
+// The hover photograph follows the pointer; keyboard focus keeps the CSS default position.
+function trackPointer(event: PointerEvent<HTMLAnchorElement>) {
+  if (event.pointerType !== 'mouse') return
+  const box = event.currentTarget.getBoundingClientRect()
+  event.currentTarget.style.setProperty('--mx', `${event.clientX - box.left}px`)
+  event.currentTarget.style.setProperty('--my', `${event.clientY - box.top}px`)
+}
+
 export function PortalRoster() {
   return (
     <section className="portal-roster" id="thiep-so" aria-labelledby="roster-title">
@@ -26,7 +37,7 @@ export function PortalRoster() {
         </h2>
       </div>
       {rows.map((row) => (
-        <a key={row.href} href={row.href} data-reveal>
+        <a key={row.href} href={row.href} data-reveal onPointerMove={trackPointer}>
           <span>{row.index}</span>
           <strong>{row.title}</strong>
           <span>{row.action}</span>

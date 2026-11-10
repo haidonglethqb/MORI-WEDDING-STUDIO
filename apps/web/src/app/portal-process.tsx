@@ -17,7 +17,7 @@ export function PortalProcess() {
           Từng bước,<br />
           <em>cùng hai bạn.</em>
         </h2>
-        <figure className="process-photo portal-parallax">
+        <figure className="process-photo portal-parallax portal-unveil">
           <Image src={process.src} alt={process.alt} width={process.width} height={process.height}
             sizes="(max-width: 900px) 90vw, 36vw" />
         </figure>
