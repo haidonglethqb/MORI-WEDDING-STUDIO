@@ -18,6 +18,7 @@ Real business inputs required before production launch. Marked `isFixture` are d
 | Base prices (VND) | Fixture: 500K–5M VND range | Finance/Ops | **Open** |
 | Taxes + shipping rates (if applicable) | Not implemented v1; left `null` in quotes | Finance | **Open** |
 | Production lead times | Fixture: 3–7 days | Ops | **Open** |
+| Studio product photography (landing) | Interim Unsplash images labelled "Ảnh minh họa"; credits in `apps/web/public/images/landing/CREDITS.md` | Brand/Ops | **Open** |
 | **Credentials & Services** | | | |
 | SMTP provider (email) | Mailpit (dev); real SMTP domain (prod) | DevOps | **Open** |
 | S3-compatible storage endpoint | MinIO (dev); AWS S3 or equivalent (prod) | DevOps | **Open** |

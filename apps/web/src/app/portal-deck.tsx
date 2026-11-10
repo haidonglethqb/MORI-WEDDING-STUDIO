@@ -1,8 +1,10 @@
 'use client'
 
+import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
 import { buildCuratedItem } from './collections/collection-types'
 import { CollectionCardVisual } from './collections/collection-card-visual'
+import { landingPhotos } from './landing-photos'
 import type { ShowcaseProduct } from './sample-showcase'
 
 export function PortalDeck({ products }: { products: ShowcaseProduct[] }) {
@@ -19,7 +21,15 @@ export function PortalDeck({ products }: { products: ShowcaseProduct[] }) {
     setThrowing(true); setDrag(direction * -600)
     timer.current = setTimeout(() => { setIndex((i) => (i + direction + length) % length); setDrag(0); setThrowing(false); timer.current = null }, 280)
   }
-  if (!length) return <div className="deck-empty"><p>Bộ sưu tập đang được cập nhật.</p><a href="/collections">Xem bộ sưu tập ↗</a></div>
+  if (!length) {
+    const photo = landingPhotos.collection
+    return (
+      <figure className="deck-empty">
+        <div className="deck-empty-photo"><Image src={photo.src} alt={photo.alt} width={photo.width} height={photo.height} sizes="(max-width: 900px) 80vw, 30vw" /></div>
+        <figcaption><span>ẢNH MINH HỌA</span><p>Bộ sưu tập đang được cập nhật.</p><a href="/collections">Xem bộ sưu tập ↗</a></figcaption>
+      </figure>
+    )
+  }
   return (
     <div className="deck-wrap">
       <div className="portal-deck" tabIndex={0} role="region" aria-label="Bộ sưu tập thiệp. Dùng phím mũi tên để chuyển mẫu."
