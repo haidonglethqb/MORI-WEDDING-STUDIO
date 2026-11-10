@@ -18,7 +18,7 @@
 /* Hero: the revealed photograph carries the primary statement and actions. */
 .portal-wordmark { transform: translateY(calc(var(--portal-progress) * -15vh)) scale(calc(1 - var(--portal-progress) * .24)); text-shadow: 0 4px 48px rgba(10, 12, 14, .35); }
 .portal-hero-copy {
-  position: absolute; z-index: 3; left: 4%; bottom: 88px; max-width: 660px; pointer-events: none;
+  position: absolute; z-index: 3; left: 4%; bottom: 88px; max-width: min(660px, 54vw); pointer-events: none;
   opacity: calc((var(--portal-progress) - .6) * 2.5); transform: translateY(calc((1 - var(--portal-progress)) * 48px));
 }
 .portal:not(.portal-motion) .portal-hero-copy, .portal.portal-open .portal-hero-copy { pointer-events: auto; }

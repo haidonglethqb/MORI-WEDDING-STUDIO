@@ -18,7 +18,7 @@ export function PortalStatement() {
       </div>
       <div className="statement-collage">
         <figure className="collage-main portal-parallax portal-unveil">
-          <Image src={craft.src} alt={craft.alt} width={craft.width} height={craft.height}
+          <Image src={craft.src} alt={craft.alt} width={craft.width} height={craft.height} quality={88}
             sizes="(max-width: 900px) 80vw, 34vw" />
         </figure>
         <figure className="collage-detail portal-fade">

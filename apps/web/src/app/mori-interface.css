@@ -1,5 +1,5 @@
 /* Shared MORI interface: dark editorial storefront, legible paper work surfaces. */
-body { margin: 0; background: #f1f0e9; color: #202823; font-family: 'Sora', 'Be Vietnam Pro', sans-serif; }
+body { margin: 0; background: #f1f0e9; color: #202823; font-family: 'Sora', sans-serif; }
 body:has(.collections-wrap), body:has(.assistant-page), body:has(.auth-layout) { background: #0a0c0e; color: #ede7dc; }
 body:has(.guest-page) { background: #f6f3eb; }
 body .home-nav { position: sticky; top: 0; z-index: 50; background: rgba(10,12,14,.94); border-bottom: 1px solid rgba(237,231,220,.18); backdrop-filter: blur(14px); }
@@ -11,8 +11,8 @@ body .home-nav :is(.nav-link-login, .nav-link-item, .nav-link-staff, .nav-logout
 body .home-nav .home-cta { color: #ede7dc; background: transparent; border: 1px solid rgba(237,231,220,.3); border-radius: 99px; min-height: 44px; box-shadow: none; }
 body .home-nav :is(a,button):hover { color: #e9a65e; }
 body :is(a,button,input,textarea,select):focus-visible { outline: 2px solid #bb7132; outline-offset: 3px; }
-body :is(.collections-wrap,.assistant-page,.workspace-page,.addresses-page,.editor-page,.order-detail-page,.request-detail-page,.studio-page,.admin-ai-page,.product-page) { font-family: 'Sora', 'Be Vietnam Pro', sans-serif; }
-body :is(.collections-wrap,.assistant-page,.workspace-page,.addresses-page,.editor-page,.order-detail-page,.request-detail-page,.studio-page,.admin-ai-page,.product-page) :is(h1,h2,h3) { font-family: 'Syne', 'Be Vietnam Pro', sans-serif; letter-spacing: -.035em; }
+body :is(.collections-wrap,.assistant-page,.workspace-page,.addresses-page,.editor-page,.order-detail-page,.request-detail-page,.studio-page,.admin-ai-page,.product-page) { font-family: 'Sora', sans-serif; }
+body :is(.collections-wrap,.assistant-page,.workspace-page,.addresses-page,.editor-page,.order-detail-page,.request-detail-page,.studio-page,.admin-ai-page,.product-page) :is(h1,h2,h3) { font-family: 'Syne', 'Sora', sans-serif; letter-spacing: -.035em; }
 /* Catalogue: framed imagery on an ink background. */
 body .collections-wrap { max-width: 1344px; padding: 80px 48px 112px; }
 body .collections-header { text-align: left; max-width: none; margin: 0 0 64px; border-bottom: 1px solid rgba(237,231,220,.2); padding-bottom: 40px; }

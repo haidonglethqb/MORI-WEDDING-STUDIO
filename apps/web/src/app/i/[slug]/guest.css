@@ -6,7 +6,7 @@
   flex-direction: column;
   align-items: center;
   background: radial-gradient(circle at 50% 5%, #ffffff 0%, #f6f3eb 100%);
-  font-family: var(--font-sans, "Be Vietnam Pro", sans-serif);
+  font-family: var(--font-sans, "Sora", sans-serif);
 }
 
 .guest-container {
