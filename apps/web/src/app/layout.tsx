@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
-import './fonts.css'
 import './portal-fonts.css'
 import './mori-interface.css'
 
@@ -14,8 +13,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html
       lang="vi"
       style={{
-        ['--font-serif' as string]: '"Lora", "Cormorant Garamond", Georgia, serif',
-        ['--font-sans' as string]: '"Be Vietnam Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+        ['--font-serif' as string]: '"Lora", Georgia, serif',
+        ['--font-sans' as string]: '"Sora", sans-serif',
       }}
     >
       <body>{children}</body>

@@ -1,0 +1,77 @@
+/* Landing interaction layer: hover feedback and scroll-linked effects.
+   Scroll effects need animation-timeline support and no reduced-motion preference;
+   otherwise content simply renders in its final state. */
+
+/* Buttons: a fill sweeps in from the left. */
+.portal-button { position: relative; overflow: hidden; isolation: isolate; }
+.portal-button::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; background: var(--portal-ink);
+  transform: scaleX(0); transform-origin: right center; transition: transform 180ms cubic-bezier(.2, .7, .2, 1);
+}
+.portal-button:hover::before, .portal-button:focus-visible::before { transform: scaleX(1); transform-origin: left center; }
+.portal-button:hover, .portal-button:focus-visible { background: transparent; color: var(--portal-bg); }
+.portal-button-solid::before { background: #e9a65e; }
+.portal-button.portal-button-solid:hover, .portal-button.portal-button-solid:focus-visible { background: var(--portal-ink); border-color: #e9a65e; color: #0a0c0e; }
+
+/* Text links: an amber underline draws over the quiet base rule. */
+.portal-home .portal-link {
+  border-bottom: 0;
+  background:
+    linear-gradient(#e9a65e, #e9a65e) left bottom / 0 1px no-repeat,
+    linear-gradient(rgba(237, 231, 220, .45), rgba(237, 231, 220, .45)) left bottom / 100% 1px no-repeat;
+  transition: background-size 180ms ease, color 160ms ease;
+}
+.portal-home .portal-link:hover, .portal-home .portal-link:focus-visible { background-size: 100% 1px, 100% 1px; color: #e9a65e; }
+
+@media (hover: hover) {
+  .portal-home .home-nav-links a { position: relative; }
+  .portal-home .home-nav-links a::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: -4px; height: 1px; background: #e9a65e;
+    transform: scaleX(0); transform-origin: right center; transition: transform 180ms ease;
+  }
+  .portal-home .home-nav-links a:hover::after { transform: scaleX(1); transform-origin: left center; }
+}
+.portal-home .footer-links-col a { transition: color 160ms ease, transform 160ms ease; }
+.portal-home .footer-links-col a:hover { color: #e9a65e; text-decoration: none; transform: translateX(6px); }
+
+/* Photographs respond to the pointer. */
+.collage-detail { transition: transform 180ms ease; }
+.statement-collage:hover .collage-detail { transform: translate(-12px, 12px) rotate(-3deg); }
+.collage-main img, .process-photo img { transition: filter 180ms ease; }
+.statement-collage:hover .collage-main img, .process-photo:hover img { filter: brightness(1.08) saturate(1.08); }
+.deck-empty-photo { transition: transform 180ms ease, box-shadow 180ms ease; }
+.deck-empty:hover .deck-empty-photo { transform: rotate(0deg) translateY(-8px); box-shadow: 0 40px 70px rgba(0, 0, 0, .6); }
+
+/* Rows: an amber rule runs across, the title steps forward. */
+.portal-process-rows > li, .material-notes li { position: relative; }
+.portal-process-rows > li::before, .material-notes li::before {
+  content: ''; position: absolute; left: 0; right: 0; top: -1px; height: 1px; background: #e9a65e;
+  transform: scaleX(0); transform-origin: left center; transition: transform 240ms ease;
+}
+.portal-process-rows > li:hover::before, .material-notes li:hover::before { transform: scaleX(1); }
+.portal-process-rows strong, .material-notes strong { transition: transform 180ms ease, color 180ms ease; }
+.portal-process-rows > li:hover strong, .material-notes li:hover strong { transform: translateX(8px); color: #e9a65e; }
+
+/* Scroll-linked effects. */
+.portal-scroll-progress { display: none; }
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .portal-scroll-progress {
+      display: block; position: fixed; top: 0; left: 0; right: 0; z-index: 95; height: 2px; pointer-events: none;
+      background: #e9a65e; transform-origin: 0 50%; animation: portal-progress linear both; animation-timeline: scroll(root);
+    }
+    .portal-unveil { animation: portal-unveil linear both; animation-timeline: view(); animation-range: entry 0% entry 70%; }
+    .portal-fade { animation: portal-fade linear both; animation-timeline: view(); animation-range: entry 10% entry 60%; }
+    .material-frame { animation: portal-expand linear both; animation-timeline: view(); animation-range: entry 0% cover 40%; }
+    .portal-statement .portal-outline { animation: portal-float linear both; animation-timeline: view(); }
+    .process-numeral { animation: portal-ink linear both; animation-timeline: view(); animation-range: cover 25% cover 50%; }
+    .portal-close-mark { animation: portal-mark linear both; animation-timeline: view(); animation-range: entry 0% cover 50%; }
+  }
+}
+@keyframes portal-progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes portal-unveil { from { clip-path: inset(24% 0 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes portal-fade { from { opacity: 0; } }
+@keyframes portal-expand { from { clip-path: inset(0 8%); } to { clip-path: inset(0 0); } }
+@keyframes portal-float { from { transform: translateY(35%); } to { transform: translateY(-25%); } }
+@keyframes portal-ink { to { color: #e9a65e; } }
+@keyframes portal-mark { from { transform: translateY(45%); opacity: .25; } }

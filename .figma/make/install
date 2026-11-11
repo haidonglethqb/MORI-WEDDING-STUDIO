@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+pnpm install --frozen-lockfile
+pnpm --filter @mori/contracts build
+pnpm --filter @mori/domain build
+pnpm --filter @mori/invitation-renderer build

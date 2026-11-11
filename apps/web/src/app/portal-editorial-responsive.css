@@ -1,0 +1,34 @@
+@media (max-width: 900px) {
+  .portal-hero-copy { left: 24px; right: 24px; max-width: none; }
+  .portal-wordmark { font-size: clamp(92px, 21vw, 220px); }
+  .portal-statement { grid-template-columns: 1fr; gap: 56px; min-height: 0; }
+  .statement-collage { padding: 0 0 22% 18%; max-width: 560px; }
+  .material-frame { height: 72vh; min-height: 440px; }
+  .material-notes { grid-template-columns: 1fr; gap: 32px; padding: 56px 24px 0; }
+  .portal-material { padding-bottom: 80px; }
+  .roster-thumb { display: none; }
+  .process-photo { max-width: 100%; aspect-ratio: 3 / 2; }
+  .portal-close > .close-body { display: block; }
+}
+@media (max-width: 600px) {
+  .portal-wordmark { font-size: clamp(84px, 25vw, 150px); transform: translateY(calc(var(--portal-progress) * -12vh)) scale(calc(1 - var(--portal-progress) * .16)); }
+  .portal-hero-copy { left: 20px; right: 20px; bottom: 72px; }
+  .portal-hero-statement { font-size: clamp(25px, 7vw, 34px); }
+  .portal-hero-lead { font-size: 14px; }
+  .portal-hero-copy .portal-actions { gap: 12px 20px; }
+  .portal-art-label { top: 56px; }
+  .statement-collage { padding: 0 0 26% 14%; }
+  .collage-detail { width: 46%; border-width: 6px; }
+  .portal-statement .collage-caption { bottom: 4%; font-size: 8px; max-width: 44%; }
+  .material-overlay { bottom: 40px; }
+  .material-notes { padding: 48px 20px 0; }
+  .material-notes strong { font-size: 22px; }
+  .portal-roster > a > span:nth-child(3) { grid-column: 2; grid-row: 1 / 3; }
+  .portal-process-rows > li { grid-template-columns: 64px 1fr; padding: 28px 0; }
+  .process-numeral { font-size: 44px; }
+  .portal-home .portal-reviews::before { font-size: 96px; }
+}
+
+/* Keep the process numbers legible and in the same visual family as the headings. */
+.process-numeral { font: 600 48px/1 'Syne', sans-serif; color: #e9a65e; -webkit-text-stroke: 0; }
+@media (max-width: 600px) { .process-numeral { font-size: 38px; } }
