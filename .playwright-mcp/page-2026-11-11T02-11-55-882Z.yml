@@ -1,0 +1,150 @@
+- generic [ref=e2]:
+  - link "Đến nội dung chính" [ref=e3] [cursor=pointer]:
+    - /url: "#landing-main"
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - link "MORI." [ref=e6] [cursor=pointer]:
+        - /url: /
+      - navigation "Chính" [ref=e7]:
+        - link "Bộ sưu tập" [ref=e8] [cursor=pointer]:
+          - /url: /collections
+        - link "Trợ lý gợi ý" [ref=e9] [cursor=pointer]:
+          - /url: /assistant
+        - link "Thiệp số" [ref=e10] [cursor=pointer]:
+          - /url: /#thiep-so
+        - link "Xưởng" [ref=e11] [cursor=pointer]:
+          - /url: /#che-tac
+      - generic [ref=e12]:
+        - link "Đăng nhập" [ref=e13] [cursor=pointer]:
+          - /url: /login
+        - link "Xem bộ sưu tập" [ref=e14] [cursor=pointer]:
+          - /url: /collections
+  - main [ref=e15]:
+    - region "MORI" [ref=e16]:
+      - generic [ref=e17]:
+        - generic [ref=e20]:
+          - generic [ref=e21]: TRÂN TRỌNG KÍNH MỜI
+          - generic [ref=e22]: M
+          - paragraph [ref=e23]: Một lời mờirất riêng.
+          - generic [ref=e25]: MORI · WEDDING STUDIO
+        - generic [ref=e30]:
+          - generic [ref=e31]: WEDDING STUDIO / VIỆT NAM
+          - generic [ref=e32]: THIỆP GIẤY · THIỆP SỐ
+        - heading "MORI" [level=1]:
+          - generic: MO
+          - generic: RI
+        - generic [ref=e33]:
+          - generic [ref=e34]: MỘT LỜI MỜI, MỘT CÂU CHUYỆN
+          - generic [ref=e35]: CUỘN ĐỂ KHÁM PHÁ ↓
+        - paragraph [ref=e36]: PHỐI CẢNH MINH HỌA
+    - generic [ref=e37]:
+      - generic [ref=e38]: 01 / MỘT LỜI MỜI
+      - heading [level=2] [ref=e39]:
+        - text: Có những câu chuyện bắt đầu bằng
+        - emphasis [ref=e40]: một tấm thiệp.
+      - paragraph [ref=e41]: Từ những nét chữ đầu tiên đến lời mời gửi trao, MORI đồng hành cùng hai bạn tạo nên một dấu ấn riêng cho ngày chung đôi.
+      - generic [aria-hidden] [ref=e42]: "01"
+    - generic [ref=e43]:
+      - generic [ref=e44]:
+        - text: 02 / BỘ SƯU TẬP
+        - heading [level=2] [ref=e45]:
+          - text: Mỗi thiết kế.
+          - emphasis [ref=e46]: Một câu chuyện.
+        - paragraph [ref=e47]: Tìm cảm hứng từ những mẫu thiệp có sẵn, rồi cùng MORI hoàn thiện lời mời của hai bạn.
+        - generic [ref=e48]:
+          - link "Khám phá bộ sưu tập ↗" [ref=e49] [cursor=pointer]:
+            - /url: /collections
+          - link "Cùng tìm ý tưởng →" [ref=e50] [cursor=pointer]:
+            - /url: /assistant
+      - generic [ref=e51]:
+        - paragraph [ref=e52]: Bộ sưu tập đang được cập nhật.
+        - link "Xem bộ sưu tập ↗" [ref=e53] [cursor=pointer]:
+          - /url: /collections
+    - generic [ref=e54]:
+      - generic [ref=e55]:
+        - generic [ref=e56]: 03 / CÙNG MORI
+        - heading "Chọn cách kể chuyện." [level=2] [ref=e57]: Chọn cáchkể chuyện.
+      - link "01 / THIẾT KẾ Thiệp cưới KHÁM PHÁ ↗" [ref=e58] [cursor=pointer]:
+        - /url: /collections
+        - generic [ref=e59]: 01 / THIẾT KẾ
+        - strong [ref=e60]: Thiệp cưới
+        - generic [ref=e61]: KHÁM PHÁ ↗
+      - link "02 / TRỰC TUYẾN Thiệp số & RSVP BẮT ĐẦU ↗" [ref=e62] [cursor=pointer]:
+        - /url: /workspace
+        - generic [ref=e63]: 02 / TRỰC TUYẾN
+        - strong [ref=e64]: Thiệp số & RSVP
+        - generic [ref=e65]: BẮT ĐẦU ↗
+      - link "03 / CẢM HỨNG Trợ lý gợi ý TRÒ CHUYỆN ↗" [ref=e66] [cursor=pointer]:
+        - /url: /assistant
+        - generic [ref=e67]: 03 / CẢM HỨNG
+        - strong [ref=e68]: Trợ lý gợi ý
+        - generic [ref=e69]: TRÒ CHUYỆN ↗
+    - generic [ref=e70]:
+      - generic [ref=e71]:
+        - text: 04 / TỪ Ý TƯỞNG ĐẾN NGÀY VUI
+        - heading [level=2] [ref=e72]:
+          - text: Từng bước,
+          - emphasis [ref=e73]: cùng hai bạn.
+      - generic [ref=e74]:
+        - generic [ref=e75]:
+          - generic [ref=e76]: "01"
+          - strong [ref=e77]: Chọn hướng thiết kế
+          - paragraph [ref=e78]: Khám phá mẫu hoặc trò chuyện cùng trợ lý.
+        - generic [ref=e79]:
+          - generic [ref=e80]: "02"
+          - strong [ref=e81]: Hoàn thiện chi tiết
+          - paragraph [ref=e82]: Trao đổi nội dung, số lượng và quy cách cùng xưởng.
+        - generic [ref=e83]:
+          - generic [ref=e84]: "03"
+          - strong [ref=e85]: Duyệt trước khi gửi
+          - paragraph [ref=e86]: Kiểm tra thông tin và theo dõi các bước tiếp theo.
+    - generic [ref=e87]:
+      - text: 05 / LỜI NHẮN TỪ KHÁCH HÀNG
+      - heading [level=2] [ref=e88]:
+        - text: Những câu chuyện
+        - emphasis [ref=e89]: được sẻ chia.
+      - paragraph [ref=e90]: Nhận xét sẽ được đăng khi khách hàng cung cấp và đồng ý chia sẻ.
+      - link "Trò chuyện cùng MORI ↗" [ref=e91] [cursor=pointer]:
+        - /url: /assistant
+    - generic [ref=e92]:
+      - text: MORI / WEDDING STUDIO
+      - generic [ref=e93]:
+        - heading [level=2] [ref=e94]:
+          - text: Ngày vui bắt đầutừ
+          - emphasis [ref=e95]: một lời mời.
+        - generic [ref=e96]:
+          - link "Tìm mẫu thiệp ↗" [ref=e97] [cursor=pointer]:
+            - /url: /collections
+          - link "Không gian của bạn →" [ref=e98] [cursor=pointer]:
+            - /url: /workspace
+      - paragraph [ref=e99]: THIỆP GIẤY & THIỆP TRỰC TUYẾN · THIẾT KẾ THEO CÂU CHUYỆN CỦA BẠN
+      - generic [aria-hidden] [ref=e100]: MORI.
+  - contentinfo [ref=e101]:
+    - generic [ref=e102]:
+      - generic [ref=e103]:
+        - generic [ref=e104]: MORI
+        - generic [ref=e105]: THIỆP CƯỚI & THIỆP TRỰC TUYẾN
+        - paragraph [ref=e106]: Cùng bạn chọn thiết kế, hoàn thiện nội dung và theo dõi từng bước làm thiệp.
+      - generic [ref=e107]:
+        - strong [ref=e108]: Khám phá
+        - link "Bộ sưu tập" [ref=e109] [cursor=pointer]:
+          - /url: /collections
+        - link "Trợ lý AI Stylist" [ref=e110] [cursor=pointer]:
+          - /url: /assistant
+        - link "Thiệp cưới số" [ref=e111] [cursor=pointer]:
+          - /url: /#thiep-so
+        - link "Quy trình cùng MORI" [ref=e112] [cursor=pointer]:
+          - /url: /#quy-trinh
+      - generic [ref=e113]:
+        - strong [ref=e114]: Không gian làm việc
+        - link "Đăng nhập tài khoản" [ref=e115] [cursor=pointer]:
+          - /url: /login
+        - link "Việc của tôi" [ref=e116] [cursor=pointer]:
+          - /url: /workspace
+        - link "Câu hỏi thường gặp" [ref=e117] [cursor=pointer]:
+          - /url: /#faq
+        - link "Sổ địa chỉ" [ref=e118] [cursor=pointer]:
+          - /url: /addresses
+    - generic [ref=e119]:
+      - paragraph [ref=e120]: © 2026 MORI Wedding Studio Atelier · All rights reserved.
+      - paragraph [ref=e121]: Thiết kế theo câu chuyện của bạn

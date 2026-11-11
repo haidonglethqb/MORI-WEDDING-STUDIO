@@ -42,7 +42,8 @@
 .portal-releases { border-top: 1px solid var(--portal-line); display: grid; grid-template-columns: 1fr 1fr; gap: 12%; align-items: center; }
 .portal-actions { display: flex; gap: 24px; flex-wrap: wrap; align-items: center; margin-top: 36px; }
 .portal-button,.portal-link { color: var(--portal-ink); text-decoration: none; display: inline-flex; align-items: center; min-height: 48px; font-size: 13px; }
-.portal-button { padding: 0 24px; border: 1px solid var(--portal-ink); border-radius: 99px; }.portal-button:hover { background: var(--portal-ink); color: var(--portal-bg); }
+.portal-home .portal-button { padding: 0 24px; border: 1px solid #e9a65e; border-radius: 99px; background: #e9a65e; color: #0a0c0e; }
+.portal-home .portal-button:hover, .portal-home .portal-button:focus-visible { background: #ede7dc; border-color: #ede7dc; color: #0a0c0e; }
 .portal-link { border-bottom: 1px solid #8b9694; }.portal-link:hover { color: #e9a65e; }
 .deck-wrap { min-width: 0; }.portal-deck { position: relative; width: min(100%, 420px); aspect-ratio: 1; margin: auto; touch-action: pan-y; cursor: grab; }.portal-deck:active { cursor: grabbing; }
 .deck-card { position: absolute; inset: 8%; background: #e7e0d4; color: #252820; box-shadow: 0 10px 22px #0007; transition: transform .28s ease; user-select: none; overflow: hidden; }
