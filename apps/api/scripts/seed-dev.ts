@@ -20,7 +20,7 @@ async function main(): Promise<void> {
   console.log('[seed] ✓ Seeded development accounts (admin, studio, customer)')
 
   await seedCatalogue()
-  console.log('[seed] ✓ Seeded 30 catalogue products (24 paper + 6 digital) with published price book')
+  console.log('[seed] ✓ Seeded 55 catalogue products (50 paper + 5 digital) with published price book')
 
   await disconnectPrismaClient()
   console.log('[seed] ✓ Development seed complete.')

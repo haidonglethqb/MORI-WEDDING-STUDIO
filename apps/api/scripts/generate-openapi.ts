@@ -166,7 +166,7 @@ if (mode === 'write') {
     )
     process.exit(1)
   }
-  const existing = readFileSync(OUTPUT_PATH, 'utf-8')
+  const existing = readFileSync(OUTPUT_PATH, 'utf-8').replaceAll('\r\n', '\n')
   if (existing !== json) {
     console.error(
       '✗ Drift check failed: docs/api/openapi.json is stale. Run pnpm api:generate.',

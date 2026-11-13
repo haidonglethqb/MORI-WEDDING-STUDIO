@@ -132,6 +132,11 @@ fi
 echo "Executing Prisma migration deploy..."
 docker compose -f compose.yaml -f compose.prod.yaml run --rm migrate
 
+# Synchronize active catalogue products, image URLs, and VND pricing idempotently
+echo "Synchronizing production catalogue and pricing..."
+docker compose -f compose.yaml -f compose.prod.yaml run --rm --no-deps -T api \
+  node apps/api/dist/modules/catalogue/sync-catalogue-cli.js
+
 # 5. Start all application services
 echo "=== [5/6] Launching Application Services ==="
 docker compose -f compose.yaml -f compose.prod.yaml up -d --remove-orphans

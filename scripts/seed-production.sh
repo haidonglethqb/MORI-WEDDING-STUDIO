@@ -41,4 +41,5 @@ import('./apps/api/dist/modules/identity/password.js').then(async ({ hashPasswor
   process.exit(1)
 })
 "
+docker exec "$API_CONTAINER" node apps/api/dist/modules/catalogue/sync-catalogue-cli.js
 echo "=== Seeding complete ==="
