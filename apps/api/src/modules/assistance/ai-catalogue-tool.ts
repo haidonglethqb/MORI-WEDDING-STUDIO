@@ -11,7 +11,7 @@ export class AiCatalogueTool {
   async listActiveProducts(): Promise<CatalogProductItem[]> {
     try {
       const products = await getPrismaClient().product.findMany({
-        where: { state: 'ACTIVE' },
+        where: { state: 'ACTIVE', type: 'PAPER' },
         include: {
           variants: {
             where: { shape: { not: 'TRIFOLD' }, availability: { not: 'UNAVAILABLE' } },
@@ -42,6 +42,8 @@ export class AiCatalogueTool {
           colourTags: p.colourTags ?? [],
           unitPriceVnd,
           formattedPriceVnd,
+          imageUrl: p.imageUrl ?? null,
+          isFixture: p.isFixture ?? false,
         }
       })
     } catch {

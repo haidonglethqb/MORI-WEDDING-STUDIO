@@ -77,7 +77,7 @@ export class ScoringMatcher {
       const maxBudget = Number(brief.budgetRangeVnd.max)
       const suites = brief.estimatedSuites ?? 50
       const targetPerSuite = maxBudget / suites
-      if (Number(product.unitPriceVnd) <= targetPerSuite) {
+      if (product.unitPriceVnd > 0n && Number(product.unitPriceVnd) <= targetPerSuite) {
         score += 20
         reasons.push('Tối ưu trong ngân sách tiệc')
       } else {

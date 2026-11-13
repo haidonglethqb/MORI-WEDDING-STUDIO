@@ -33,8 +33,28 @@ describe('ScoringMatcher', () => {
       shape: 'FLAT',
       styleTags: ['minimalist', 'japandi', 'wabi-sabi'],
       colourTags: ['ivory', 'sand'],
-      unitPriceVnd: 25000n,
-      formattedPriceVnd: '25.000 ₫',
+      unitPriceVnd: 6000n,
+      formattedPriceVnd: '6.000 ₫',
+    },
+    {
+      id: 'p4',
+      slug: 'typography-bifold-01',
+      name: 'Florence Monogram',
+      shape: 'BIFOLD',
+      styleTags: ['typography', 'calligraphy'],
+      colourTags: ['ivory', 'olive'],
+      unitPriceVnd: 11000n,
+      formattedPriceVnd: '11.000 ₫',
+    },
+    {
+      id: 'p5',
+      slug: 'editorial-bifold-01',
+      name: "L'Amour Vogue No. 1",
+      shape: 'BIFOLD',
+      styleTags: ['editorial'],
+      colourTags: ['champagne', 'ivory'],
+      unitPriceVnd: 15000n,
+      formattedPriceVnd: '15.000 ₫',
     },
   ]
 
@@ -74,5 +94,16 @@ describe('ScoringMatcher', () => {
     const results = matcher.rankProducts(dummyCatalog, baseBrief, ['minimalist-flat-01'])
     expect(results).toHaveLength(1)
     expect(results[0]?.slug).toBe('minimalist-flat-01')
+  })
+
+  it('ranks typography calligraphy products highest for MODERN_CALLIGRAPHY without editorial collision', () => {
+    const calligraphyBrief: ConversationWeddingBrief = {
+      ...baseBrief,
+      venueCategory: 'HOTEL_BALLROOM',
+      aestheticIdentity: 'MODERN_CALLIGRAPHY',
+      targetShape: 'BIFOLD',
+    }
+    const results = matcher.rankProducts(dummyCatalog, calligraphyBrief)
+    expect(results[0]?.slug).toBe('typography-bifold-01')
   })
 })

@@ -29,7 +29,7 @@ export class SupervisorGuardrail {
     let triggered = false
 
     // 1. Strip internal slug leaks like "(slug: traditional-bifold-01)" or "(minimalist-flat-01)"
-    sanitized = sanitized.replace(/\s*\([a-z0-9_.\s-]*(?:flat|bifold|traditional|minimalist|editorial|floral|slug|mã)[^)]*\)/gi, '')
+    sanitized = sanitized.replace(/\s*\([a-z0-9_.\s-]*(?:flat|bifold|traditional|minimalist|editorial|floral|typography|calligraphy|slug|mã)[^)]*\)/gi, '')
 
     // 2. Remove parenthesized enum lists, e.g. "(HOT_FOIL_160C, DECKLE_EDGE, WAX_SEAL)"
     sanitized = sanitized.replace(/\s*\([A-Z0-9_,\s-]+\)/g, (match) => {
@@ -84,6 +84,7 @@ export class SupervisorGuardrail {
       subtitle: prod.isFixture ? 'Mẫu minh họa để tham khảo phong cách.' : prod.shape === 'BIFOLD' ? 'Thiệp gấp đôi' : 'Thiệp phẳng',
       shape: prod.shape,
       startingPriceVnd: prod.isFixture ? 'Mẫu minh họa' : prod.formattedPriceVnd,
+      imageUrl: prod.imageUrl ?? null,
       isFixture: prod.isFixture ?? false,
     }))
   }

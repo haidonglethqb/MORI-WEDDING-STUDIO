@@ -71,8 +71,9 @@ describe('AssistantOrchestratorService', () => {
           shape: 'BIFOLD',
           styleTags: ['floral'],
           colourTags: ['sage'],
-          unitPriceVnd: 35000n,
-          formattedPriceVnd: '35.000 ₫',
+          unitPriceVnd: 11000n,
+          formattedPriceVnd: '11.000 ₫',
+          imageUrl: '/images/products/floral/floral-bifold-01.jpg',
         },
       ]),
     } as unknown as CatalogProvider
@@ -93,6 +94,7 @@ describe('AssistantOrchestratorService', () => {
     expect(res.reply).toContain('quy trình may đo')
     expect(res.suggestedProducts.length).toBeGreaterThan(0)
     expect(res.suggestedProducts[0]?.slug).toBe('floral-bifold-01')
+    expect(res.suggestedProducts[0]?.imageUrl).toBe('/images/products/floral/floral-bifold-01.jpg')
   })
 
   it('activates deterministic local fallback gracefully when Groq fails', async () => {
@@ -109,8 +111,9 @@ describe('AssistantOrchestratorService', () => {
           shape: 'BIFOLD',
           styleTags: ['floral'],
           colourTags: ['sage'],
-          unitPriceVnd: 35000n,
-          formattedPriceVnd: '35.000 ₫',
+          unitPriceVnd: 11000n,
+          formattedPriceVnd: '11.000 ₫',
+          imageUrl: '/images/products/floral/floral-bifold-01.jpg',
         },
       ]),
     } as unknown as CatalogProvider

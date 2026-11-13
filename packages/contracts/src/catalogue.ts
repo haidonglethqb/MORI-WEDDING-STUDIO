@@ -22,6 +22,7 @@ export const CatalogueProductSchema = z.object({
   name: z.string(),
   type: z.enum(['PAPER', 'DIGITAL']),
   isFixture: z.boolean(),
+  imageUrl: z.string().nullable().optional(),
   styleTags: z.array(z.string()),
   variants: z.array(CatalogueVariantSchema),
 })

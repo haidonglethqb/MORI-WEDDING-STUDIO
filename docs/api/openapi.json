@@ -394,6 +394,9 @@
                         "VND"
                       ]
                     },
+                    "isFixture": {
+                      "type": "boolean"
+                    },
                     "quantity": {
                       "type": "integer"
                     },

@@ -28,6 +28,7 @@ export class CatalogueService {
             name: product.name,
             type: product.type,
             isFixture: product.isFixture,
+            imageUrl: product.imageUrl ?? null,
             styleTags: product.styleTags,
             variants: product.variants
               .filter(
@@ -36,8 +37,10 @@ export class CatalogueService {
               )
               .map((variant) => toVariant(variant, query.shape)),
           }))
-          .filter((product) =>
-            product.variants.some((variant) => variant.availability !== 'UNAVAILABLE'),
+          .filter(
+            (product) =>
+              (product.type === 'DIGITAL' && !query.shape) ||
+              product.variants.some((variant) => variant.availability !== 'UNAVAILABLE'),
           )
       }
     } catch {

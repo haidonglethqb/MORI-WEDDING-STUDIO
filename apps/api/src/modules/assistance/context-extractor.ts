@@ -99,6 +99,7 @@ export class ContextExtractor {
     else if (/(?:không|bỏ|đừng|hủy)\s+(?:thích\s+)?(?:hoa|cỏ|botanical|floral)/i.test(lower)) cloned.aestheticIdentity = null
     else if (lower.includes('hoa') || lower.includes('cỏ') || lower.includes('botanical') || lower.includes('floral')) cloned.aestheticIdentity = 'FLORAL_BOTANICAL'
     else if (lower.includes('wabi') || lower.includes('tối giản') || lower.includes('nhật') || lower.includes('japandi')) cloned.aestheticIdentity = 'MINIMALIST_JAPANDI'
+    else if (lower.includes('thư pháp') || lower.includes('calligraphy') || lower.includes('typography')) cloned.aestheticIdentity = 'MODERN_CALLIGRAPHY'
 
     if (/(?:bỏ|không|đừng)\s+(?:dáng\s+)?gập/i.test(lower) || lower.includes('phẳng') || lower.includes('flat')) cloned.targetShape = 'FLAT'
     else if (/(?:bỏ|không|đừng)\s+(?:khổ\s+)?phẳng/i.test(lower) || lower.includes('gập') || lower.includes('bifold')) cloned.targetShape = 'BIFOLD'

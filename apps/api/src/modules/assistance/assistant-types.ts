@@ -39,6 +39,7 @@ export interface SuggestedProductCard {
   subtitle: string
   shape: string
   startingPriceVnd: string
+  imageUrl?: string | null
   isFixture?: boolean
   silhouette?: string
   accentColor?: string
@@ -76,5 +77,6 @@ export interface CatalogProductItem {
   colourTags: string[]
   unitPriceVnd: bigint
   formattedPriceVnd: string
+  imageUrl?: string | null
   isFixture?: boolean
 }
