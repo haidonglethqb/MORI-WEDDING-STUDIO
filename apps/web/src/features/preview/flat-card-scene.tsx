@@ -4,19 +4,22 @@ import { useEffect, useRef } from 'react'
 import * as THREE from 'three'
 import { biFoldHingeRadians, flatCardYaw } from '@mori/domain'
 import { webglAvailable } from './webgl-available'
-import { createBespokePaperTexture } from './paper-texture'
+import { createBespokePaperTexture, loadCardImageTexture } from './paper-texture'
+import { getProductImageUrl } from './product-image'
 import { getBespokeProfile } from '../../app/collections/collection-catalog-data'
 
 export function FlatCardScene({
   face,
   slug = 'editorial-flat-01',
   name,
+  imageUrl,
   style: _style,
   onUnavailable,
 }: {
   face: 'front' | 'back'
   slug?: string | undefined
   name?: string | undefined
+  imageUrl?: string | null | undefined
   style?: string | undefined
   onUnavailable: () => void
 }) {
@@ -26,6 +29,7 @@ export function FlatCardScene({
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null)
   fail.current = onUnavailable
   targetYaw.current = flatCardYaw(face)
+  const resolvedImageUrl = imageUrl ?? getProductImageUrl(slug)
 
   useEffect(() => {
     if (!webglAvailable()) {
@@ -39,13 +43,16 @@ export function FlatCardScene({
     let prevY = 0
     let rotX = 0
     let rotY = targetYaw.current
+    let loadedFrontTex: THREE.Texture | null = null
 
     const canvas = document.createElement('canvas')
+    canvas.style.maxWidth = '100%'
+    canvas.style.height = 'auto'
+    canvas.style.display = 'block'
     const scene = new THREE.Scene()
     const camera = new THREE.PerspectiveCamera(38, 340 / 440, 0.1, 10)
     camera.position.set(0, 0, 3.8)
 
-    // Warm Atelier Studio Lighting
     const ambient = new THREE.AmbientLight(0xfffaed, 1.4)
     const dirLight = new THREE.DirectionalLight(0xfff5db, 1.8)
     dirLight.position.set(3, 4, 4)
@@ -53,7 +60,6 @@ export function FlatCardScene({
     fillLight.position.set(-3, -2, 2)
     scene.add(ambient, dirLight, fillLight)
 
-    // Contact shadow underneath
     const sCanvas = document.createElement('canvas')
     sCanvas.width = 128
     sCanvas.height = 128
@@ -66,10 +72,9 @@ export function FlatCardScene({
       sctx.fillRect(0, 0, 128, 128)
     }
     const sTex = new THREE.CanvasTexture(sCanvas)
-    const sPlane = new THREE.Mesh(
-      new THREE.PlaneGeometry(2.4, 2.4),
-      new THREE.MeshBasicMaterial({ map: sTex, transparent: true, depthWrite: false }),
-    )
+    const shadowGeom = new THREE.PlaneGeometry(2.4, 2.4)
+    const shadowMat = new THREE.MeshBasicMaterial({ map: sTex, transparent: true, depthWrite: false })
+    const sPlane = new THREE.Mesh(shadowGeom, shadowMat)
     sPlane.rotation.x = -Math.PI / 2
     sPlane.position.y = -1.25
     scene.add(sPlane)
@@ -84,10 +89,9 @@ export function FlatCardScene({
       roughness: 0.8,
       metalness: isDark ? 0.2 : 0.05,
     })
-    const frontMat = new THREE.MeshStandardMaterial({ map: frontTex, roughness: 0.55, metalness: 0.15 })
+    const frontMat = new THREE.MeshStandardMaterial({ map: frontTex, roughness: 0.55, metalness: 0.12 })
     const backMat = new THREE.MeshStandardMaterial({ map: backTex, roughness: 0.65, metalness: 0.1 })
 
-    // Box Geometry: [right, left, top, bottom, front, back]
     const cardGeom = new THREE.BoxGeometry(1.65, 2.3, 0.015)
     const card = new THREE.Mesh(cardGeom, [sideMat, sideMat, sideMat, sideMat, frontMat, backMat])
     card.userData['hinge'] = biFoldHingeRadians(0)
@@ -99,8 +103,21 @@ export function FlatCardScene({
       return
     }
     rendererRef.current = renderer
+    renderer.outputColorSpace = THREE.SRGBColorSpace
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     renderer.setSize(340, 440)
+
+    loadCardImageTexture(
+      resolvedImageUrl,
+      1.65 / 2.3,
+      renderer.capabilities.getMaxAnisotropy(),
+      () => cancelled,
+      (texture) => {
+        loadedFrontTex = texture
+        frontMat.map = texture
+        frontMat.needsUpdate = true
+      },
+    )
 
     const onMouseDown = (e: MouseEvent) => { isDragging = true; prevX = e.clientX; prevY = e.clientY }
     const onMouseMove = (e: MouseEvent) => {
@@ -137,11 +154,12 @@ export function FlatCardScene({
       canvas.removeEventListener('mousedown', onMouseDown)
       window.removeEventListener('mousemove', onMouseMove)
       window.removeEventListener('mouseup', onMouseUp)
-      frontTex.dispose(); backTex.dispose(); sTex.dispose()
-      cardGeom.dispose(); sideMat.dispose(); frontMat.dispose(); backMat.dispose()
+      frontTex.dispose(); loadedFrontTex?.dispose(); backTex.dispose(); sTex.dispose()
+      cardGeom.dispose(); shadowGeom.dispose(); shadowMat.dispose()
+      sideMat.dispose(); frontMat.dispose(); backMat.dispose()
       rendererRef.current?.dispose(); rendererRef.current = null
     }
-  }, [slug, name])
+  }, [slug, name, resolvedImageUrl])
 
   useEffect(() => {
     targetYaw.current = flatCardYaw(face)
@@ -150,7 +168,14 @@ export function FlatCardScene({
   return (
     <div
       ref={host}
-      style={{ display: 'inline-flex', justifyContent: 'center', alignItems: 'center', cursor: 'grab', touchAction: 'none' }}
+      style={{
+        display: 'inline-flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        maxWidth: '100%',
+        cursor: 'grab',
+        touchAction: 'none',
+      }}
       aria-label="Khung mô hình 3D xoay 360 độ"
     />
   )

@@ -1,12 +1,14 @@
 import { notFound } from 'next/navigation'
 import { HomeNav } from '../../home-nav'
 import { ProductPreview } from '../../../features/preview/product-preview'
+import { resolveProductImageUrl } from '../../../features/preview/product-image'
 import { getBespokeProfile } from '../../collections/collection-catalog-data'
 import {
   COLLECTION_CATEGORIES,
   resolveCategoryId,
   getPreviewCoupleName,
 } from '../../collections/collection-types'
+import { getShapeLabel, resolveProductCopy } from './product-copy'
 import { ProductMetaHeader } from './product-meta-header'
 import './product.css'
 
@@ -21,19 +23,14 @@ interface CatalogueVariant {
 interface CatalogueProduct {
   slug: string
   name: string
+  description?: string | null
+  imageUrl?: string | null
   isFixture: boolean
   variants: CatalogueVariant[]
 }
 
 function apiOrigin(): string {
   return process.env['API_INTERNAL_ORIGIN'] ?? 'http://127.0.0.1:4000'
-}
-
-const shapeLabel: Record<string, string> = {
-  FLAT: 'Dạng phẳng (Flat Card)',
-  BIFOLD: 'Dạng gập đôi (Bi-fold)',
-  ARCH: 'Dạng vòm uốn cong (Arch)',
-  DECKLE: 'Mép xé thủ công (Deckle Edge)',
 }
 
 async function loadProducts(): Promise<CatalogueProduct[]> {
@@ -49,14 +46,18 @@ async function loadProducts(): Promise<CatalogueProduct[]> {
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const products = await loadProducts()
-  let product = products.find((item) => item.slug === slug)
+  const product = products.find((item) => item.slug === slug)
 
   if (!product) notFound()
 
   const orderable = product.variants.filter((variant) => variant.availability !== 'UNAVAILABLE')
   const profile = getBespokeProfile(slug)
-  const curatedTitle = product.isFixture ? profile?.title ?? product.name : product.name
-  const curatedSubtitle = product.isFixture ? profile?.subtitle : undefined
+  const { title: curatedTitle, subtitle: curatedSubtitle } = resolveProductCopy(
+    product,
+    profile?.title,
+    profile?.subtitle,
+  )
+  const imageUrl = resolveProductImageUrl(product, slug)
   const categoryId = resolveCategoryId(slug)
   const cat = COLLECTION_CATEGORIES.find((c) => c.id === categoryId)
 
@@ -73,7 +74,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             {cat?.title.replace('Bộ sưu tập ', '') ?? 'Tác phẩm'}
           </a>
           <span>/</span>
-          <span style={{ color: '#252a24', fontWeight: 500 }}>{curatedTitle}</span>
+          <span className="product-breadcrumb-current">{curatedTitle}</span>
         </div>
 
         <div className="product-layout">
@@ -82,6 +83,8 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               slug={slug}
               name={getPreviewCoupleName()}
               shape={orderable[0]?.shape ?? 'FLAT'}
+              imageUrl={imageUrl}
+              title={curatedTitle}
             />
           </div>
 
@@ -96,26 +99,16 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
             <p className="product-desc">
               {product.isFixture
-                ? 'Mẫu này giúp bạn tham khảo phong cách và bố cục. Thông số và giá sản phẩm thực tế đang được cập nhật.'
-                : 'Xem các quy cách hiện có bên dưới. Chất liệu, kỹ thuật hoàn thiện và thời gian sẽ được xưởng xác nhận theo đơn hàng.'}
+                ? 'Mẫu minh họa giúp bạn tham khảo phong cách và bố cục. Thông số và giá sản phẩm thực tế đang được cập nhật.'
+                : 'Xem các quy cách hiện có bên dưới. Chất liệu giấy 350gsm, kỹ thuật hoàn thiện và tiến độ sẽ được xưởng xác nhận theo yêu cầu.'}
             </p>
 
             <div className="product-variants-box">
-              <h3
-                style={{
-                  fontSize: '13px',
-                  margin: '0 0 12px',
-                  color: '#252a24',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.06em',
-                }}
-              >
-                Quy cách &amp; Giá cơ bản
-              </h3>
+              <h3 className="product-variants-heading">Quy cách &amp; Giá cơ bản</h3>
               {orderable.map((variant) => (
                 <div key={variant.shape} className="product-variant-item">
                   <span className="product-variant-shape">
-                    {shapeLabel[variant.shape] ?? variant.shape}
+                    {getShapeLabel(variant.shape)}
                   </span>
                   <span className="product-variant-price">
                     {product.isFixture
@@ -129,21 +122,16 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             </div>
 
             <div className="product-specs">
-              <p style={{ margin: '0 0 6px', fontWeight: 600, color: '#32462f' }}>
-                Thông tin cần xác nhận:
-              </p>
-              <ul style={{ margin: 0, paddingLeft: '18px' }}>
-                <li>Chất liệu và kỹ thuật hoàn thiện theo mẫu được chọn.</li>
-                <li>Số lượng và thời gian thực hiện theo nhu cầu.</li>
-                <li>Chi phí được xác nhận trước khi bạn chốt yêu cầu.</li>
+              <p className="product-specs-title">Thông tin cần xác nhận:</p>
+              <ul className="product-specs-list">
+                <li>Chất liệu giấy bã mía 350gsm và kỹ thuật hoàn thiện theo mẫu được chọn.</li>
+                <li>Số lượng bộ thiệp và thời gian thực hiện theo lịch trình của bạn.</li>
+                <li>Chi phí được xác nhận rõ ràng trước khi bạn chốt yêu cầu.</li>
               </ul>
             </div>
 
-            <div style={{ marginTop: '24px' }}>
-              <a
-                href="/assistant"
-                className="product-order-cta"
-              >
+            <div className="product-cta-wrap">
+              <a href="/assistant" className="product-order-cta">
                 Hỏi về mẫu này &rarr;
               </a>
             </div>

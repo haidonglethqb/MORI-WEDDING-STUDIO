@@ -51,3 +51,45 @@ export function createPaperTexture(
 ): THREE.CanvasTexture {
   return createBespokePaperTexture(style, isCover, title)
 }
+
+export function loadCardImageTexture(
+  imageUrl: string | null | undefined,
+  cardAspect: number,
+  maxAnisotropy: number,
+  isCancelled: () => boolean,
+  onLoaded: (texture: THREE.Texture) => void,
+): void {
+  if (!imageUrl) return
+  const loader = new THREE.TextureLoader()
+  loader.load(
+    imageUrl,
+    (texture) => {
+      if (isCancelled()) {
+        texture.dispose()
+        return
+      }
+      texture.colorSpace = THREE.SRGBColorSpace
+      texture.anisotropy = Math.min(4, maxAnisotropy)
+      const img = texture.image as { width?: number; height?: number } | undefined
+      if (img?.width && img?.height) {
+        const imgAspect = img.width / img.height
+        if (Math.abs(cardAspect - imgAspect) > 0.05) {
+          if (imgAspect > cardAspect) {
+            const scale = cardAspect / imgAspect
+            texture.repeat.set(scale, 1)
+            texture.offset.set((1 - scale) / 2, 0)
+          } else {
+            const scale = imgAspect / cardAspect
+            texture.repeat.set(1, scale)
+            texture.offset.set(0, (1 - scale) / 2)
+          }
+        }
+      }
+      onLoaded(texture)
+    },
+    undefined,
+    () => {
+      // Keep the procedural canvas texture when product image fails to load.
+    },
+  )
+}

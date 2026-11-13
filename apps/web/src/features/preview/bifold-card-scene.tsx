@@ -4,19 +4,22 @@ import { useEffect, useRef } from 'react'
 import * as THREE from 'three'
 import { bifoldPanelTransforms } from '@mori/domain'
 import { webglAvailable } from './webgl-available'
-import { createBespokePaperTexture } from './paper-texture'
+import { createBespokePaperTexture, loadCardImageTexture } from './paper-texture'
+import { getProductImageUrl } from './product-image'
 import { getBespokeProfile } from '../../app/collections/collection-catalog-data'
 
 export function BiFoldCardScene({
   openAmount,
   slug = 'editorial-bifold-01',
   name,
+  imageUrl,
   style: _style,
   onUnavailable,
 }: {
   openAmount: number
   slug?: string | undefined
   name?: string | undefined
+  imageUrl?: string | null | undefined
   style?: string | undefined
   onUnavailable: () => void
 }) {
@@ -26,6 +29,7 @@ export function BiFoldCardScene({
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null)
   fail.current = onUnavailable
   openRef.current = openAmount
+  const resolvedImageUrl = imageUrl ?? getProductImageUrl(slug)
 
   useEffect(() => {
     if (!webglAvailable()) {
@@ -39,13 +43,16 @@ export function BiFoldCardScene({
     let prevY = 0
     let viewRotX = 0.05
     let viewRotY = -0.2
+    let loadedCoverTex: THREE.Texture | null = null
 
     const canvas = document.createElement('canvas')
+    canvas.style.maxWidth = '100%'
+    canvas.style.height = 'auto'
+    canvas.style.display = 'block'
     const scene = new THREE.Scene()
     const camera = new THREE.PerspectiveCamera(38, 380 / 440, 0.1, 10)
     camera.position.set(0, 0, 4.4)
 
-    // Warm Atelier Studio Lighting
     const ambient = new THREE.AmbientLight(0xfffaed, 1.4)
     const keyLight = new THREE.DirectionalLight(0xfff6dd, 1.8)
     keyLight.position.set(4, 5, 4)
@@ -53,7 +60,6 @@ export function BiFoldCardScene({
     fillLight.position.set(-4, -1, 3)
     scene.add(ambient, keyLight, fillLight)
 
-    // Contact shadow underneath
     const sCanvas = document.createElement('canvas')
     sCanvas.width = 128
     sCanvas.height = 128
@@ -66,10 +72,9 @@ export function BiFoldCardScene({
       sctx.fillRect(0, 0, 128, 128)
     }
     const sTex = new THREE.CanvasTexture(sCanvas)
-    const sPlane = new THREE.Mesh(
-      new THREE.PlaneGeometry(3.2, 2.4),
-      new THREE.MeshBasicMaterial({ map: sTex, transparent: true, depthWrite: false }),
-    )
+    const shadowGeom = new THREE.PlaneGeometry(3.2, 2.4)
+    const shadowMat = new THREE.MeshBasicMaterial({ map: sTex, transparent: true, depthWrite: false })
+    const sPlane = new THREE.Mesh(shadowGeom, shadowMat)
     sPlane.rotation.x = -Math.PI / 2
     sPlane.position.y = -1.25
     scene.add(sPlane)
@@ -87,10 +92,9 @@ export function BiFoldCardScene({
       roughness: 0.8,
       metalness: isDark ? 0.2 : 0.05,
     })
-    const coverMat = new THREE.MeshStandardMaterial({ map: coverTex, roughness: 0.55, metalness: 0.15 })
+    const coverMat = new THREE.MeshStandardMaterial({ map: coverTex, roughness: 0.55, metalness: 0.12 })
     const insideMat = new THREE.MeshStandardMaterial({ map: insideTex, roughness: 0.65, metalness: 0.1 })
 
-    // Panels
     const panelGeom = new THREE.BoxGeometry(1.2, 2.3, 0.015)
     const rightPanel = new THREE.Mesh(panelGeom, [sideMat, sideMat, sideMat, sideMat, insideMat, coverMat])
     rightPanel.position.set(0.6, 0, 0)
@@ -110,8 +114,21 @@ export function BiFoldCardScene({
       return
     }
     rendererRef.current = renderer
+    renderer.outputColorSpace = THREE.SRGBColorSpace
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     renderer.setSize(380, 440)
+
+    loadCardImageTexture(
+      resolvedImageUrl,
+      1.2 / 2.3,
+      renderer.capabilities.getMaxAnisotropy(),
+      () => cancelled,
+      (texture) => {
+        loadedCoverTex = texture
+        coverMat.map = texture
+        coverMat.needsUpdate = true
+      },
+    )
 
     const onMouseDown = (e: MouseEvent) => { isDragging = true; prevX = e.clientX; prevY = e.clientY }
     const onMouseMove = (e: MouseEvent) => {
@@ -151,16 +168,24 @@ export function BiFoldCardScene({
       canvas.removeEventListener('mousedown', onMouseDown)
       window.removeEventListener('mousemove', onMouseMove)
       window.removeEventListener('mouseup', onMouseUp)
-      coverTex.dispose(); insideTex.dispose(); sTex.dispose()
-      panelGeom.dispose(); sideMat.dispose(); coverMat.dispose(); insideMat.dispose()
+      coverTex.dispose(); loadedCoverTex?.dispose(); insideTex.dispose(); sTex.dispose()
+      panelGeom.dispose(); shadowGeom.dispose(); shadowMat.dispose()
+      sideMat.dispose(); coverMat.dispose(); insideMat.dispose()
       rendererRef.current?.dispose(); rendererRef.current = null
     }
-  }, [slug, name])
+  }, [slug, name, resolvedImageUrl])
 
   return (
     <div
       ref={host}
-      style={{ display: 'inline-flex', justifyContent: 'center', alignItems: 'center', cursor: 'grab', touchAction: 'none' }}
+      style={{
+        display: 'inline-flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        maxWidth: '100%',
+        cursor: 'grab',
+        touchAction: 'none',
+      }}
       aria-label="Khung mô hình 3D xoay 360 độ"
     />
   )
