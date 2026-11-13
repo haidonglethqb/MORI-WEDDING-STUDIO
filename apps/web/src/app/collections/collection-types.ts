@@ -1,4 +1,5 @@
 import { BESPOKE_PROFILES } from './collection-catalog-data'
+import { resolveProductImageUrl } from './product-image-url'
 import type { MoriIconName } from '../../components/mori-icon'
 
 export type StyleCategoryId = 'editorial' | 'floral' | 'heritage' | 'minimalist' | 'modern'
@@ -22,6 +23,7 @@ export interface CollectionItem {
   shape: 'BIFOLD' | 'FLAT' | 'TRIFOLD'
   minPriceVnd: string | null
   isFixture: boolean
+  imageUrl: string | null
 }
 
 export const COLLECTION_CATEGORIES: CollectionCategory[] = [
@@ -80,25 +82,32 @@ export function resolveCategoryId(slug: string): StyleCategoryId {
   return 'editorial'
 }
 
-export function buildCuratedItem(
-  raw: { slug: string; name: string; shape: 'BIFOLD' | 'FLAT' | 'TRIFOLD'; minPriceVnd: string | null; isFixture: boolean },
-): CollectionItem {
+export function buildCuratedItem(raw: {
+  slug: string
+  name: string
+  shape: 'BIFOLD' | 'FLAT' | 'TRIFOLD'
+  minPriceVnd: string | null
+  isFixture: boolean
+  imageUrl?: string | null | undefined
+}): CollectionItem {
   const categoryId = resolveCategoryId(raw.slug)
   const cat = COLLECTION_CATEGORIES.find((c) => c.id === categoryId)
   const categoryLabel = cat?.title.replace('Bộ sưu tập ', '') ?? 'Nghệ nhân'
   const profile = BESPOKE_PROFILES[raw.slug]
+  const imageUrl = resolveProductImageUrl(raw)
 
   return {
     slug: raw.slug,
     skuName: raw.name,
-    curatedTitle: raw.isFixture ? profile?.title ?? raw.name : raw.name,
+    curatedTitle: profile?.title ?? raw.name,
     curatedDesc: raw.isFixture
-      ? 'Mẫu minh họa để tham khảo phong cách và bố cục.'
-      : 'Xem thông tin quy cách hiện có trên trang chi tiết.',
+      ? profile?.subtitle ?? 'Mẫu minh họa để tham khảo phong cách và bố cục.'
+      : profile?.subtitle ?? 'Thiệp cưới in trên giấy ngà sinh thái tại xưởng MORI.',
     categoryId,
     categoryLabel,
     shape: raw.shape,
     minPriceVnd: raw.minPriceVnd,
     isFixture: raw.isFixture,
+    imageUrl,
   }
 }

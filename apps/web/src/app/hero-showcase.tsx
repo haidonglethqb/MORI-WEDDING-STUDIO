@@ -25,10 +25,10 @@ export function HeroShowcase() {
 
   return (
     <div className="hero-3d-box">
-      <div className="hero-3d-badge">MORI / PHỐI CẢNH MINH HỌA</div>
+      <div className="hero-3d-badge">MORI / PHỐI CẢNH 3D</div>
       {showPreview ? (
         <>
-          <div className="hero-model-selector" aria-label="Chọn phong cách minh họa">
+          <div className="hero-model-selector" aria-label="Chọn phong cách thiệp">
             {MODELS.map((model) => (
               <button
                 key={model.slug}
@@ -86,7 +86,11 @@ export function HeroShowcase() {
               <span className="paper-heading">Ngày chung đôi</span>
               <small>MỘT KHỞI ĐẦU MỚI<br />MỘT CÂU CHUYỆN RIÊNG</small>
             </div>
-            <div className="paper-reply"><small>MORI WEDDING STUDIO</small><span>Hẹn ngày vui.</span><small>WITH LOVE, ALWAYS</small></div>
+            <div className="paper-reply">
+              <small>MORI WEDDING STUDIO</small>
+              <span>Hẹn ngày vui.</span>
+              <small>WITH LOVE, ALWAYS</small>
+            </div>
           </div>
           <p className="hero-preview-caption">Phối cảnh tham khảo, không thay thế bản duyệt in.</p>
           <button type="button" className="hero-preview-open" onClick={() => setShowPreview(true)}>

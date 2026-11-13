@@ -1,5 +1,6 @@
 import { HomeNav } from '../home-nav'
 import { CollectionFilters } from './collection-filters'
+import { resolveProductImageUrl } from './product-image-url'
 import { buildCuratedItem, type CollectionItem } from './collection-types'
 import { PriceCalculator } from './price-calculator'
 import './collections.css'
@@ -19,6 +20,7 @@ interface CatalogueProduct {
   name: string
   type?: 'PAPER' | 'DIGITAL'
   isFixture: boolean
+  imageUrl?: string | null
   variants: CatalogueVariant[]
 }
 
@@ -46,16 +48,17 @@ export default async function CollectionsPage() {
       const shape = orderable[0]?.shape ?? 'FLAT'
       const minPrice = orderable.find((v) => v.unitAmountVnd !== null)?.unitAmountVnd ?? null
 
-      return buildCuratedItem(
-        {
-          slug: product.slug,
-          name: product.name,
-          shape,
-          minPriceVnd: minPrice,
-          isFixture: product.isFixture,
-        },
-      )
+      return buildCuratedItem({
+        slug: product.slug,
+        name: product.name,
+        shape,
+        minPriceVnd: minPrice,
+        isFixture: product.isFixture,
+        imageUrl: resolveProductImageUrl(product),
+      })
     })
+
+  const hasFixtures = items.some((item) => item.isFixture)
 
   return (
     <>
@@ -67,15 +70,26 @@ export default async function CollectionsPage() {
           <p>
             Khám phá các hướng thiết kế và chọn mẫu để bắt đầu trao đổi cùng xưởng.
           </p>
-          {items.some((item) => item.isFixture) ? (
-            <p className="catalogue-note">Một số mẫu đang là nội dung minh họa. Giá và quy cách thực tế sẽ được xác nhận trước khi bạn gửi yêu cầu.</p>
+          {hasFixtures ? (
+            <p className="catalogue-note">
+              Một số mẫu đang là nội dung minh họa. Giá và quy cách thực tế sẽ được xác nhận trước khi bạn gửi yêu cầu.
+            </p>
           ) : null}
         </header>
 
-        <a href="#du-toan" className="calculator-jump">Xem dự toán theo số lượng ↓</a><CollectionFilters items={items} />
-        <PriceCalculator options={products.flatMap((product) => product.variants
-          .filter((variant) => variant.availability !== 'UNAVAILABLE' && variant.shape !== 'TRIFOLD')
-          .map((variant) => ({ id: variant.id, label: `${product.name} · ${variant.shape === 'BIFOLD' ? 'Gấp đôi' : 'Phẳng'}`, isFixture: product.isFixture })))} />
+        <a href="#du-toan" className="calculator-jump">Xem dự toán theo số lượng ↓</a>
+        <CollectionFilters items={items} />
+        <PriceCalculator
+          options={products.flatMap((product) =>
+            product.variants
+              .filter((variant) => variant.availability !== 'UNAVAILABLE' && variant.shape !== 'TRIFOLD')
+              .map((variant) => ({
+                id: variant.id,
+                label: `${product.name} · ${variant.shape === 'BIFOLD' ? 'Gấp đôi' : 'Phẳng'}`,
+                isFixture: product.isFixture,
+              })),
+          )}
+        />
       </main>
     </>
   )

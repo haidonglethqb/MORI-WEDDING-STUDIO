@@ -1,13 +1,15 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
-import { getBespokeProfile } from '../collections/collection-catalog-data'
+import { getBespokeProfile, resolveProductImageUrl } from '../collections/collection-catalog-data'
 import { renderCardMotif } from '../collections/collection-motif-svgs'
 import { getPreviewCoupleName } from '../collections/collection-types'
 import { ProductPreview } from '../../features/preview/product-preview'
 import type { SuggestedProductCard } from './assistant-types'
 import { MoriIcon } from '../../components/mori-icon'
+import './assistant-product-card.css'
 
 interface ProductCardProps {
   item: SuggestedProductCard
@@ -20,13 +22,27 @@ const SILHOUETTE_MAP: Record<string, string> = {
   standard: 'Chữ nhật cổ điển',
 }
 
+function formatStartingPrice(raw: string, isFixture: boolean): string {
+  if (isFixture) return 'Mẫu minh họa'
+  const trimmed = raw.trim()
+  if (!trimmed || trimmed === '0') return 'Báo giá theo yêu cầu'
+  if (/^\d+$/.test(trimmed)) return `${BigInt(trimmed).toLocaleString('vi-VN')} ₫`
+  return trimmed
+}
+
 export function AssistantProductCard({ item }: ProductCardProps) {
   const [show3D, setShow3D] = useState(false)
+  const [imgFailed, setImgFailed] = useState(false)
+
   const profile = getBespokeProfile(item.slug)
-  const title = item.isFixture ? profile?.title ?? item.title ?? item.name : item.title ?? item.name
-  const subtitle = item.isFixture
+  const imageUrl = resolveProductImageUrl(item)
+  const showPhoto = Boolean(imageUrl) && !imgFailed
+  const isFixture = item.isFixture === true
+
+  const title = profile?.title ?? item.title ?? item.name
+  const subtitle = isFixture
     ? 'Mẫu minh họa; thông tin sản phẩm thực tế đang được cập nhật.'
-    : item.subtitle
+    : item.subtitle || profile?.subtitle || 'Thiệp cưới in trên giấy ngà sinh thái tại xưởng MORI.'
   const silhouetteLabel = profile?.silhouette ? SILHOUETTE_MAP[profile.silhouette] : null
 
   const cardBg = profile?.cardBg ?? '#fdfcf9'
@@ -36,10 +52,7 @@ export function AssistantProductCard({ item }: ProductCardProps) {
   const motifType = profile?.motifType ?? 'arch-vogue'
   const coupleName = getPreviewCoupleName()
   const textColor = isDark ? '#fbf8ee' : '#222820'
-
-  const displayPrice = item.isFixture ? 'Mẫu minh họa' : item.startingPriceVnd.includes('₫')
-    ? item.startingPriceVnd
-    : `${item.startingPriceVnd} ₫`
+  const displayPrice = formatStartingPrice(item.startingPriceVnd, isFixture)
 
   return (
     <div className="embedded-product-card">
@@ -48,39 +61,42 @@ export function AssistantProductCard({ item }: ProductCardProps) {
         {silhouetteLabel && <span className="silhouette-badge">{silhouetteLabel}</span>}
       </div>
 
-      {/* Visual In-Chat Card Mockup Preview */}
-      <div className="card-mockup-stage" aria-label="Phối cảnh thiệp minh họa">
-        <div
-          className={`mini-artisan-paper ${isDark ? 'is-dark' : 'is-light'}`}
-          style={{
-            backgroundColor: cardBg,
-            borderColor,
-            color: textColor,
-          }}
-        >
-          <div className="mini-motif-box">{renderCardMotif(motifType, accentColor)}</div>
-          <div className="mini-paper-typography">
-            <span className="mini-couple-title" style={{ color: textColor }}>
-              Tên hai bạn
-            </span>
-            <span className="mini-date-subtitle" style={{ color: isDark ? '#dfd5be' : '#71786c' }}>
-              Ngày tổ chức
-            </span>
-            <div className="mini-divider-line" style={{ background: accentColor }} />
-            <span className="mini-tagline" style={{ color: accentColor }}>
-              {isDark ? 'TRĂM NĂM HẠNH PHÚC' : 'SAVE THE DATE'}
-            </span>
-          </div>
-          <span className="mini-preview-overlay-hint">
-            Phối cảnh minh họa
-          </span>
+      {showPhoto && imageUrl ? (
+        <div className="assistant-card-photo-stage">
+          <Image
+            src={imageUrl}
+            alt={title}
+            fill
+            unoptimized
+            sizes="(max-width: 640px) 100vw, 320px"
+            className="assistant-card-photo"
+            onError={() => setImgFailed(true)}
+          />
         </div>
-      </div>
+      ) : (
+        <div className="card-mockup-stage" aria-label="Phối cảnh thiệp">
+          <div
+            className={`mini-artisan-paper ${isDark ? 'is-dark' : 'is-light'}`}
+            style={{ backgroundColor: cardBg, borderColor, color: textColor }}
+          >
+            <div className="mini-motif-box">{renderCardMotif(motifType, accentColor)}</div>
+            <div className="mini-paper-typography">
+              <span className="mini-couple-title" style={{ color: textColor }}>Tên hai bạn</span>
+              <span className="mini-date-subtitle" style={{ color: isDark ? '#dfd5be' : '#71786c' }}>
+                Ngày tổ chức
+              </span>
+              <div className="mini-divider-line" style={{ background: accentColor }} />
+              <span className="mini-tagline" style={{ color: accentColor }}>
+                {isDark ? 'TRĂM NĂM HẠNH PHÚC' : 'SAVE THE DATE'}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
 
       <h4 className="embedded-product-title">{title}</h4>
       <p className="embedded-product-subtitle">{subtitle}</p>
 
-      {/* Interactive 3D Viewer in Chat */}
       {show3D && (
         <div className="inline-3d-scene-box">
           <div className="inline-3d-header">
@@ -100,7 +116,7 @@ export function AssistantProductCard({ item }: ProductCardProps) {
 
       <div className="embedded-product-footer">
         <div className="embedded-product-price">
-          <span className="price-label">{item.isFixture ? 'Giá và quy cách' : 'Giá tham khảo'}</span>
+          <span className="price-label">{isFixture ? 'Giá và quy cách' : 'Giá tham khảo'}</span>
           <span className="price-value">{displayPrice}</span>
         </div>
 
@@ -113,7 +129,7 @@ export function AssistantProductCard({ item }: ProductCardProps) {
             {show3D ? 'Đóng xem trước' : <><MoriIcon name="paper" /> Xem trước 3D</>}
           </button>
           <Link href={`/products/${item.slug}`} className="embedded-product-action">
-            Xem mẫu và thông tin <MoriIcon name="arrow-right" />
+            Xem mẫu <MoriIcon name="arrow-right" />
           </Link>
         </div>
       </div>

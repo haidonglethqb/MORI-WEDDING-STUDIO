@@ -26,23 +26,24 @@
 body .home-nav, body .home-nav :is(a, button, span) { font-family: var(--a-ui); }
 body .home-nav .home-mark { font-family: 'Syne', var(--a-ui); }
 
-body:has(:is(.workspace-page, .addresses-page, .editor-page, .order-detail-page, .request-detail-page, .studio-page, .admin-ai-page, .product-page, .assistant-page, .collections-wrap, .auth-layout, .moderation-page)) {
+body:has(:is(.workspace-page, .addresses-page, .editor-page, .order-detail-page, .request-detail-page, .studio-page, .admin-ai-page, .product-page, .assistant-page, .collections-wrap, .auth-layout, .moderation-page, .blog-page)) {
   font-family: var(--a-ui);
   background: var(--a-paper);
 }
-body:has(:is(.assistant-page, .collections-wrap, .auth-layout)) { background: var(--a-ink); }
+body:has(:is(.assistant-page, .collections-wrap, .auth-layout, .blog-page)) { background: var(--a-ink); }
 
 body :is(.workspace-page, .addresses-page, .editor-page, .order-detail-page, .request-detail-page, .studio-page, .admin-ai-page, .product-page, .assistant-page, .collections-wrap, .auth-layout, .moderation-page) {
   font-family: var(--a-ui);
   color: var(--a-text);
 }
-body :is(.workspace-page, .addresses-page, .editor-page, .order-detail-page, .request-detail-page, .studio-page, .admin-ai-page, .product-page, .assistant-page, .collections-wrap, .auth-layout, .moderation-page) :is(h1, h2, h3),
+body .blog-page { font-family: var(--a-ui); color: var(--a-ivory); }
+body :is(.workspace-page, .addresses-page, .editor-page, .order-detail-page, .request-detail-page, .studio-page, .admin-ai-page, .product-page, .assistant-page, .collections-wrap, .auth-layout, .moderation-page, .blog-page) :is(h1, h2, h3),
 body .auth-editorial-panel h2, body .atelier-header h1 {
   font-family: var(--a-display);
   font-weight: 500;
   letter-spacing: -0.015em;
 }
-body :where(.workspace-page, .addresses-page, .editor-page, .order-detail-page, .request-detail-page, .studio-page, .admin-ai-page, .moderation-page, .product-page, .auth-layout, .collections-wrap) :where(button, input, select, textarea) { font-family: inherit; }
+body :where(.workspace-page, .addresses-page, .editor-page, .order-detail-page, .request-detail-page, .studio-page, .admin-ai-page, .moderation-page, .product-page, .auth-layout, .collections-wrap, .blog-page) :where(button, input, select, textarea) { font-family: inherit; }
 body :where(.workspace-page, .addresses-page, .editor-page, .order-detail-page, .request-detail-page, .studio-page, .admin-ai-page) :where(input[type=checkbox], input[type=radio], input[type=range]) { accent-color: var(--a-forest); }
 
 /* Header band: a full-bleed ink strip that continues the navigation. */

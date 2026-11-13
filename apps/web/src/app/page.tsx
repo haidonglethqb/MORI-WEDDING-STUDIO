@@ -9,6 +9,7 @@ import { PortalProcess } from './portal-process'
 import { PortalJournal } from './portal-journal'
 import { PortalClose } from './portal-close'
 import { type ShowcaseProduct } from './sample-showcase'
+import { resolveCategoryId } from './collections/collection-types'
 import { HomeFooter } from './home-footer'
 import './home.css'
 import './collections/collections.css'
@@ -25,20 +26,45 @@ import './portal-motion.css'
 
 export const dynamic = 'force-dynamic'
 
+function pickDiverseShowcase(products: CatalogueProduct[]): CatalogueProduct[] {
+  const seen = new Set<string>()
+  const picked: CatalogueProduct[] = []
+  for (const product of products) {
+    const category = resolveCategoryId(product.slug)
+    if (!seen.has(category)) {
+      seen.add(category)
+      picked.push(product)
+    }
+  }
+  for (const product of products) {
+    if (picked.length >= 5) break
+    if (!picked.includes(product)) picked.push(product)
+  }
+  return picked.slice(0, 5)
+}
+
 async function loadProducts(): Promise<ShowcaseProduct[]> {
   try {
     const origin = process.env['API_INTERNAL_ORIGIN'] ?? 'http://127.0.0.1:4000'
     const response = await fetch(`${origin}/api/v1/catalog/products`, { cache: 'no-store' })
     if (!response.ok) return []
     const products = (await response.json()) as CatalogueProduct[]
-    return products.filter((p) => p.variants.some((v) => v.availability !== 'UNAVAILABLE'))
-      .slice(0, 4).map((p) => {
-        const variants = p.variants.filter((v) => v.availability !== 'UNAVAILABLE')
-        const prices = variants.flatMap((v) => v.unitAmountVnd === null ? [] : [BigInt(v.unitAmountVnd)])
-        const minimum = prices.reduce<bigint | null>((min, value) => min === null || value < min ? value : min, null)
-        return { slug: p.slug, name: p.name, shape: variants[0]?.shape ?? 'FLAT', priceVnd: minimum?.toString() ?? null, isFixture: p.isFixture }
-      })
-  } catch { return [] }
+    const active = products.filter((p) => p.variants.some((v) => v.availability !== 'UNAVAILABLE'))
+    return pickDiverseShowcase(active).map((p) => {
+      const variants = p.variants.filter((v) => v.availability !== 'UNAVAILABLE')
+      const prices = variants.flatMap((v) => (v.unitAmountVnd === null ? [] : [BigInt(v.unitAmountVnd)]))
+      const minimum = prices.reduce<bigint | null>((min, value) => (min === null || value < min ? value : min), null)
+      return {
+        slug: p.slug,
+        name: p.name,
+        shape: variants[0]?.shape ?? 'FLAT',
+        priceVnd: minimum?.toString() ?? null,
+        isFixture: p.isFixture,
+      }
+    })
+  } catch {
+    return []
+  }
 }
 
 export default async function HomePage() {
