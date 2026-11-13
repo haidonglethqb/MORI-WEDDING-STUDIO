@@ -24,6 +24,7 @@ const statusLabel: Record<string, string> = {
   IN_FULFILLMENT: 'Đang thiết kế/chế tác',
   COMPLETED: 'Hoàn thành',
   CANCELLED: 'Đã hủy',
+  APPROVED: 'Đang trao đổi',
 }
 
 function apiOrigin(): string {
@@ -56,7 +57,7 @@ export default async function StudioPage() {
         <main className="studio-page">
           <div className="studio-empty">
             <p>Vui lòng đăng nhập bằng tài khoản nghệ nhân của xưởng.</p>
-            <a href="/login" className="workspace-btn-primary" style={{ display: 'inline-block', marginTop: '12px' }}>
+            <a href="/login" className="workspace-btn-primary">
               Đăng nhập tài khoản xưởng
             </a>
           </div>
@@ -72,7 +73,7 @@ export default async function StudioPage() {
         <main className="studio-page">
           <div className="studio-empty">
             <p>Tài khoản hiện tại không có quyền truy cập xưởng chế tác.</p>
-            <a href="/workspace" className="workspace-btn-secondary" style={{ display: 'inline-block', marginTop: '12px' }}>
+            <a href="/workspace" className="workspace-btn-secondary">
               Về việc của tôi
             </a>
           </div>
@@ -100,15 +101,16 @@ export default async function StudioPage() {
       <main className="studio-page">
         <header className="studio-header">
           <div>
-            <h1>Hàng đợi chế tác &amp; Thiết kế</h1>
+            <span className="atelier-eyebrow">Xưởng MORI · {items.length} yêu cầu đang mở</span>
+            <h1>Hàng đợi chế tác &amp; thiết kế</h1>
             <p>Quản lý các yêu cầu thiết kế riêng và bản in ấn thiệp cưới đang xử lý.</p>
           </div>
           <div className="studio-actions">
-            <a href="/admin/ai" className="workspace-btn-secondary" style={{ marginRight: '8px' }}>
-              ✦ Cấu hình AI
+            <a href="/admin/ai" className="workspace-btn-secondary">
+              Cấu hình AI
             </a>
             <a href="/studio/orders" className="workspace-btn-primary">
-              Danh sách đơn in ấn →
+              Danh sách đơn in ấn
             </a>
           </div>
         </header>
@@ -132,7 +134,7 @@ export default async function StudioPage() {
                   <div className="workspace-item-actions">
                     <span className={`badge-tag ${item.status}`}>{statusLabel[item.status] ?? item.status}</span>
                     <a href={`/studio/requests/${item.requestId}`} className="workspace-action-link">
-                      Xử lý yêu cầu →
+                      Xử lý yêu cầu
                     </a>
                   </div>
                 </div>

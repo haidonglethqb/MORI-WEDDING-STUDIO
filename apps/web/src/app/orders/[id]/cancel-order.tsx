@@ -22,18 +22,22 @@ export function CancelOrder({ orderId }: { orderId: string }) {
 
   return (
     <form
+      className="order-card-section atelier-form"
       onSubmit={(event) => {
         event.preventDefault()
         void submit()
       }}
     >
-      <h2>Yêu cầu hủy</h2>
-      <label>
-        Lý do
-        <input value={reason} onChange={(event) => setReason(event.target.value)} />
+      <h2 className="order-card-title">Yêu cầu hủy đơn</h2>
+      <p className="atelier-hint">Xưởng sẽ xem xét dựa trên công đoạn hiện tại của đơn.</p>
+      <label className="atelier-field">
+        <span>Lý do hủy</span>
+        <input value={reason} placeholder="vd: Thay đổi ngày cưới" onChange={(event) => setReason(event.target.value)} />
       </label>
-      <button type="submit">Gửi yêu cầu hủy</button>
-      {status ? <p>{status}</p> : null}
+      <div className="atelier-form-actions">
+        <button type="submit" className="workspace-btn-outline atelier-danger">Gửi yêu cầu hủy</button>
+      </div>
+      {status ? <p className="atelier-hint" role="status">{status}</p> : null}
     </form>
   )
 }

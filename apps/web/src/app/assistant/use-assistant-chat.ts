@@ -82,7 +82,12 @@ export function useAssistantChat() {
     } catch {
       // Storage full
     }
-    scrollAnchorRef.current?.scrollIntoView({ behavior: 'smooth' })
+    // Scroll only the conversation pane; scrollIntoView also moved the window on load.
+    const pane = scrollAnchorRef.current?.parentElement
+    if (pane) {
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      pane.scrollTo({ top: pane.scrollHeight, behavior: reduce ? 'auto' : 'smooth' })
+    }
   }, [messages, brief])
 
   async function sendMessage(textToSend: string) {

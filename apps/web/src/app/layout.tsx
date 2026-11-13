@@ -1,7 +1,11 @@
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 import './portal-fonts.css'
+import './fonts.css'
 import './mori-interface.css'
+import './atelier-system.css'
+import './atelier-surfaces.css'
+import './atelier-pages.css'
 
 export const metadata: Metadata = {
   title: 'MORI Wedding Studio · Xưởng thiệp cưới giấy ngà',

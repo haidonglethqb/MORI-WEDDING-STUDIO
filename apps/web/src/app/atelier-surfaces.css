@@ -1,0 +1,144 @@
+/* Paper surfaces, lists, forms and feedback for MORI work pages. */
+body :is(.workspace-section, .studio-card, .request-section-card, .order-card-section, .address-new-card, .admin-ai-card) {
+  background: var(--a-card);
+  border: 1px solid var(--a-line);
+  border-radius: 4px;
+  box-shadow: none;
+  padding: 30px 32px;
+  margin-bottom: 24px;
+}
+body :is(.workspace-section-head, .request-section-title, .order-card-title) {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 0 22px;
+  padding: 0 0 16px;
+  border-bottom: 1px solid var(--a-line);
+}
+body :is(.workspace-section-head h2, .request-section-title, .order-card-title, .address-new-card h2) {
+  color: var(--a-text);
+  font: 500 22px/1.3 var(--a-display);
+  letter-spacing: -.01em;
+}
+.atelier-section-note { color: var(--a-amber-text); font: 500 11px/1.4 var(--a-ui); letter-spacing: .14em; text-transform: uppercase; }
+body :is(.workspace-list, .studio-grid) { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+body :is(.workspace-item, .studio-item, .quote-item-card, .proof-item-card, .address-item-card) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px 20px;
+  margin: 0;
+  padding: 18px 20px;
+  background: #fff;
+  border: 1px solid var(--a-line);
+  border-radius: 3px;
+  box-shadow: none;
+  transition: border-color .2s, background-color .2s;
+}
+body :is(.workspace-item, .studio-item):hover { border-color: var(--a-line-strong); background: #fffaf1; box-shadow: none; }
+body :is(.workspace-item-title, .studio-item-title) { color: var(--a-text); font: 500 18px/1.35 var(--a-display); }
+body :is(.workspace-item-meta, .studio-item-meta) { color: var(--a-muted); font-size: 13px; }
+body .workspace-item-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+body .workspace-grid { grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr); gap: 28px; align-items: start; }
+body .workspace-actions, body .studio-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+
+/* Empty states read as a quiet editorial aside rather than a dashed box. */
+body :is(.workspace-empty, .studio-empty, .atelier-empty) {
+  padding: 36px 24px;
+  background: transparent;
+  border: 1px dashed var(--a-line-strong);
+  border-radius: 3px;
+  color: var(--a-muted);
+  font: italic 400 16px/1.6 var(--a-display);
+  text-align: center;
+}
+body .atelier-empty--inline { padding: 0; border: 0; text-align: left; }
+body :is(.studio-page, .order-detail-page, .workspace-page) > :is(.studio-empty, .workspace-empty, .atelier-empty) { margin-top: 56px; }
+body :is(.workspace-empty, .studio-empty, .atelier-empty) :is(.workspace-btn-primary, .workspace-btn-outline, .workspace-btn-secondary) { margin-top: 16px; font-style: normal; }
+body .workspace-load-error { border-radius: 3px; border-color: #e5cfa8; background: #fbf3e4; }
+
+/* Notices and conversation. */
+body .notice-list { display: grid; gap: 8px; }
+body .notice-item { display: flex; justify-content: space-between; gap: 12px; padding: 14px 16px; border-radius: 3px; border-color: var(--a-line); background: #fff; font-size: 14px; }
+body .notice-new { align-self: flex-start; border-radius: 99px; background: #f6ead8; color: #8a521d; letter-spacing: .08em; }
+body .message-bubble-list { gap: 10px; }
+body .message-bubble { max-width: 78%; padding: 14px 18px; border: 1px solid var(--a-line); border-radius: 3px 14px 14px 14px; background: #f4f1e9; color: var(--a-text); font-size: 15px; }
+
+/* Forms. Zero-specificity defaults so component-level styles still win. */
+:where(.workspace-page, .addresses-page, .order-detail-page, .request-detail-page, .studio-page) :where(input:not([type=checkbox], [type=radio], [type=range], [type=file]), textarea, select) {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 48px;
+  padding: 11px 14px;
+  border: 1px solid var(--a-line-strong);
+  border-radius: 2px;
+  background: #fffefb;
+  color: var(--a-text);
+  font: 400 15px/1.5 var(--a-ui);
+  transition: border-color .2s, box-shadow .2s;
+}
+:where(.workspace-page, .addresses-page, .order-detail-page, .request-detail-page, .studio-page) :where(textarea) { min-height: 112px; resize: vertical; }
+:where(.workspace-page, .addresses-page, .order-detail-page, .request-detail-page, .studio-page) :where(input, textarea, select):focus { border-color: var(--a-forest); box-shadow: 0 0 0 3px rgba(31, 51, 41, .12); outline: none; }
+:where(.workspace-page, .addresses-page, .order-detail-page, .request-detail-page, .studio-page) :where(input, textarea)::placeholder { color: #8c8f86; }
+body .field-group, body .atelier-field { display: grid; gap: 8px; margin: 0; }
+body :is(.field-group, .atelier-field) > span { color: var(--a-text); font-size: 13px; font-weight: 500; }
+body .atelier-form { display: grid; gap: 18px; }
+body .atelier-form-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+body .atelier-form-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
+body .atelier-reply { display: grid; gap: 12px; margin-top: 8px; padding-top: 20px; border-top: 1px solid var(--a-line); }
+body .atelier-reply .atelier-form-actions { justify-content: space-between; }
+body .atelier-hint { margin: 0; color: var(--a-muted); font-size: 13px; }
+body .status-banner { margin: 0; padding: 12px 14px; border-radius: 3px; font-size: 14px; line-height: 1.5; }
+body .status-banner.status-error { background: #f6e3df; border: 1px solid #e8c3ba; color: #8d2f1f; }
+body .status-banner.status-success { background: #e3eee5; border: 1px solid #c3dac9; color: #23503a; }
+
+/* Addresses. */
+body .addresses-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-bottom: 32px; }
+body .address-item-card { display: grid; gap: 6px; align-content: start; }
+body .address-item-name { font: 500 18px/1.35 var(--a-display); }
+body .address-item-detail { color: var(--a-muted); font-size: 14px; }
+body .addresses-page > .atelier-empty { margin-bottom: 24px; }
+
+/* Order detail. */
+body .order-detail-grid { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 28px; align-items: start; }
+body .order-info-row { gap: 16px; padding: 13px 0; border-bottom: 1px solid #efeae0; font-size: 14px; }
+body .order-info-row > :first-child { color: var(--a-muted); }
+body .order-info-row > :last-child { color: var(--a-text); text-align: right; font-weight: 500; }
+body .order-info-row.is-total { margin-top: 6px; padding-top: 18px; border-top: 1px solid var(--a-line-strong); border-bottom: 0; }
+body .order-info-row.is-total > :first-child { color: var(--a-text); font-weight: 600; }
+body .order-total-highlight { color: var(--a-forest); font: 500 28px/1.1 var(--a-display); }
+body .atelier-alert { margin-top: 16px; padding: 14px 16px; border: 1px solid #e5cfa8; border-radius: 3px; background: #fbf3e4; color: #6c4a1c; font-size: 14px; line-height: 1.55; }
+body .atelier-list { margin: 0; padding-left: 18px; color: var(--a-muted); font-size: 14px; line-height: 1.7; }
+body .atelier-list.is-danger { color: #9a3523; }
+body .atelier-address strong { display: block; font: 500 18px/1.4 var(--a-display); }
+body .atelier-address p { margin: 4px 0 0; color: var(--a-muted); font-size: 14px; }
+
+/* Request detail: amounts read as a ledger entry. */
+body .atelier-amount { display: block; color: var(--a-forest); font: 500 26px/1.15 var(--a-display); }
+body .atelier-meta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 8px; color: var(--a-muted); font-size: 13px; }
+body .proof-item-card strong { font: 500 18px/1.35 var(--a-display); }
+
+@media (max-width: 860px) {
+  body :is(.workspace-grid, .order-detail-grid) { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 640px) {
+  body :is(.workspace-header, .studio-header, .addresses-header, .request-detail-header, .order-detail-header) { padding: 36px 0 32px; margin-bottom: 28px; }
+  body :is(.workspace-page, .addresses-page, .order-detail-page, .request-detail-page, .studio-page) { padding-left: 20px; padding-right: 20px; }
+  body :is(.workspace-section, .studio-card, .request-section-card, .order-card-section, .address-new-card) { padding: 22px 20px; }
+  body .atelier-form-row { grid-template-columns: minmax(0, 1fr); }
+  body :is(.workspace-item, .studio-item) { align-items: flex-start; }
+  body .workspace-item-actions { width: 100%; justify-content: space-between; }
+  body .message-bubble { max-width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body :is(.workspace-item, .studio-item, .workspace-action-link, .workspace-action-link::after) { transition: none; }
+}
+body .atelier-approve { display: grid; gap: 10px; flex-basis: 100%; padding-top: 14px; border-top: 1px solid var(--a-line); }
+body .atelier-check { display: flex; align-items: flex-start; gap: 10px; color: var(--a-text); font-size: 14px; line-height: 1.5; cursor: pointer; }
+body .atelier-check input { width: 18px; height: 18px; margin: 1px 0 0; accent-color: var(--a-forest); flex: 0 0 auto; }
+body .atelier-approve .workspace-btn-primary { justify-self: start; margin-top: 6px; }
+body .workspace-btn-outline.atelier-danger { border-color: #dfb7ad; color: #8d2f1f; }
+body .workspace-btn-outline.atelier-danger:hover { border-color: #8d2f1f; background: #f6e3df; }
+body .workspace-request-starter { margin-bottom: 18px; }

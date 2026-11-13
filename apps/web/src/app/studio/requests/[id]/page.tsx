@@ -34,6 +34,7 @@ const statusLabel: Record<string, string> = {
   IN_FULFILLMENT: 'Đang chế tác',
   COMPLETED: 'Hoàn thành',
   CANCELLED: 'Đã hủy',
+  APPROVED: 'Đang trao đổi',
 }
 
 function apiOrigin(): string {

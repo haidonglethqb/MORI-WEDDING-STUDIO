@@ -55,7 +55,7 @@ export default async function WorkspacePage() {
         <main className="workspace-page">
           <div className="workspace-empty">
             <p>Vui lòng đăng nhập để xem không gian làm việc của bạn.</p>
-            <a href="/login" className="workspace-btn-primary" style={{ display: 'inline-block', marginTop: '12px' }}>
+            <a href="/login" className="workspace-btn-primary">
               Đăng nhập ngay
             </a>
           </div>
@@ -85,6 +85,7 @@ export default async function WorkspacePage() {
       <main className="workspace-page">
         <header className="workspace-header">
           <div>
+            <span className="atelier-eyebrow">MORI Atelier · Việc của tôi</span>
             <h1>Không gian làm việc</h1>
             <p>Theo dõi tiến độ thiết kế, thiệp cưới trực tuyến và đơn chế tác thủ công.</p>
           </div>
@@ -109,7 +110,7 @@ export default async function WorkspacePage() {
               <div className="workspace-section-head">
                 <h2>Yêu cầu thiết kế riêng ({requestsRes?.ok ? requests.length : '—'})</h2>
               </div>
-              <div style={{ marginBottom: '16px' }}>
+              <div className="workspace-request-starter">
                 <CreateDesignRequest />
               </div>
               {requestsRes?.ok ? <RequestList requests={requests} /> : <WorkspaceLoadError label="yêu cầu thiết kế" />}

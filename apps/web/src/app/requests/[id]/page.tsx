@@ -1,8 +1,10 @@
 import { cookies } from 'next/headers'
 import { HomeNav } from '../../home-nav'
+import { AtelierCrumbs } from '../../../components/atelier-crumbs'
 import { ApproveProof } from './approve-proof'
 import { CustomerReply } from './customer-reply'
 import { PlaceOrderButton } from './place-order'
+import { proofStateLabel, quoteStateLabel } from './request-labels'
 import './request-detail.css'
 
 export const dynamic = 'force-dynamic'
@@ -36,19 +38,19 @@ export default async function CustomerRequestPage({ params }: { params: Promise<
     response = await fetch(`${apiOrigin()}/api/v1/requests/${id}/messages`, { headers: cookie ? { cookie } : {}, cache: 'no-store' })
   } catch {
     return (
-      <><HomeNav /><main className="request-detail-page"><div style={{ textAlign: 'center', padding: '60px 0', color: '#666' }}>Không mở được trao đổi.</div></main></>
+      <><HomeNav /><main className="request-detail-page"><div className="atelier-empty">Không mở được trao đổi.</div></main></>
     )
   }
 
   if (response.status === 401) {
     return (
-      <><HomeNav /><main className="request-detail-page"><div style={{ textAlign: 'center', padding: '60px 0' }}><p>Vui lòng đăng nhập để xem yêu cầu thiết kế của bạn.</p><a href="/login" style={{ display: 'inline-block', marginTop: '12px', padding: '8px 20px', background: '#3e4a39', color: '#fff', borderRadius: '999px', textDecoration: 'none' }}>Đăng nhập</a></div></main></>
+      <><HomeNav /><main className="request-detail-page"><div className="atelier-empty"><p>Vui lòng đăng nhập để xem yêu cầu thiết kế của bạn.</p><a href="/login" className="workspace-btn-primary">Đăng nhập</a></div></main></>
     )
   }
 
   if (!response.ok) {
     return (
-      <><HomeNav /><main className="request-detail-page"><div style={{ textAlign: 'center', padding: '60px 0', color: '#666' }}>Yêu cầu này không tồn tại hoặc bạn không có quyền xem.</div></main></>
+      <><HomeNav /><main className="request-detail-page"><div className="atelier-empty">Yêu cầu này không tồn tại hoặc bạn không có quyền xem.</div></main></>
     )
   }
 
@@ -64,37 +66,31 @@ export default async function CustomerRequestPage({ params }: { params: Promise<
     <>
       <HomeNav />
       <main className="request-detail-page">
-        <div style={{ fontSize: '13px', color: '#7a8274', marginBottom: '20px' }}>
-          <a href="/" style={{ color: '#55634f', textDecoration: 'none' }}>Trang chủ</a>
-          <span style={{ margin: '0 8px' }}>/</span>
-          <a href="/workspace" style={{ color: '#55634f', textDecoration: 'none' }}>Việc của tôi</a>
-          <span style={{ margin: '0 8px' }}>/</span>
-          <span style={{ color: '#242823' }}>Yêu cầu #{id.slice(0, 8)}</span>
-        </div>
+        <AtelierCrumbs items={[{ label: 'Trang chủ', href: '/' }, { label: 'Việc của tôi', href: '/workspace' }, { label: `Yêu cầu #${id.slice(0, 8)}` }]} />
 
         <header className="request-detail-header">
-          <h1>Hồ sơ may đo #{id.slice(0, 8)}</h1>
-          <p style={{ margin: 0, color: '#687063', fontSize: '14px' }}>
-            Trao đổi trực tiếp cùng nghệ nhân xưởng MORI về mẫu phác thảo và duyệt bản in mẫu.
-          </p>
+          <div>
+            <span className="atelier-eyebrow">Hồ sơ may đo · #{id.slice(0, 8)}</span>
+            <h1>Trao đổi cùng xưởng MORI</h1>
+            <p>Nhận báo giá, duyệt bản in mẫu và gửi đơn chế tác — mọi bước đều được lưu lại tại đây.</p>
+          </div>
         </header>
 
         <section className="request-section-card">
           <h2 className="request-section-title">
             <span>Báo giá từ xưởng ({quotes.length})</span>
-            <span style={{ fontSize: '12px', fontWeight: 600, color: '#b38e46' }}>ATELIER QUOTE</span>
+            <span className="atelier-section-note">Bước 1</span>
           </h2>
           {quotes.length === 0 ? (
-            <p style={{ fontSize: '14px', color: '#7a8274', margin: 0 }}>Nghệ nhân đang tính toán định lượng giấy và chi phí ép kim cho bạn.</p>
+            <p className="atelier-empty atelier-empty--inline">Nghệ nhân đang tính toán định lượng giấy và chi phí ép kim cho bạn.</p>
           ) : (
             quotes.map((quote) => (
               <div key={quote.quoteId} className="quote-item-card">
                 <div>
-                  <strong style={{ fontSize: '18px', color: '#2e4a2a' }}>
-                    {Number(quote.totalAmountVnd).toLocaleString('vi-VN')} ₫
-                  </strong>
-                  <span style={{ fontSize: '12px', marginLeft: '10px', color: '#687063' }}>
-                    Trạng thái: {quote.state} {quote.isFixture ? '· Mẫu thử' : ''}
+                  <strong className="atelier-amount">{Number(quote.totalAmountVnd).toLocaleString('vi-VN')} ₫</strong>
+                  <span className="atelier-meta-row">
+                    <span className={`atelier-state ${quote.state}`}>{quoteStateLabel[quote.state] ?? quote.state}</span>
+                    {quote.isFixture ? <span>Mẫu thử</span> : null}
                   </span>
                 </div>
                 {quote.state === 'ISSUED' && (
@@ -114,15 +110,20 @@ export default async function CustomerRequestPage({ params }: { params: Promise<
         </section>
 
         <section className="request-section-card">
-          <h2 className="request-section-title">Bản in mẫu duyệt (Proofs &amp; Revisions)</h2>
+          <h2 className="request-section-title">
+            <span>Bản in mẫu cần duyệt</span>
+            <span className="atelier-section-note">Bước 2</span>
+          </h2>
           {proofs.length === 0 ? (
-            <p style={{ fontSize: '14px', color: '#7a8274', margin: 0 }}>Chưa có bản in mẫu nào được tải lên từ xưởng.</p>
+            <p className="atelier-empty atelier-empty--inline">Chưa có bản in mẫu nào được tải lên từ xưởng.</p>
           ) : (
             proofs.map((proof) => (
               <div key={proof.revisionId} className="proof-item-card">
                 <div>
                   <strong>Bản in đợt #{proof.sequence}</strong>
-                  <span style={{ fontSize: '12px', color: '#666', marginLeft: '10px' }}>Trạng thái: {proof.state}</span>
+                  <span className="atelier-meta-row">
+                    <span className={`atelier-state ${proof.state}`}>{proofStateLabel[proof.state] ?? proof.state}</span>
+                  </span>
                 </div>
                 {proof.state === 'IN_REVIEW' && (
                   <ApproveProof requestId={id} revisionId={proof.revisionId} sequence={proof.sequence} manifestHash={proof.manifestHash} />
@@ -133,9 +134,12 @@ export default async function CustomerRequestPage({ params }: { params: Promise<
         </section>
 
         <section className="request-section-card">
-          <h2 className="request-section-title">Nhật ký trao đổi cùng xưởng</h2>
+          <h2 className="request-section-title">
+            <span>Nhật ký trao đổi ({messages.length})</span>
+            <span className="atelier-section-note">Luôn mở</span>
+          </h2>
           {messages.length === 0 ? (
-            <p style={{ fontSize: '14px', color: '#7a8274', marginBottom: '20px' }}>Chưa có tin nhắn nào. Bạn có thể gửi phản hồi bên dưới.</p>
+            <p className="atelier-empty atelier-empty--inline">Chưa có tin nhắn nào. Bạn có thể gửi phản hồi bên dưới.</p>
           ) : (
             <div className="message-bubble-list">
               {messages.map((m, idx) => (

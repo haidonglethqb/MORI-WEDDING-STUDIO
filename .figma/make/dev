@@ -2,5 +2,4 @@
 set -euo pipefail
 
 cd apps/web
-exec env API_INTERNAL_ORIGIN="${API_INTERNAL_ORIGIN:-http://127.0.0.1:9}" \
-  node node_modules/next/dist/bin/next dev --hostname 0.0.0.0 --port "$PORT"
+exec node node_modules/next/dist/bin/next dev --hostname 0.0.0.0 --port "$PORT"

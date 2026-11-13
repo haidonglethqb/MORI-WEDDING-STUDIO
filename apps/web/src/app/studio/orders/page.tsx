@@ -51,7 +51,7 @@ export default async function StudioOrdersPage() {
         <main className="studio-page">
           <div className="studio-empty">
             <p>Vui lòng đăng nhập bằng tài khoản nghệ nhân/xưởng studio.</p>
-            <a href="/login" className="workspace-btn-primary" style={{ display: 'inline-block', marginTop: '12px' }}>
+            <a href="/login" className="workspace-btn-primary">
               Đăng nhập tài khoản xưởng
             </a>
           </div>
@@ -67,7 +67,7 @@ export default async function StudioOrdersPage() {
         <main className="studio-page">
           <div className="studio-empty">
             <p>Trang này dành riêng cho tài khoản xưởng chế tác.</p>
-            <a href="/workspace" className="workspace-btn-outline" style={{ display: 'inline-block', marginTop: '12px' }}>
+            <a href="/workspace" className="workspace-btn-outline">
               Về trang khách hàng
             </a>
           </div>
@@ -84,6 +84,7 @@ export default async function StudioOrdersPage() {
       <main className="studio-page">
         <header className="studio-header">
           <div>
+            <span className="atelier-eyebrow">Xưởng MORI · {orders.length} đơn đang theo dõi</span>
             <h1>Đơn in ấn xưởng chế tác</h1>
             <p>Theo dõi và cập nhật công đoạn in thiệp giấy mỹ thuật và bàn giao thiệp số.</p>
           </div>
@@ -119,7 +120,7 @@ export default async function StudioOrdersPage() {
                       {statusLabel[order.status] ?? order.status}
                     </span>
                     <a href={`/studio/orders/${order.orderId}`} className="workspace-action-link">
-                      Xử lý công đoạn →
+                      Xử lý công đoạn
                     </a>
                   </div>
                 </div>

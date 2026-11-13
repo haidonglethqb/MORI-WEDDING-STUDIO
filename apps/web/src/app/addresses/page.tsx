@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers'
 import { HomeNav } from '../home-nav'
+import { AtelierCrumbs } from '../../components/atelier-crumbs'
 import { AddressForm } from './address-form'
 import './addresses.css'
 import '../login/login.css'
@@ -25,13 +26,13 @@ export default async function AddressesPage() {
     response = await fetch(`${apiOrigin()}/api/v1/me/addresses`, { headers: { cookie }, cache: 'no-store' })
   } catch {
     return (
-      <><HomeNav /><main className="addresses-page"><div style={{ textAlign: 'center', padding: '60px 0', color: '#666' }}>Không kết nối được đến máy chủ.</div></main></>
+      <><HomeNav /><main className="addresses-page"><div className="atelier-empty">Không kết nối được đến máy chủ.</div></main></>
     )
   }
 
   if (response.status === 401) {
     return (
-      <><HomeNav /><main className="addresses-page"><div style={{ textAlign: 'center', padding: '60px 0' }}><p>Vui lòng đăng nhập để xem sổ địa chỉ nhận hàng của bạn.</p><a href="/login" style={{ display: 'inline-block', marginTop: '12px', padding: '8px 20px', background: '#3e4a39', color: '#fff', borderRadius: '999px', textDecoration: 'none' }}>Đăng nhập ngay</a></div></main></>
+      <><HomeNav /><main className="addresses-page"><div className="atelier-empty"><p>Vui lòng đăng nhập để xem sổ địa chỉ nhận hàng của bạn.</p><a href="/login" className="workspace-btn-primary">Đăng nhập ngay</a></div></main></>
     )
   }
 
@@ -41,23 +42,20 @@ export default async function AddressesPage() {
     <>
       <HomeNav />
       <main className="addresses-page">
-        <div style={{ fontSize: '13px', color: '#7a8274', marginBottom: '20px' }}>
-          <a href="/" style={{ color: '#55634f', textDecoration: 'none' }}>Trang chủ</a>
-          <span style={{ margin: '0 8px' }}>/</span>
-          <a href="/workspace" style={{ color: '#55634f', textDecoration: 'none' }}>Việc của tôi</a>
-          <span style={{ margin: '0 8px' }}>/</span>
-          <span style={{ color: '#242823' }}>Sổ địa chỉ</span>
-        </div>
+        <AtelierCrumbs items={[{ label: 'Trang chủ', href: '/' }, { label: 'Việc của tôi', href: '/workspace' }, { label: 'Sổ địa chỉ' }]} />
 
         <header className="addresses-header">
-          <h1>Sổ địa chỉ nhận thiệp ({addresses.length})</h1>
-          <p style={{ margin: 0, color: '#687063', fontSize: '14px' }}>
-            Quản lý danh sách địa chỉ giao nhận thiệp cưới in và hộp quà may đo từ xưởng MORI.
-          </p>
+          <div>
+            <span className="atelier-eyebrow">Giao nhận · {addresses.length} địa chỉ đã lưu</span>
+            <h1>Sổ địa chỉ nhận thiệp</h1>
+            <p>
+              Quản lý danh sách địa chỉ giao nhận thiệp cưới in và hộp quà may đo từ xưởng MORI.
+            </p>
+          </div>
         </header>
 
         {addresses.length === 0 ? (
-          <div style={{ padding: '24px', background: '#faf9f5', borderRadius: '12px', border: '1px dashed #d5d0c4', textAlign: 'center', color: '#7a8274', marginBottom: '32px', fontSize: '14px' }}>
+          <div className="atelier-empty">
             Bạn chưa lưu địa chỉ nhận thiệp nào. Hãy thêm địa chỉ mới bên dưới.
           </div>
         ) : (
@@ -74,7 +72,7 @@ export default async function AddressesPage() {
         )}
 
         <section className="address-new-card">
-          <h2 style={{ fontFamily: 'var(--font-serif, "Lora", Georgia, serif)', fontSize: '20px', color: '#242823', margin: '0 0 16px' }}>
+          <h2>
             Thêm địa chỉ giao thiệp mới
           </h2>
           <AddressForm />

@@ -17,6 +17,7 @@ const statusLabel: Record<string, string> = {
   IN_FULFILLMENT: 'Đang chế tác',
   COMPLETED: 'Hoàn thành',
   CANCELLED: 'Đã hủy',
+  APPROVED: 'Đang trao đổi',
 }
 
 const kindLabel: Record<string, string> = {
@@ -40,7 +41,7 @@ export function OrderList({ orders }: { orders: OrderListItem[] }) {
           <div className="workspace-item-actions">
             <span className={`badge-tag ${order.status}`}>{statusLabel[order.status] ?? order.status}</span>
             <a href={`/orders/${order.orderId}`} className="workspace-action-link">
-              Xem
+              Xem đơn
             </a>
           </div>
         </li>

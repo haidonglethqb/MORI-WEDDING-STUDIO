@@ -52,7 +52,7 @@ export function ApproveProof({
       })
       setLoading(false)
       if (response.ok) {
-        setStatus('✦ Đã duyệt bản in này thành công! Đang cập nhật trạng thái...')
+        setStatus('Đã duyệt bản in này thành công! Đang cập nhật trạng thái...')
         router.refresh()
       } else {
         setStatus('Chưa duyệt được. Hãy xác nhận đủ các mục.')
@@ -65,13 +65,14 @@ export function ApproveProof({
 
   return (
     <form
+      className="atelier-approve"
       onSubmit={(event) => {
         event.preventDefault()
         void approve()
       }}
     >
       {checks.map(([key, label]) => (
-        <label key={key}>
+        <label key={key} className="atelier-check">
           <input
             type="checkbox"
             checked={ack[key]}
@@ -80,10 +81,10 @@ export function ApproveProof({
           {label}
         </label>
       ))}
-      <button type="submit" disabled={!ready || loading}>
+      <button type="submit" className="workspace-btn-primary" disabled={!ready || loading}>
         {loading ? 'Đang ghi nhận...' : `Duyệt bản ${sequence}`}
       </button>
-      <p>{status}</p>
+      {status ? <p className="atelier-hint" role="status">{status}</p> : null}
     </form>
   )
 }

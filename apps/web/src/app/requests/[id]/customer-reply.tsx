@@ -25,17 +25,24 @@ export function CustomerReply({ requestId }: { requestId: string }) {
 
   return (
     <form
+      className="atelier-reply"
       onSubmit={(event) => {
         event.preventDefault()
         void send()
       }}
     >
-      <label>
-        Tin cho xưởng
-        <textarea value={plainText} onChange={(event) => setPlainText(event.target.value)} />
+      <label className="atelier-field">
+        <span>Tin nhắn cho xưởng</span>
+        <textarea
+          value={plainText}
+          placeholder="Chia sẻ mong muốn về màu sắc, chất liệu, nội dung in…"
+          onChange={(event) => setPlainText(event.target.value)}
+        />
       </label>
-      <button type="submit">Gửi</button>
-      {status ? <p>{status}</p> : null}
+      <div className="atelier-form-actions">
+        <p className="atelier-hint" role="status" aria-live="polite">{status || 'Xưởng thường phản hồi trong giờ làm việc.'}</p>
+        <button type="submit" className="workspace-btn-primary" disabled={!plainText.trim()}>Gửi tin nhắn</button>
+      </div>
     </form>
   )
 }
