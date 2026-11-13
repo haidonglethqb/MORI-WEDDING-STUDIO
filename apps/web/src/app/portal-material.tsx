@@ -30,6 +30,11 @@ export function PortalMaterial() {
           </li>
         ))}
       </ol>
+      <div className="material-more" data-reveal>
+        <a className="portal-link" href="/blog/thiep-cuoi-giay-ba-mia">
+          Tìm hiểu câu chuyện giấy bã mía ↗
+        </a>
+      </div>
     </section>
   )
 }

@@ -1,6 +1,6 @@
 /* Shared MORI interface: dark editorial storefront, legible paper work surfaces. */
 body { margin: 0; background: #f1f0e9; color: #202823; font-family: 'Sora', sans-serif; }
-body:has(.collections-wrap), body:has(.assistant-page), body:has(.auth-layout) { background: #0a0c0e; color: #ede7dc; }
+body:has(.collections-wrap), body:has(.assistant-page), body:has(.auth-layout), body:has(.blog-page) { background: #0a0c0e; color: #ede7dc; }
 body:has(.guest-page) { background: #f6f3eb; }
 body .home-nav { position: sticky; top: 0; z-index: 50; background: rgba(10,12,14,.94); border-bottom: 1px solid rgba(237,231,220,.18); backdrop-filter: blur(14px); }
 body .home-nav-inner { max-width: 1440px; min-height: 64px; padding: 8px 48px; box-sizing: border-box; }
@@ -15,8 +15,8 @@ body .home-nav a.nav-link-staff:hover { color: #172019; background: #e9a65e; }
 body .home-nav .nav-user-badge .user-name { color: #252a24; }
 body .home-nav a.nav-logout-btn:hover { color: #202823; background: #ede7dc; border-color: #ede7dc; }
 body :is(a,button,input,textarea,select):focus-visible { outline: 2px solid #bb7132; outline-offset: 3px; }
-body :is(.collections-wrap,.assistant-page,.workspace-page,.addresses-page,.editor-page,.order-detail-page,.request-detail-page,.studio-page,.admin-ai-page,.product-page) { font-family: 'Sora', sans-serif; }
-body :is(.collections-wrap,.assistant-page,.workspace-page,.addresses-page,.editor-page,.order-detail-page,.request-detail-page,.studio-page,.admin-ai-page,.product-page) :is(h1,h2,h3) { font-family: 'Syne', 'Sora', sans-serif; letter-spacing: -.035em; }
+body :is(.collections-wrap,.assistant-page,.workspace-page,.addresses-page,.editor-page,.order-detail-page,.request-detail-page,.studio-page,.admin-ai-page,.product-page,.blog-page) { font-family: 'Sora', sans-serif; }
+body :is(.collections-wrap,.assistant-page,.workspace-page,.addresses-page,.editor-page,.order-detail-page,.request-detail-page,.studio-page,.admin-ai-page,.product-page,.blog-page) :is(h1,h2,h3) { font-family: 'Syne', 'Sora', sans-serif; letter-spacing: -.035em; }
 /* Catalogue: framed imagery on an ink background. */
 body .collections-wrap { max-width: 1344px; padding: 80px 48px 112px; }
 body .collections-header { text-align: left; max-width: none; margin: 0 0 64px; border-bottom: 1px solid rgba(237,231,220,.2); padding-bottom: 40px; }

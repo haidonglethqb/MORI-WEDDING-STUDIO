@@ -6,6 +6,7 @@ import { PortalStatement } from './portal-statement'
 import { PortalMaterial } from './portal-material'
 import { PortalRoster } from './portal-roster'
 import { PortalProcess } from './portal-process'
+import { PortalJournal } from './portal-journal'
 import { PortalClose } from './portal-close'
 import { type ShowcaseProduct } from './sample-showcase'
 import { HomeFooter } from './home-footer'
@@ -19,6 +20,7 @@ import './portal-responsive.css'
 import './portal-reviews.css'
 import './portal-editorial.css'
 import './portal-editorial-responsive.css'
+import './portal-journal.css'
 import './portal-motion.css'
 
 export const dynamic = 'force-dynamic'
@@ -64,8 +66,9 @@ export default async function HomePage() {
         <PortalMaterial />
         <PortalRoster />
         <PortalProcess />
+        <PortalJournal />
         <section className="portal-reviews" id="nhan-xet" aria-labelledby="reviews-title" data-reveal>
-          <span className="portal-kicker">06 / LỜI NHẮN TỪ KHÁCH HÀNG</span>
+          <span className="portal-kicker">07 / LỜI NHẮN TỪ KHÁCH HÀNG</span>
           <h2 id="reviews-title">Những câu chuyện<br /><em>được sẻ chia.</em></h2>
           <p>Nhận xét sẽ được đăng khi khách hàng cung cấp và đồng ý chia sẻ.</p>
           <a href="/assistant">Trò chuyện cùng MORI ↗</a>

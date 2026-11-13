@@ -12,6 +12,7 @@ export function HomeFooter() {
         <div className="footer-links-col">
           <strong>Khám phá</strong>
           <a href="/collections">Bộ sưu tập</a>
+          <a href="/blog">Tạp chí &amp; Cảm hứng</a>
           <a href="/assistant">Trợ lý AI Stylist</a>
           <a href="/#thiep-so">Thiệp cưới số</a>
           <a href="/#quy-trinh">Quy trình cùng MORI</a>

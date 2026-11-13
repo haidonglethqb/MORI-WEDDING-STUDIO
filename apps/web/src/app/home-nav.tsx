@@ -41,6 +41,7 @@ export async function HomeNav() {
         </Link>
         <nav aria-label="Chính" className="home-nav-links">
           <Link href="/collections">Bộ sưu tập</Link>
+          <Link href="/blog">Tạp chí</Link>
           <Link href="/assistant">Trợ lý gợi ý</Link>
           <Link href="/#thiep-so">Thiệp số</Link>
           <Link href="/#che-tac">Xưởng</Link>

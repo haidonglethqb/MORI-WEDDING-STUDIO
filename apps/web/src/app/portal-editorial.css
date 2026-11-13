@@ -71,6 +71,7 @@
 .material-notes span { color: #e9a65e; font-size: 12px; letter-spacing: .1em; }
 .material-notes strong { display: block; margin: 16px 0 8px; font: 600 26px/1.2 'Syne', sans-serif; letter-spacing: -.02em; }
 .material-notes p { margin: 0; color: var(--portal-muted); line-height: 1.75; max-width: 34ch; }
+.material-more { max-width: 1440px; margin: 0 auto; padding: 40px 5% 0; box-sizing: border-box; }
 
 /* 04 Roster rows: a photograph surfaces on hover or keyboard focus. */
 .portal-roster > a { position: relative; transition: color 180ms ease; }
