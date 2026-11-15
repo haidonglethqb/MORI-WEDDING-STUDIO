@@ -1,8 +1,14 @@
+import { HomeFooter } from '../home-footer'
 import { HomeNav } from '../home-nav'
-import { CollectionFilters } from './collection-filters'
-import { resolveProductImageUrl } from './product-image-url'
+import { CartDrawerFallback } from '../../features/cart/cart-drawer-fallback'
+import {
+  DIGITAL_CATALOG_ITEMS,
+  resolveDigitalPriceVnd,
+} from '../../features/cart/cart-types'
+import { CollectionTabsPanel, type CollectionGroupTab } from './collection-tabs-panel'
 import { buildCuratedItem, type CollectionItem } from './collection-types'
-import { PriceCalculator } from './price-calculator'
+import { resolveProductImageUrl } from './product-image-url'
+import '../../features/cart/storefront-footer.css'
 import './collections.css'
 import './masonry-gallery.css'
 
@@ -38,27 +44,77 @@ async function loadProducts(): Promise<CatalogueProduct[]> {
   }
 }
 
-export default async function CollectionsPage() {
+function parseTab(raw?: string | string[]): CollectionGroupTab {
+  const val = Array.isArray(raw) ? raw[0] : raw
+  if (val === 'paper' || val === 'online' || val === 'combo' || val === 'custom') return val
+  return 'all'
+}
+
+export default async function CollectionsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ tab?: string | string[] }>
+}) {
+  const query = await searchParams
   const products = await loadProducts()
 
-  const items: CollectionItem[] = products
-    .filter((p) => p.variants.some((v) => v.availability !== 'UNAVAILABLE'))
-    .map((product) => {
-      const orderable = product.variants.filter((v) => v.availability !== 'UNAVAILABLE')
-      const shape = orderable[0]?.shape ?? 'FLAT'
-      const minPrice = orderable.find((v) => v.unitAmountVnd !== null)?.unitAmountVnd ?? null
+  const paperProducts = products.filter(
+    (p) => p.type !== 'DIGITAL' && p.variants.some((v) => v.availability !== 'UNAVAILABLE'),
+  )
 
-      return buildCuratedItem({
-        slug: product.slug,
-        name: product.name,
-        shape,
-        minPriceVnd: minPrice,
-        isFixture: product.isFixture,
-        imageUrl: resolveProductImageUrl(product),
-      })
+  const paperItems: CollectionItem[] = paperProducts.map((product) => {
+    const orderable = product.variants.filter((v) => v.availability !== 'UNAVAILABLE')
+    const shape = orderable[0]?.shape ?? 'FLAT'
+    const minPrice = orderable.find((v) => v.unitAmountVnd !== null)?.unitAmountVnd ?? null
+    return buildCuratedItem({
+      slug: product.slug,
+      name: product.name,
+      productType: 'PAPER',
+      shape,
+      minPriceVnd: minPrice,
+      isFixture: product.isFixture,
+      imageUrl: resolveProductImageUrl(product),
     })
+  })
 
-  const hasFixtures = items.some((item) => item.isFixture)
+  const digitalItems: CollectionItem[] = DIGITAL_CATALOG_ITEMS.map((meta) => {
+    const apiMatch = products.find((p) => p.slug === meta.slug)
+    const apiPrice = apiMatch?.variants.find((v) => v.unitAmountVnd !== null)?.unitAmountVnd
+    const resolvedPrice = resolveDigitalPriceVnd(meta.slug, apiPrice)
+    return buildCuratedItem({
+      slug: meta.slug,
+      name: apiMatch?.name ?? meta.name,
+      productType: 'DIGITAL',
+      shape: 'DIGITAL',
+      minPriceVnd: String(resolvedPrice),
+      isFixture: false,
+      imageUrl: null,
+    })
+  })
+
+  const comboPaperOptions = paperItems.map((item) => ({
+    slug: item.slug,
+    name: item.curatedTitle,
+    shape: item.shape,
+    unitAmountVnd: item.minPriceVnd ? Number(item.minPriceVnd) : 9_000,
+    imageUrl: item.imageUrl,
+  }))
+
+  const comboDigitalOptions = digitalItems.map((item) => ({
+    slug: item.slug,
+    name: item.curatedTitle,
+    unitAmountVnd: item.minPriceVnd ? Number(item.minPriceVnd) : 499_000,
+  }))
+
+  const calculatorOptions = paperProducts.flatMap((product) =>
+    product.variants
+      .filter((variant) => variant.availability !== 'UNAVAILABLE' && variant.shape !== 'TRIFOLD')
+      .map((variant) => ({
+        id: variant.id,
+        label: `${product.name} · ${variant.shape === 'BIFOLD' ? 'Gấp đôi' : 'Phẳng'}`,
+        isFixture: product.isFixture,
+      })),
+  )
 
   return (
     <>
@@ -66,31 +122,23 @@ export default async function CollectionsPage() {
       <main className="collections-wrap">
         <header className="collections-header">
           <span className="collections-tag">BỘ SƯU TẬP MORI</span>
-          <h1>Bộ sưu tập Thiệp cưới Nghệ nhân</h1>
+          <h1>Bộ sưu tập Thiệp cưới &amp; Thiệp Online</h1>
           <p>
-            Khám phá các hướng thiết kế và chọn mẫu để bắt đầu trao đổi cùng xưởng.
+            Khám phá 4 giải pháp tại MORI: Thiệp cưới vật lý trên giấy mỹ thuật 350gsm, Thiệp online website riêng, Combo tiết kiệm 50% và Gói thiết kế riêng theo câu chuyện hai bạn.
           </p>
-          {hasFixtures ? (
-            <p className="catalogue-note">
-              Một số mẫu đang là nội dung minh họa. Giá và quy cách thực tế sẽ được xác nhận trước khi bạn gửi yêu cầu.
-            </p>
-          ) : null}
         </header>
 
-        <a href="#du-toan" className="calculator-jump">Xem dự toán theo số lượng ↓</a>
-        <CollectionFilters items={items} />
-        <PriceCalculator
-          options={products.flatMap((product) =>
-            product.variants
-              .filter((variant) => variant.availability !== 'UNAVAILABLE' && variant.shape !== 'TRIFOLD')
-              .map((variant) => ({
-                id: variant.id,
-                label: `${product.name} · ${variant.shape === 'BIFOLD' ? 'Gấp đôi' : 'Phẳng'}`,
-                isFixture: product.isFixture,
-              })),
-          )}
+        <CollectionTabsPanel
+          paperItems={paperItems}
+          digitalItems={digitalItems}
+          calculatorOptions={calculatorOptions}
+          comboPaperOptions={comboPaperOptions}
+          comboDigitalOptions={comboDigitalOptions}
+          initialTab={parseTab(query.tab)}
         />
       </main>
+      <CartDrawerFallback />
+      <HomeFooter />
     </>
   )
 }

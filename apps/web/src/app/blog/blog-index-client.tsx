@@ -47,7 +47,7 @@ export function BlogIndexClient({ articles, categories }: BlogIndexClientProps) 
   const gridItems = showFeatured ? filtered.slice(1) : filtered
 
   return (
-    <section aria-label="Danh sách bài viết Tạp chí MORI">
+    <section aria-label="Danh sách bài viết Blog cưới MORI">
       <div className="blog-filter-bar">
         <div className="blog-tab-row" role="tablist" aria-label="Chuyên mục bài viết">
           <button

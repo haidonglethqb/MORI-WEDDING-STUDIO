@@ -1,0 +1,38 @@
+@import './cart-row.css';
+
+html body:has(.cart-page-wrap) { background: #fffcf7; color: #1f241d; }
+.cart-page-wrap { max-width: 1180px; margin: 0 auto; padding: 40px 24px 88px; box-sizing: border-box; color: #1f241d; }
+.cart-page-head { margin-bottom: 28px; padding-bottom: 18px; border-bottom: 1px solid #e4dfd2; }
+.cart-page-tag {
+  display: inline-block; padding: 4px 12px; border-radius: 999px; background: #e8ebdd;
+  color: #495628; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px;
+}
+.cart-page-head h1 {
+  margin: 0 0 6px; font-family: var(--a-display, 'Lora', Georgia, serif);
+  font-size: clamp(28px, 3.6vw, 38px); font-weight: 500; color: #1f241d;
+}
+.cart-page-head p { margin: 0; font-size: 14px; color: #5b6355; }
+.cart-grid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 0.9fr); gap: 28px; align-items: start; }
+@media (max-width: 880px) { .cart-grid { grid-template-columns: 1fr; } }
+.cart-list-card, .cart-summary-panel, .cart-empty-panel {
+  background: #ffffff; border: 1px solid #e4dfd2; border-radius: 14px; padding: 22px;
+}
+.cart-summary-panel { background: #f5f7ef; border-color: #d4dcc2; }
+.cart-sum-row {
+  display: flex; justify-content: space-between; gap: 12px; padding: 10px 0;
+  border-bottom: 1px solid #e0e5d4; font-size: 14px;
+}
+.cart-sum-discount {
+  background: #e8ebdd; color: #3f4e21; padding: 10px 12px; border-radius: 8px;
+  margin-top: 8px; font-weight: 600;
+}
+.cart-sum-total { display: flex; justify-content: space-between; align-items: baseline; margin: 16px 0; font-size: 16px; font-weight: 700; }
+.cart-sum-total strong { font-family: var(--a-display, 'Lora', serif); font-size: 24px; color: #4b582d; }
+.cart-page-actions { display: grid; gap: 10px; }
+.cart-action-primary, .cart-action-secondary {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 46px;
+  border-radius: 8px; font-size: 14px; font-weight: 700; text-decoration: none;
+}
+.cart-action-primary { background: #657344; color: #fffcf7; }
+.cart-action-secondary { background: #fffcf7; border: 1.5px solid #657344; color: #4b582d; }
+.cart-empty-panel { text-align: center; padding: 56px 24px; }

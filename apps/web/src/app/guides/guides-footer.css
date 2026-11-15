@@ -1,0 +1,101 @@
+/* Scoped HomeFooter styling shared across MORI light pages */
+:is(.mori-guide-shell, .assistant-shell, .admin-ai-shell, .studio-shell) .home-footer {
+  background: #E8EBDD;
+  border-top: 2px solid #657344;
+  color: #252A24;
+  padding: 52px 32px 28px;
+  margin-top: auto;
+}
+
+:is(.mori-guide-shell, .assistant-shell, .admin-ai-shell, .studio-shell) .footer-inner {
+  max-width: 1160px;
+  margin: 0 auto 36px;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 40px;
+}
+
+:is(.mori-guide-shell, .assistant-shell, .admin-ai-shell, .studio-shell) .footer-brand-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+:is(.mori-guide-shell, .assistant-shell, .admin-ai-shell, .studio-shell) .footer-mark {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: #252A24;
+}
+
+:is(.mori-guide-shell, .assistant-shell, .admin-ai-shell, .studio-shell) .footer-tagline {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #657344;
+}
+
+:is(.mori-guide-shell, .assistant-shell, .admin-ai-shell, .studio-shell) .footer-desc {
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: #474F43;
+  margin: 4px 0 0;
+  max-width: 420px;
+}
+
+:is(.mori-guide-shell, .assistant-shell, .admin-ai-shell, .studio-shell) .footer-links-col {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+:is(.mori-guide-shell, .assistant-shell, .admin-ai-shell, .studio-shell) .footer-links-col strong {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #657344;
+  margin-bottom: 4px;
+}
+
+:is(.mori-guide-shell, .assistant-shell, .admin-ai-shell, .studio-shell) .footer-links-col a {
+  color: #252A24;
+  text-decoration: none;
+  font-size: 13.5px;
+}
+
+:is(.mori-guide-shell, .assistant-shell, .admin-ai-shell, .studio-shell) .footer-links-col a:hover {
+  color: #657344;
+  text-decoration: underline;
+}
+
+:is(.mori-guide-shell, .assistant-shell, .admin-ai-shell, .studio-shell) .footer-bottom {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding-top: 20px;
+  border-top: 1px solid #CFD6BE;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 12.5px;
+  color: #4D5549;
+}
+
+:is(.mori-guide-shell, .assistant-shell, .admin-ai-shell, .studio-shell) .footer-bottom p {
+  margin: 0;
+}
+
+:is(.mori-guide-shell, .assistant-shell, .admin-ai-shell, .studio-shell) .footer-eco-badge {
+  color: #657344;
+  font-weight: 600;
+}
+
+@media (max-width: 760px) {
+  :is(.mori-guide-shell, .assistant-shell, .admin-ai-shell, .studio-shell) .footer-inner {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}

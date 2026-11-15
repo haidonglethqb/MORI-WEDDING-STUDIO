@@ -10,8 +10,9 @@ import {
   Param,
   Post,
   Put,
+  UnprocessableEntityException,
 } from '@nestjs/common'
-import { SESSION_COOKIE } from '@mori/contracts'
+import { SESSION_COOKIE, type CurrentUser } from '@mori/contracts'
 import { IdentityService } from '../identity/identity.service.js'
 import { readCookie } from '../identity/read-cookie.js'
 import { AiConfigService, type AiSystemConfig } from './ai-config.service.js'
@@ -59,8 +60,30 @@ export class AdminAiConfigController {
   @Get('logs')
   @Header('Cache-Control', PRIVATE)
   async getLogs(@Headers('cookie') cookie: string | undefined) {
-    await this.verifyAdmin(cookie)
+    await this.verifyStaff(cookie)
     return this.logService.getSessions(50)
+  }
+
+  @Post('sessions/:id/reply')
+  @HttpCode(200)
+  @Header('Cache-Control', PRIVATE)
+  async replyToSession(
+    @Headers('cookie') cookie: string | undefined,
+    @Param('id') id: string,
+    @Body() body: { message?: string; resolveEscalation?: boolean },
+  ) {
+    const staff = await this.verifyStaff(cookie)
+    const msg = typeof body?.message === 'string' ? body.message.trim() : ''
+    if (!msg) throw new UnprocessableEntityException('Vui lòng nhập nội dung phản hồi')
+
+    const sender = staff.displayName?.trim() || (staff.role === 'ADMIN' ? 'Admin MORI' : 'Studio MORI')
+    const session = this.logService.addAdminReply(id, {
+      sender,
+      message: msg,
+      resolveEscalation: body?.resolveEscalation,
+    })
+    if (!session) throw new NotFoundException('Không tìm thấy phiên hội thoại')
+    return { ok: true, session }
   }
 
   @Delete('logs')
@@ -115,14 +138,21 @@ export class AdminAiConfigController {
     return this.testerService.testConnection(body)
   }
 
-  private async verifyAdmin(cookie: string | undefined): Promise<void> {
+  private async verifyAdmin(cookie: string | undefined): Promise<CurrentUser> {
+    const user = await this.verifyStaff(cookie)
+    if (user.role !== 'ADMIN') throw new NotFoundException()
+    return user
+  }
+
+  private async verifyStaff(cookie: string | undefined): Promise<CurrentUser> {
     const token = readCookie(cookie, SESSION_COOKIE)
     if (!token) throw new NotFoundException()
     try {
       const user = await this.identity.currentUser(token)
-      if (user.role !== 'ADMIN' || user.status !== 'ACTIVE') {
+      if ((user.role !== 'ADMIN' && user.role !== 'STUDIO') || user.status !== 'ACTIVE') {
         throw new NotFoundException()
       }
+      return user
     } catch {
       throw new NotFoundException()
     }

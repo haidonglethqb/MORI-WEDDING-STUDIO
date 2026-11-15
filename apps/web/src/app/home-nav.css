@@ -1,161 +1,123 @@
-.home-nav {
-  background: rgba(251, 250, 246, 0.95);
-  backdrop-filter: blur(8px);
-  border-bottom: 1px solid #ebe6dd;
+body header.home-nav {
+  background: #FFFCF7;
+  border-bottom: 1px solid #E8EBDD;
   position: sticky;
   top: 0;
   width: 100%;
   z-index: 50;
 }
 
-.home-nav-inner {
-  align-items: center;
-  display: flex;
-  gap: 28px;
-  min-height: 72px;
-  margin: 0 auto;
-  max-width: 1320px;
-  padding: 0 32px;
-  width: 100%;
+.home-promo-bar { background: #657344; color: #FFFCF7; width: 100%; }
+
+.home-promo-inner {
+  align-items: center; box-sizing: border-box; display: flex; flex-wrap: wrap;
+  font-family: var(--a-ui, 'Be Vietnam Pro', sans-serif); font-size: 12px; font-weight: 500;
+  gap: 12px; justify-content: center; line-height: 1.4; margin: 0 auto; max-width: 1360px;
+  min-height: 36px; padding: 6px 32px; text-align: center;
 }
 
-.home-mark {
-  color: #242823;
-  font-family: Lora, Georgia, serif;
-  font-size: 22px;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  text-decoration: none;
-  transition: opacity 0.15s;
+body header.home-nav .home-promo-cta {
+  align-items: center; background: #FFFCF7; border-radius: 999px; color: #3E472D;
+  display: inline-flex; font-size: 11px; font-weight: 700; justify-content: center;
+  letter-spacing: 0.08em; min-height: 24px; padding: 2px 12px; text-decoration: none;
+  white-space: nowrap; transition: background-color 0.15s, color 0.15s;
+}
+body header.home-nav .home-promo-cta:hover { background: #E8EBDD; color: #252A24; }
+
+body header.home-nav .home-nav-inner {
+  align-items: center; box-sizing: border-box; display: flex; gap: 24px;
+  margin: 0 auto; max-width: 1360px; min-height: 66px; padding: 8px 32px; width: 100%;
 }
 
-.home-mark:hover {
-  opacity: 0.8;
+body header.home-nav .home-mark {
+  align-items: flex-start; color: #3E472D; display: inline-flex; flex-direction: column;
+  flex-shrink: 0; gap: 2px; text-decoration: none; transition: opacity 0.15s;
+}
+body header.home-nav .home-mark::after { content: none; }
+body header.home-nav .home-mark:hover { opacity: 0.85; }
+
+body header.home-nav .home-mark-word {
+  color: #3E472D; font-family: 'Lora', Georgia, serif; font-size: 26px; font-weight: 600;
+  letter-spacing: 0.08em; line-height: 0.95; text-transform: lowercase;
 }
 
-.home-nav-links {
-  align-items: center;
-  display: flex;
-  gap: 24px;
+body header.home-nav .home-mark-sub {
+  color: #657344; font-family: var(--a-ui, 'Be Vietnam Pro', sans-serif); font-size: 8.5px;
+  font-weight: 600; letter-spacing: 0.22em; line-height: 1; text-transform: uppercase;
 }
 
-.home-nav-links a {
-  color: #4f574b;
-  font-size: 14px;
-  font-weight: 500;
-  text-decoration: none;
-  transition: color 0.15s;
+body header.home-nav .home-nav-links { align-items: center; display: flex; flex-wrap: nowrap; gap: 20px; }
+
+body header.home-nav .home-nav-links a {
+  color: #252A24; font-family: var(--a-ui, 'Be Vietnam Pro', sans-serif); font-size: 12px;
+  font-weight: 600; letter-spacing: 0.08em; text-decoration: none; text-transform: uppercase;
+  white-space: nowrap; transition: color 0.15s;
+}
+body header.home-nav .home-nav-links a:hover { color: #657344; }
+
+body header.home-nav .home-nav-end {
+  align-items: center; display: flex; flex-shrink: 0; gap: 10px; margin-left: auto;
 }
 
-.home-nav-links a:hover {
-  color: #242823;
+body header.home-nav .nav-link-login,
+body header.home-nav .nav-link-staff {
+  font-family: var(--a-ui, 'Be Vietnam Pro', sans-serif); font-size: 12px; font-weight: 600;
+  letter-spacing: 0.06em; text-decoration: none; white-space: nowrap;
+  transition: color 0.15s, background-color 0.15s, border-color 0.15s;
 }
 
-.home-nav-end {
-  align-items: center;
-  display: flex;
-  gap: 16px;
-  margin-left: auto;
+body header.home-nav .nav-link-login { color: #3E472D; padding: 6px 10px; text-transform: uppercase; }
+body header.home-nav .nav-link-login:hover { color: #657344; }
+
+body header.home-nav a.nav-link-staff {
+  align-items: center; background: #E8EBDD; border: 1px solid #D9DFC8; border-radius: 999px;
+  color: #3E472D; display: inline-flex; min-height: 36px; padding: 0 12px;
+}
+body header.home-nav a.nav-link-staff:hover { background: #657344; border-color: #657344; color: #FFFCF7; }
+
+body header.home-nav .nav-user-badge {
+  align-items: center; background: #E8EBDD; border: 1px solid #D9DFC8; border-radius: 999px;
+  box-sizing: border-box; display: inline-flex; gap: 6px; min-height: 36px; padding: 4px 12px;
 }
 
-.nav-link-login,
-.nav-link-item,
-.nav-link-staff {
-  color: #3b4438;
-  font-size: 14px;
-  font-weight: 500;
-  text-decoration: none;
-  transition: color 0.15s;
+body header.home-nav .user-role-tag {
+  background: #657344; border-radius: 999px; color: #FFFCF7; font-size: 10px;
+  font-weight: 600; letter-spacing: 0.06em; padding: 2px 7px; text-transform: uppercase;
 }
 
-.nav-link-login:hover,
-.nav-link-item:hover,
-.nav-link-staff:hover {
-  color: #1f241d;
-  text-decoration: underline;
+body header.home-nav .user-name {
+  color: #252A24; font-size: 12px; font-weight: 600; max-width: 128px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 
-.nav-link-staff {
-  background: #f1ede4;
-  border-radius: 6px;
-  color: #455240;
-  padding: 6px 12px;
+body header.home-nav a.nav-logout-btn {
+  align-items: center; background: transparent; border: 1px solid #C6CEB2; border-radius: 999px;
+  color: #3E472D; display: inline-flex; font-size: 11px; font-weight: 600;
+  letter-spacing: 0.06em; min-height: 36px; padding: 0 14px; text-decoration: none;
+  white-space: nowrap; transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+}
+body header.home-nav a.nav-logout-btn:hover { background: #657344; border-color: #657344; color: #FFFCF7; }
+
+body header.home-nav a.home-cta {
+  align-items: center; background: #657344; border: 1px solid #657344; border-radius: 999px;
+  box-shadow: none; color: #FFFCF7; display: inline-flex; font-size: 12px; font-weight: 600;
+  letter-spacing: 0.08em; min-height: 38px; padding: 0 18px; text-decoration: none;
+  white-space: nowrap; transition: background-color 0.15s, border-color 0.15s;
+}
+body header.home-nav a.home-cta:hover { background: #4F5B35; border-color: #4F5B35; color: #FFFCF7; }
+
+@media (max-width: 1120px) {
+  body header.home-nav .home-nav-inner { flex-wrap: wrap; gap: 10px 16px; padding: 10px 20px; }
+  body header.home-nav .home-nav-links { order: 3; width: 100%; overflow-x: auto; padding: 4px 0; scrollbar-width: none; }
+  body header.home-nav .home-nav-links::-webkit-scrollbar { display: none; }
 }
 
-.nav-user-badge {
-  align-items: center;
-  background: #ffffff;
-  border: 1px solid #e2ded5;
-  border-radius: 100px;
-  display: flex;
-  gap: 8px;
-  padding: 4px 12px 4px 6px;
-}
-
-.user-role-tag {
-  background: #3b4a37;
-  border-radius: 100px;
-  color: #ffffff;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  padding: 2px 8px;
-  text-transform: uppercase;
-}
-
-.user-name {
-  color: #252a24;
-  font-size: 13px;
-  font-weight: 500;
-}
-
-.nav-logout-btn {
-  background: transparent;
-  border: 1px solid #dcd6cb;
-  border-radius: 8px;
-  color: #715549;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 500;
-  padding: 6px 14px;
-  text-decoration: none;
-  transition: all 0.15s;
-}
-
-.nav-logout-btn:hover {
-  background: #fcf4f2;
-  border-color: #d8aca3;
-  color: #a83622;
-}
-
-.home-cta {
-  align-items: center;
-  background: #3b4a37;
-  border-radius: 8px;
-  color: #fbfaf6;
-  display: inline-flex;
-  font-size: 14px;
-  font-weight: 500;
-  min-height: 40px;
-  padding: 0 18px;
-  text-decoration: none;
-  transition: background 0.15s;
-}
-
-.home-cta:hover {
-  background: #2b3728;
-}
-
-@media (max-width: 900px) {
-  .home-nav-inner {
-    flex-wrap: wrap;
-    gap: 16px;
-    padding: 12px 20px;
-  }
-
-  .home-nav-end {
-    margin-left: 0;
-    width: 100%;
-    justify-content: flex-start;
-  }
+@media (max-width: 640px) {
+  .home-promo-inner { font-size: 11px; gap: 8px; padding: 6px 14px; }
+  body header.home-nav .home-nav-inner { padding: 10px 16px; }
+  body header.home-nav .home-nav-links { gap: 14px; }
+  body header.home-nav .home-nav-links a { font-size: 11px; min-height: 36px; display: inline-flex; align-items: center; }
+  body header.home-nav .home-nav-end { flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+  body header.home-nav .user-name { max-width: 88px; }
+  body header.home-nav a.home-cta { min-height: 36px; padding: 0 14px; }
 }

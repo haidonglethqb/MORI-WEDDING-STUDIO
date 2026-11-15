@@ -1,48 +1,23 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import type {
-  AssistantChatApiResponse,
-  ChatMessageItem,
-  ConversationWeddingBrief,
-} from './assistant-types'
-
-const STORAGE_KEY = 'mori_atelier_assistant_session_v2'
-const SESSION_KEY = 'mori_atelier_chat_session_id'
-
-function createSessionId(): string {
-  return `sess_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
-}
-
-export const DEFAULT_BRIEF: ConversationWeddingBrief = {
-  coupleNames: null,
-  weddingDate: null,
-  season: null,
-  venueCategory: null,
-  location: null,
-  aestheticIdentity: null,
-  targetShape: null,
-  guestCount: null,
-  estimatedSuites: null,
-  budgetRangeVnd: null,
-  preferredFinishes: [],
-  shortlistedSlugs: [],
-  lastDiscussedSlug: null,
-}
-
-export const INITIAL_GREETING: ChatMessageItem = {
-  id: 'greeting-0',
-  role: 'assistant',
-  content:
-    'Chào bạn, mình là trợ lý MORI. Hãy chia sẻ phong cách yêu thích hoặc số lượng khách mời, mình sẽ giúp bạn tìm hướng thiết kế phù hợp nhé.',
-}
-
-export const QUICK_STARTERS = [
-  'Tiệc sân vườn ngoài trời Đà Lạt 120 khách',
-  'Lễ cưới truyền thống Song Hỷ Á Đông',
-  'Phong cách Editorial Vogue Paris sang trọng',
-  'Tư vấn chi phí theo ngân sách 2 - 3 triệu',
-]
+import {
+  DEFAULT_BRIEF,
+  INITIAL_GREETING,
+  QUICK_STARTERS,
+  createAssistantSessionId,
+  loadOrCreateChatStorage,
+  persistChatStorage,
+  postAssistantTurn,
+  postHumanEscalation,
+  resetChatStorage,
+} from './assistant-chat-api'
+import {
+  extractEscalatedFlag,
+  extractStaffReplies,
+  mergeSyncedStaffMessages,
+} from './assistant-session-sync'
+import type { ChatMessageItem, ConversationWeddingBrief } from './assistant-types'
 
 export function useAssistantChat() {
   const [messages, setMessages] = useState<ChatMessageItem[]>([INITIAL_GREETING])
@@ -50,115 +25,155 @@ export function useAssistantChat() {
   const [sessionId, setSessionId] = useState<string>('')
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const [escalated, setEscalated] = useState(false)
+  const [escalating, setEscalating] = useState(false)
+  const [escalateError, setEscalateError] = useState<string | null>(null)
   const [quickOptions, setQuickOptions] = useState<string[]>(QUICK_STARTERS)
   const scrollAnchorRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    try {
-      let savedSession = localStorage.getItem(SESSION_KEY)
-      if (!savedSession) {
-        savedSession = createSessionId()
-        localStorage.setItem(SESSION_KEY, savedSession)
-      }
-      setSessionId(savedSession)
-
-      const saved = localStorage.getItem(STORAGE_KEY)
-      if (saved) {
-        const parsed = JSON.parse(saved) as {
-          messages: ChatMessageItem[]
-          brief: ConversationWeddingBrief
-        }
-        if (parsed.messages?.length) setMessages(parsed.messages)
-        if (parsed.brief) setBrief(parsed.brief)
-      }
-    } catch {
-      // Storage unavailable
-    }
+    const loaded = loadOrCreateChatStorage()
+    setSessionId(loaded.sessionId)
+    if (loaded.messages?.length) setMessages(loaded.messages)
+    if (loaded.brief) setBrief(loaded.brief)
+    if (loaded.escalated) setEscalated(true)
   }, [])
 
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ messages, brief }))
-    } catch {
-      // Storage full
-    }
-    // Scroll only the conversation pane; scrollIntoView also moved the window on load.
+    persistChatStorage(messages, brief, escalated)
     const pane = scrollAnchorRef.current?.parentElement
     if (pane) {
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
       pane.scrollTo({ top: pane.scrollHeight, behavior: reduce ? 'auto' : 'smooth' })
     }
-  }, [messages, brief])
+  }, [messages, brief, escalated])
+
+  useEffect(() => {
+    if (!sessionId) return
+    let active = true
+
+    async function syncSessionReplies() {
+      if (!active || document.visibilityState === 'hidden') return
+      try {
+        const res = await fetch(`/assistant/session?sessionId=${encodeURIComponent(sessionId)}`, {
+          cache: 'no-store',
+        })
+        if (!res.ok || !active) return
+        const payload = (await res.json()) as unknown
+        if (extractEscalatedFlag(payload)) setEscalated(true)
+        const staffReplies = extractStaffReplies(payload)
+        if (staffReplies.length > 0) {
+          setMessages((prev) => mergeSyncedStaffMessages(prev, staffReplies))
+        }
+      } catch {
+        // Ignore polling errors
+      }
+    }
+
+    void syncSessionReplies()
+    const timer = window.setInterval(() => void syncSessionReplies(), 5000)
+    return () => {
+      active = false
+      window.clearInterval(timer)
+    }
+  }, [sessionId])
 
   async function sendMessage(textToSend: string) {
     const text = textToSend.trim()
     if (!text || loading) return
 
-    const userMsg: ChatMessageItem = { id: `u-${Date.now()}`, role: 'user', content: text }
-    const updatedMessages = [...messages, userMsg]
-    setMessages(updatedMessages)
+    const updated = [...messages, { id: `u-${Date.now()}`, role: 'user' as const, content: text }]
+    setMessages(updated)
     setInput('')
     setLoading(true)
 
-    try {
-      const history = updatedMessages.map((m) => ({ role: m.role, content: m.content }))
-      const activeSession = sessionId || createSessionId()
-      const res = await fetch('/assistant/ask', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ message: text, history, context: brief, sessionId: activeSession }),
-      })
+    const result = await postAssistantTurn(
+      text,
+      updated,
+      brief,
+      sessionId || createAssistantSessionId(),
+    )
+    setLoading(false)
 
-      if (!res.ok) {
-        if (res.status === 409) {
-          const quotaMsg: ChatMessageItem = {
-            id: `quota-${Date.now()}`,
-            role: 'assistant',
-            content:
-              'Bạn đã sử dụng hết hạn mức tư vấn hôm nay dành cho khách vãng lai. Vui lòng đăng nhập tài khoản MORI để tiếp tục trò chuyện (30 lượt/ngày), hoặc quay lại vào ngày mai nhé.',
-          }
-          setMessages((prev) => [...prev, quotaMsg])
-          return
-        }
-        throw new Error(`HTTP ${res.status}`)
-      }
+    if (result.kind === 'quota') {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `quota-${Date.now()}`,
+          role: 'assistant',
+          content:
+            'Bạn đã dùng hết hạn mức tư vấn hôm nay dành cho khách vãng lai. Hãy đăng nhập hoặc bấm “Gặp nhân viên tư vấn (Admin)” để được hỗ trợ trực tiếp nhé.',
+        },
+      ])
+      return
+    }
+    if (result.kind === 'error') {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `err-${Date.now()}`,
+          role: 'assistant',
+          content:
+            'MORI xin lỗi, kết nối tới trợ lý đang gián đoạn. Bạn có thể bấm “Gặp nhân viên tư vấn (Admin)” hoặc gửi yêu cầu thiết kế riêng trên trang Bộ sưu tập.',
+        },
+      ])
+      return
+    }
 
-      const data = (await res.json()) as AssistantChatApiResponse
-      const botMsg: ChatMessageItem = {
+    setMessages((prev) => [
+      ...prev,
+      {
         id: `a-${Date.now()}`,
         role: 'assistant',
-        content: data.reply,
-        products: data.suggestedProducts,
-        budget: data.estimatedBudget,
-      }
+        senderType: 'ai',
+        content: result.data.reply,
+        products: result.data.suggestedProducts,
+        budget: result.data.estimatedBudget,
+      },
+    ])
+    if (result.data.needsHumanSupport) setEscalated(true)
+    if (result.data.updatedBrief) setBrief(result.data.updatedBrief)
+    if (result.data.quickFollowUps?.length) setQuickOptions(result.data.quickFollowUps)
+  }
 
-      setMessages((prev) => [...prev, botMsg])
-      if (data.updatedBrief) setBrief(data.updatedBrief)
-      if (data.quickFollowUps?.length) setQuickOptions(data.quickFollowUps)
-    } catch {
-      const errorMsg: ChatMessageItem = {
-        id: `err-${Date.now()}`,
-        role: 'assistant',
-        content:
-          'MORI xin lỗi, kết nối tới xưởng chế tác đang gián đoạn. Bạn vui lòng thử lại sau giây lát.',
-      }
-      setMessages((prev) => [...prev, errorMsg])
-    } finally {
-      setLoading(false)
+  async function escalateToHuman(contact: string, note: string): Promise<boolean> {
+    setEscalating(true)
+    setEscalateError(null)
+    const ok = await postHumanEscalation(
+      sessionId || createAssistantSessionId(),
+      contact,
+      note,
+      messages,
+    )
+    setEscalating(false)
+
+    if (!ok) {
+      setEscalateError(
+        'Chưa thể chuyển phiên tự động lúc này. Bạn vui lòng gửi yêu cầu thiết kế riêng trên trang Bộ sưu tập hoặc thử lại sau nhé.',
+      )
+      return false
     }
+
+    setEscalated(true)
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: `esc-${Date.now()}`,
+        role: 'assistant',
+        senderType: 'system',
+        senderLabel: 'Hệ thống hỗ trợ MORI',
+        content: `Đã chuyển cuộc trò chuyện kèm thông tin liên hệ (${contact}) tới nhân viên tư vấn MORI.${note ? ` Ghi chú: "${note}".` : ''} Phản hồi từ nhân viên sẽ hiện trực tiếp tại khung chat này.`,
+      },
+    ])
+    return true
   }
 
   function handleReset() {
-    const nextSession = createSessionId()
-    try {
-      localStorage.removeItem(STORAGE_KEY)
-      localStorage.setItem(SESSION_KEY, nextSession)
-    } catch {
-      // Storage unavailable
-    }
-    setSessionId(nextSession)
+    setSessionId(resetChatStorage())
     setMessages([INITIAL_GREETING])
     setBrief(DEFAULT_BRIEF)
+    setEscalated(false)
+    setEscalateError(null)
     setQuickOptions(QUICK_STARTERS)
   }
 
@@ -168,9 +183,13 @@ export function useAssistantChat() {
     input,
     setInput,
     loading,
+    escalated,
+    escalating,
+    escalateError,
     quickOptions,
     scrollAnchorRef,
     sendMessage,
+    escalateToHuman,
     handleReset,
   }
 }

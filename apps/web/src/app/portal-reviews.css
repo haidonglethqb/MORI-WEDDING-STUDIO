@@ -1,4 +1,8 @@
-.portal-reviews { max-width: 1440px; margin: 0 auto; padding: 112px 5%; border-top: 1px solid rgba(237,231,220,.2); color: #ede7dc; }
-.portal-reviews h2 { font: 600 clamp(36px,4vw,62px)/1.15 'Syne',sans-serif; letter-spacing: -.04em; margin: 24px 0; color: #ede7dc; }
-.portal-reviews h2 em { color: #e9a65e; font-style: normal; }.portal-reviews p { max-width: 560px; color: #b7bdba; line-height: 1.8; }.portal-reviews a { color: #ede7dc; display: inline-flex; min-height: 48px; align-items: center; text-underline-offset: 5px; }
+.portal-reviews { max-width: 1440px; margin: 0 auto; padding: 112px 5%; background: #E8EBDD; box-shadow: 0 0 0 100vmax #E8EBDD; clip-path: inset(0 -100vmax); border-top: 1px solid #D9DFC8; color: #252A24; }
+.portal-reviews .portal-kicker { color: #4F5B35; }
+.portal-reviews h2 { font: 600 clamp(36px,4vw,62px)/1.15 'Syne', 'Be Vietnam Pro', sans-serif; letter-spacing: -.04em; margin: 24px 0; color: #252A24; }
+.portal-reviews h2 em { color: #4F5B35; font-style: normal; }
+.portal-reviews p { max-width: 560px; color: #5D6650; line-height: 1.8; }
+.portal-reviews a { color: #3E472D; display: inline-flex; min-height: 48px; align-items: center; text-underline-offset: 5px; text-decoration-color: #657344; font-weight: 500; }
+.portal-reviews a:hover { color: #657344; }
 @media (max-width: 600px) { .portal-reviews { padding: 64px 20px; } }

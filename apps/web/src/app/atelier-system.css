@@ -1,42 +1,40 @@
 /*
  * MORI atelier work surfaces: shared tokens and components for every page
  * outside the editorial homepage. Vietnamese-capable faces (Be Vietnam Pro,
- * Lora) replace Sora/Syne here because those files ship without the
- * Vietnamese subset, which made diacritics fall back mid-word.
+ * Lora) render body and headings cleanly.
  */
 :root {
-  --a-ink: #0b0d0f;
-  --a-ink-2: #15191b;
-  --a-ivory: #ede7dc;
-  --a-ivory-dim: #aeb2ab;
-  --a-paper: #f3f0e8;
-  --a-card: #fffdf8;
-  --a-line: #e2dccf;
-  --a-line-strong: #cbc3b2;
-  --a-text: #1d221e;
-  --a-muted: #62675f;
-  --a-amber: #e9a65e;
-  --a-amber-text: #8f5420;
-  --a-forest: #1f3329;
-  --a-forest-hover: #2d4739;
+  --a-ink: #252A24;
+  --a-ink-2: #3E472D;
+  --a-ivory: #FFFCF7;
+  --a-ivory-dim: #5D6650;
+  --a-paper: #FFFCF7;
+  --a-sage: #E8EBDD;
+  --a-card: #FFFFFF;
+  --a-line: #E0E4D3;
+  --a-line-strong: #C6CEB2;
+  --a-text: #252A24;
+  --a-muted: #5D6650;
+  --a-amber: #657344;
+  --a-amber-text: #4D5933;
+  --a-forest: #657344;
+  --a-forest-hover: #4F5B35;
   --a-display: 'Lora', Georgia, serif;
   --a-ui: 'Be Vietnam Pro', system-ui, sans-serif;
 }
 
 body .home-nav, body .home-nav :is(a, button, span) { font-family: var(--a-ui); }
-body .home-nav .home-mark { font-family: 'Syne', var(--a-ui); }
 
 body:has(:is(.workspace-page, .addresses-page, .editor-page, .order-detail-page, .request-detail-page, .studio-page, .admin-ai-page, .product-page, .assistant-page, .collections-wrap, .auth-layout, .moderation-page, .blog-page)) {
   font-family: var(--a-ui);
-  background: var(--a-paper);
+  background: #FFFCF7;
 }
-body:has(:is(.assistant-page, .collections-wrap, .auth-layout, .blog-page)) { background: var(--a-ink); }
+body:has(:is(.assistant-page, .collections-wrap, .auth-layout, .blog-page)) { background: #FFFCF7; }
 
-body :is(.workspace-page, .addresses-page, .editor-page, .order-detail-page, .request-detail-page, .studio-page, .admin-ai-page, .product-page, .assistant-page, .collections-wrap, .auth-layout, .moderation-page) {
+body :is(.workspace-page, .addresses-page, .editor-page, .order-detail-page, .request-detail-page, .studio-page, .admin-ai-page, .product-page, .assistant-page, .collections-wrap, .auth-layout, .moderation-page, .blog-page) {
   font-family: var(--a-ui);
   color: var(--a-text);
 }
-body .blog-page { font-family: var(--a-ui); color: var(--a-ivory); }
 body :is(.workspace-page, .addresses-page, .editor-page, .order-detail-page, .request-detail-page, .studio-page, .admin-ai-page, .product-page, .assistant-page, .collections-wrap, .auth-layout, .moderation-page, .blog-page) :is(h1, h2, h3),
 body .auth-editorial-panel h2, body .atelier-header h1 {
   font-family: var(--a-display);
@@ -46,14 +44,14 @@ body .auth-editorial-panel h2, body .atelier-header h1 {
 body :where(.workspace-page, .addresses-page, .editor-page, .order-detail-page, .request-detail-page, .studio-page, .admin-ai-page, .moderation-page, .product-page, .auth-layout, .collections-wrap, .blog-page) :where(button, input, select, textarea) { font-family: inherit; }
 body :where(.workspace-page, .addresses-page, .editor-page, .order-detail-page, .request-detail-page, .studio-page, .admin-ai-page) :where(input[type=checkbox], input[type=radio], input[type=range]) { accent-color: var(--a-forest); }
 
-/* Header band: a full-bleed ink strip that continues the navigation. */
+/* Header band: full-bleed light sage strip with crisp dark text. */
 body :is(.workspace-page, .addresses-page, .order-detail-page, .request-detail-page, .studio-page) { padding-top: 0; }
 body :is(.workspace-header, .studio-header, .addresses-header, .request-detail-header, .order-detail-header),
 body :is(.workspace-page, .addresses-page, .order-detail-page, .request-detail-page, .studio-page) > .atelier-crumbs {
-  background: var(--a-ink);
-  box-shadow: 0 0 0 100vmax var(--a-ink);
+  background: var(--a-sage);
+  box-shadow: 0 0 0 100vmax var(--a-sage);
   clip-path: inset(0 -100vmax);
-  color: var(--a-ivory);
+  color: var(--a-text);
   border: 0;
   margin: 0;
 }
@@ -68,14 +66,14 @@ body :is(.workspace-header, .studio-header, .addresses-header, .request-detail-h
 }
 body .atelier-crumbs + :is(.workspace-header, .addresses-header, .request-detail-header, .order-detail-header) { padding-top: 20px; }
 body :is(.workspace-header, .studio-header, .addresses-header, .request-detail-header, .order-detail-header) h1 {
-  color: var(--a-ivory);
+  color: var(--a-text);
   font-size: clamp(32px, 4vw, 52px);
   line-height: 1.1;
   margin: 0 0 12px;
   max-width: 760px;
 }
 body :is(.workspace-header, .studio-header, .addresses-header, .request-detail-header, .order-detail-header) p {
-  color: var(--a-ivory-dim);
+  color: var(--a-muted);
   font-size: 15px;
   line-height: 1.7;
   margin: 0;
@@ -84,17 +82,17 @@ body :is(.workspace-header, .studio-header, .addresses-header, .request-detail-h
 .atelier-eyebrow {
   display: block;
   margin-bottom: 16px;
-  color: var(--a-amber);
-  font: 500 11px/1.4 var(--a-ui);
+  color: var(--a-amber-text);
+  font: 600 11px/1.4 var(--a-ui);
   letter-spacing: 0.18em;
   text-transform: uppercase;
 }
 .atelier-crumbs { padding-top: 32px; font-size: 13px; }
 .atelier-crumbs ol { display: flex; flex-wrap: wrap; gap: 6px 10px; margin: 0; padding: 0; list-style: none; }
-.atelier-crumbs li { display: inline-flex; gap: 10px; align-items: center; color: var(--a-ivory); }
-.atelier-crumbs li + li::before { content: '/'; color: #6e736d; }
-.atelier-crumbs a { color: var(--a-ivory-dim); text-decoration: none; }
-.atelier-crumbs a:hover { color: var(--a-amber); }
+.atelier-crumbs li { display: inline-flex; gap: 10px; align-items: center; color: var(--a-text); }
+.atelier-crumbs li + li::before { content: '/'; color: #8A987D; }
+.atelier-crumbs a { color: var(--a-muted); text-decoration: none; }
+.atelier-crumbs a:hover { color: var(--a-forest); }
 
 /* Buttons. */
 body :is(.workspace-btn-primary, .workspace-btn-outline, .workspace-btn-secondary, .login-submit-btn) {
@@ -110,15 +108,15 @@ body :is(.workspace-btn-primary, .workspace-btn-outline, .workspace-btn-secondar
   cursor: pointer;
   transition: background-color .2s, border-color .2s, color .2s;
 }
-body :is(.workspace-btn-primary, .login-submit-btn) { background: var(--a-forest); border: 1px solid var(--a-forest); color: var(--a-ivory); }
+body :is(.workspace-btn-primary, .login-submit-btn) { background: var(--a-forest); border: 1px solid var(--a-forest); color: #FFFCF7; }
 body :is(.workspace-btn-primary, .login-submit-btn):hover { background: var(--a-forest-hover); border-color: var(--a-forest-hover); color: #fff; }
 body :is(.workspace-btn-outline, .workspace-btn-secondary) { background: transparent; border: 1px solid var(--a-line-strong); color: var(--a-text); }
-body :is(.workspace-btn-outline, .workspace-btn-secondary):hover { border-color: var(--a-text); background: transparent; }
+body :is(.workspace-btn-outline, .workspace-btn-secondary):hover { border-color: var(--a-forest); color: var(--a-forest-hover); background: transparent; }
 body :is(.workspace-btn-primary, .login-submit-btn, .workspace-btn-outline):disabled { opacity: .55; cursor: not-allowed; }
-body :is(.workspace-header, .studio-header) .workspace-btn-primary { background: var(--a-ivory); border-color: var(--a-ivory); color: var(--a-ink); }
-body :is(.workspace-header, .studio-header) .workspace-btn-primary:hover { background: var(--a-amber); border-color: var(--a-amber); }
-body :is(.workspace-header, .studio-header) :is(.workspace-btn-outline, .workspace-btn-secondary) { border-color: rgba(237, 231, 220, .32); color: var(--a-ivory); }
-body :is(.workspace-header, .studio-header) :is(.workspace-btn-outline, .workspace-btn-secondary):hover { border-color: var(--a-amber); color: var(--a-amber); }
+body :is(.workspace-header, .studio-header) .workspace-btn-primary { background: var(--a-forest); border-color: var(--a-forest); color: #FFFCF7; }
+body :is(.workspace-header, .studio-header) .workspace-btn-primary:hover { background: var(--a-forest-hover); border-color: var(--a-forest-hover); }
+body :is(.workspace-header, .studio-header) :is(.workspace-btn-outline, .workspace-btn-secondary) { border-color: var(--a-line-strong); background: #FFFCF7; color: var(--a-text); }
+body :is(.workspace-header, .studio-header) :is(.workspace-btn-outline, .workspace-btn-secondary):hover { border-color: var(--a-forest); color: var(--a-forest-hover); }
 body .workspace-action-link {
   display: inline-flex;
   align-items: center;
@@ -133,7 +131,7 @@ body .workspace-action-link {
   white-space: nowrap;
 }
 body .workspace-action-link::after { content: '→'; margin-left: 8px; transition: transform .2s; }
-body .workspace-action-link:hover { background: var(--a-ink); border-color: var(--a-ink); color: var(--a-ivory); }
+body .workspace-action-link:hover { background: var(--a-forest); border-color: var(--a-forest); color: #FFFCF7; }
 body .workspace-action-link:hover::after { transform: translateX(3px); }
 
 /* Status badges share one quiet vocabulary across orders, requests and proofs. */
@@ -144,16 +142,16 @@ body :is(.badge-tag, .order-status-badge, .atelier-state) {
   padding: 5px 11px;
   border: 0;
   border-radius: 99px;
-  background: #ece8de;
-  color: #545950;
+  background: #E8EBDD;
+  color: #3E472D;
   font: 600 11px/1.2 var(--a-ui);
   letter-spacing: .06em;
   text-transform: uppercase;
   white-space: nowrap;
 }
 body :is(.badge-tag, .atelier-state)::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
-body :is(.badge-tag, .order-status-badge, .atelier-state):is(.DRAFT, .SUBMITTED, .PENDING, .ISSUED, .IN_REVIEW, .WORKING, .REQUESTED) { background: #f6ead8; color: #8a521d; }
-body :is(.badge-tag, .order-status-badge, .atelier-state):is(.CONFIRMED, .IN_FULFILLMENT, .IN_PRODUCTION, .IN_PROGRESS, .SHIPPED) { background: #e3ebe5; color: #2b4a38; }
+body :is(.badge-tag, .order-status-badge, .atelier-state):is(.DRAFT, .SUBMITTED, .PENDING, .ISSUED, .IN_REVIEW, .WORKING, .REQUESTED) { background: #F0EFE6; color: #5D6650; }
+body :is(.badge-tag, .order-status-badge, .atelier-state):is(.CONFIRMED, .IN_FULFILLMENT, .IN_PRODUCTION, .IN_PROGRESS, .SHIPPED) { background: #E8EBDD; color: #3E472D; }
 body :is(.badge-tag, .order-status-badge, .atelier-state):is(.PUBLISHED, .APPROVED, .ACCEPTED, .COMPLETED, .DELIVERED, .HANDED_OVER) { background: #dfeee3; color: #23603a; }
 body :is(.badge-tag, .order-status-badge, .atelier-state):is(.CANCELLED, .WITHDRAWN, .EXPIRED, .DENIED, .CHANGES_REQUESTED) { background: #f6e3df; color: #9a3523; }
 body :is(.workspace-header, .order-detail-header) .order-status-badge { align-self: flex-start; }

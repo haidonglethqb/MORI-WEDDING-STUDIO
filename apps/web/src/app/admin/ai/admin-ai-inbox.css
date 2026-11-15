@@ -1,0 +1,143 @@
+.admin-ai-page .inbox-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.admin-ai-page .inbox-subtabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.admin-ai-page .inbox-subtab-btn {
+  min-height: 36px;
+  padding: 0 15px;
+  border-radius: 999px;
+  border: 1px solid #C8CEBA;
+  background: #FAF7EE;
+  color: #252A24;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.admin-ai-page .inbox-subtab-btn.is-active {
+  background: #E8EBDD;
+  border-color: #657344;
+  color: #252A24;
+}
+
+.admin-ai-page .inbox-cards-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-ai-page .inbox-record-card {
+  background: #FAF7EE;
+  border: 1px solid #DCE0D0;
+  border-radius: 16px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.admin-ai-page .inbox-card-top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-ai-page .inbox-card-top > div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-ai-page .inbox-code-badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #657344;
+  color: #FFFCF7;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.admin-ai-page .inbox-customer-name {
+  font-size: 15px;
+  color: #252A24;
+}
+
+.admin-ai-page .inbox-contact-pill,
+.admin-ai-page .inbox-type-badge {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: #E8EBDD;
+  color: #46502E;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.admin-ai-page .inbox-summary-grid,
+.admin-ai-page .inbox-controls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 12px;
+}
+
+.admin-ai-page .inbox-meta-label {
+  display: block;
+  font-size: 11.5px;
+  color: #5D6559;
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+
+.admin-ai-page .inbox-summary-grid p {
+  margin: 0;
+  font-size: 13.5px;
+  color: #252A24;
+  line-height: 1.5;
+}
+
+.admin-ai-page .inbox-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.admin-ai-page .inbox-field span {
+  font-size: 12px;
+  font-weight: 600;
+  color: #252A24;
+}
+
+.admin-ai-page .inbox-field select,
+.admin-ai-page .inbox-field input {
+  min-height: 38px;
+  padding: 0 12px;
+  border-radius: 9px;
+  border: 1px solid #C8CEBA;
+  background: #FFFCF7;
+  color: #252A24;
+  font-size: 13.5px;
+}
+
+.admin-ai-page .inbox-feedback-line {
+  font-size: 13px;
+  font-weight: 600;
+  color: #46502E;
+}
+
+.admin-ai-page .inbox-card-actions {
+  display: flex;
+  justify-content: flex-end;
+}

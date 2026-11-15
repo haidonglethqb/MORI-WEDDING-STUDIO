@@ -53,27 +53,27 @@ export const SECONDARY_PROFILES: Record<string, BespokeProductProfile> = {
   },
   'editorial-digital-01': {
     title: 'Digital Vogue Haute Couture',
-    subtitle: 'Ấn phẩm thiệp số định dạng tạp chí thời trang Paris',
+    subtitle: 'Ấn phẩm thiệp online định dạng tạp chí thời trang Paris',
     silhouette: 'arch', cardBg: '#faf7f2', borderColor: '#c5a059', accentColor: '#b38e46', motifType: 'roman-vogue',
   },
   'traditional-digital-01': {
     title: 'Digital Song Hỷ Hoàng Gia',
-    subtitle: 'Thiệp số Á Đông sắc son chu sa và đại tự Song Hỷ ánh kim',
+    subtitle: 'Thiệp online Á Đông sắc son chu sa và đại tự Song Hỷ ánh kim',
     silhouette: 'standard', cardBg: '#7c1f1d', borderColor: '#d4af37', accentColor: '#ffd700', motifType: 'palace-joy',
   },
   'floral-digital-01': {
     title: 'Digital Provence Garden',
-    subtitle: 'Thiệp số thảo mộc hoa lá thanh tao phong cách thiên nhiên',
+    subtitle: 'Thiệp online thảo mộc hoa lá thanh tao phong cách thiên nhiên',
     silhouette: 'deckle', cardBg: '#f9f8f4', borderColor: '#607855', accentColor: '#4d6643', motifType: 'magnolia-spray',
   },
   'minimalist-digital-01': {
     title: 'Digital Zen Wabi-Sabi',
-    subtitle: 'Thiệp số tĩnh tại với vòng tròn Ensō và triện đỏ Mori',
+    subtitle: 'Thiệp online tĩnh tại với vòng tròn Ensō và triện đỏ Mori',
     silhouette: 'standard', cardBg: '#f5f3ec', borderColor: '#b5aea1', accentColor: '#963529', motifType: 'zen-enso',
   },
   'typography-digital-01': {
     title: 'Digital Florence Calligraphy',
-    subtitle: 'Thiệp số chữ lồng thư pháp bay bổng và lãng mạn',
+    subtitle: 'Thiệp online chữ lồng thư pháp bay bổng và lãng mạn',
     silhouette: 'deckle', cardBg: '#faf6f0', borderColor: '#a67c52', accentColor: '#8a6138', motifType: 'florence-script',
   },
   'fixture-bifold': {

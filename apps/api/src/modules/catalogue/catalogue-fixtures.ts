@@ -6,7 +6,7 @@ export function getFixtureCatalogue(query: CatalogueQuery): CatalogueProduct[] {
     .filter(({ item }) => {
       if (query.type && item.type !== query.type) return false
       if (query.style && !item.styleTags.includes(query.style)) return false
-      if (query.shape && (item.type !== 'PAPER' || item.shape !== query.shape)) return false
+      if (query.shape && item.shape !== query.shape) return false
       return true
     })
     .map(({ item, idx }) => ({
@@ -16,16 +16,13 @@ export function getFixtureCatalogue(query: CatalogueQuery): CatalogueProduct[] {
       isFixture: false,
       imageUrl: item.imageUrl,
       styleTags: [...item.styleTags],
-      variants:
-        item.type === 'PAPER' && item.shape
-          ? [
-              {
-                id: `00000000-0000-4000-8000-${String(idx + 1).padStart(12, '0')}`,
-                shape: item.shape,
-                availability: 'AVAILABLE' as const,
-                unitAmountVnd: item.unitAmountVnd.toString(),
-              },
-            ]
-          : [],
+      variants: [
+        {
+          id: `00000000-0000-4000-8000-${String(idx + 1).padStart(12, '0')}`,
+          shape: item.shape,
+          availability: 'AVAILABLE' as const,
+          unitAmountVnd: item.unitAmountVnd.toString(),
+        },
+      ],
     }))
 }

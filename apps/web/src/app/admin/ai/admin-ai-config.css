@@ -1,0 +1,97 @@
+.admin-ai-page .provider-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.admin-ai-page .provider-tab {
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #D3D8C5;
+  background: #FAF7EE;
+  color: #252A24;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-weight: 600;
+}
+
+.admin-ai-page .provider-tab.active {
+  background: #E8EBDD;
+  border-color: #657344;
+}
+
+.admin-ai-page .tab-sub {
+  font-size: 12px;
+  font-weight: 400;
+  color: #555D51;
+}
+
+.admin-ai-page .admin-ai-subpanel {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.admin-ai-page .field-row {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.admin-ai-page .field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-ai-page .flex-1 {
+  flex: 1;
+  min-width: 220px;
+}
+
+.admin-ai-page .field-label,
+.admin-ai-page .section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #252A24;
+}
+
+.admin-ai-page .text-input,
+.admin-ai-page .select-input {
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid #C8CEBA;
+  background: #FFFCF7;
+  color: #252A24;
+  font-size: 13.5px;
+}
+
+.admin-ai-page .admin-actions-bar {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.admin-ai-page .test-feedback-box,
+.admin-ai-page .save-status-box {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  background: #E8EBDD;
+  color: #252A24;
+}
+
+@media (max-width: 720px) {
+  .admin-ai-page .provider-tabs {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,177 @@
+@import './guides-footer.css';
+
+html body:has(.mori-guide-shell) {
+  background: #FFFCF7;
+  color: #252A24;
+  font-family: 'Be Vietnam Pro', system-ui, sans-serif;
+}
+
+.mori-guide-shell {
+  min-height: 100vh;
+  background: #FFFCF7;
+  color: #252A24;
+  display: flex;
+  flex-direction: column;
+}
+
+.mori-guide-main {
+  flex: 1;
+  width: 100%;
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 36px 24px 80px;
+  box-sizing: border-box;
+}
+
+.guide-subnav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-bottom: 24px;
+  margin-bottom: 32px;
+  border-bottom: 1px solid #E8EBDD;
+}
+
+.guide-subnav-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: #FAF7EE;
+  border: 1px solid #DCE0D0;
+  color: #464E42;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 0.16s ease, border-color 0.16s ease, color 0.16s ease;
+}
+
+.guide-subnav-link:hover {
+  background: #E8EBDD;
+  border-color: #657344;
+  color: #252A24;
+}
+
+.guide-subnav-link.is-active {
+  background: #657344;
+  border-color: #657344;
+  color: #FFFCF7;
+}
+
+.guide-hero-band {
+  background: #E8EBDD;
+  border-radius: 20px;
+  padding: 44px 36px;
+  text-align: center;
+  margin-bottom: 48px;
+  border: 1px solid #D5DAC8;
+}
+
+.guide-hero-kicker {
+  display: inline-block;
+  padding: 5px 14px;
+  border-radius: 999px;
+  background: #FFFCF7;
+  color: #657344;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.guide-hero-band h1 {
+  font-family: 'Lora', Georgia, serif;
+  font-size: clamp(26px, 3.8vw, 42px);
+  font-weight: 600;
+  line-height: 1.22;
+  color: #252A24;
+  margin: 0 0 16px;
+}
+
+.guide-hero-lead {
+  max-width: 720px;
+  margin: 0 auto;
+  font-size: 15.5px;
+  line-height: 1.75;
+  color: #3E453B;
+}
+
+.guide-cta-banner {
+  margin-top: 56px;
+  background: #E8EBDD;
+  border: 1px solid #D2D8C4;
+  border-radius: 20px;
+  padding: 36px 28px;
+  text-align: center;
+}
+
+.guide-cta-banner h2 {
+  font-family: 'Lora', Georgia, serif;
+  font-size: clamp(22px, 2.8vw, 30px);
+  color: #252A24;
+  margin: 0 0 10px;
+}
+
+.guide-cta-banner p {
+  font-size: 14.5px;
+  color: #4A5246;
+  margin: 0 0 24px;
+  line-height: 1.65;
+}
+
+.guide-cta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+}
+
+.guide-btn-primary,
+.guide-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 0 24px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+}
+
+.guide-btn-primary {
+  background: #657344;
+  color: #FFFCF7;
+  border: 1px solid #657344;
+}
+
+.guide-btn-primary:hover {
+  background: #515D35;
+  border-color: #515D35;
+}
+
+.guide-btn-secondary {
+  background: #FFFCF7;
+  color: #252A24;
+  border: 1px solid #657344;
+}
+
+.guide-btn-secondary:hover {
+  background: #657344;
+  color: #FFFCF7;
+}
+
+@media (max-width: 760px) {
+  .mori-guide-main {
+    padding: 24px 16px 56px;
+  }
+  .guide-hero-band {
+    padding: 32px 20px;
+    margin-bottom: 32px;
+  }
+}

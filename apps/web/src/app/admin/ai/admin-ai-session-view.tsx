@@ -1,22 +1,53 @@
 'use client'
 
+import { useState } from 'react'
 import type { AiConversationSession } from './admin-ai-types'
+import { AdminSessionBrief } from './admin-session-brief'
 
 interface SessionViewProps {
   session: AiConversationSession
   onDeleteSession: (sessionId: string) => Promise<void>
+  onSessionUpdated: () => Promise<void>
 }
 
-export function AdminAiSessionView({ session, onDeleteSession }: SessionViewProps) {
-  const { brief, turns } = session
-  const hasBriefInfo =
-    brief.coupleNames ||
-    brief.weddingDate ||
-    brief.location ||
-    brief.guestCount ||
-    brief.budget ||
-    brief.aesthetic ||
-    brief.targetShape
+export function AdminAiSessionView({
+  session,
+  onDeleteSession,
+  onSessionUpdated,
+}: SessionViewProps) {
+  const [replyText, setReplyText] = useState('')
+  const [sending, setSending] = useState(false)
+  const [replyFeedback, setReplyFeedback] = useState<string | null>(null)
+
+  const staffReplies = session.adminReplies ?? []
+  const contactText = session.customerContact || session.contactInfo
+  const escalationDetail = session.escalationReason || session.escalationNote
+  const isEscalated = Boolean(
+    session.needsHumanSupport || session.needsHuman || session.escalated || contactText,
+  )
+
+  async function handleSendReply(event: React.FormEvent) {
+    event.preventDefault()
+    const clean = replyText.trim()
+    if (!clean || sending) return
+    setSending(true)
+    setReplyFeedback(null)
+    try {
+      const res = await fetch(`/admin/ai/logs/${encodeURIComponent(session.sessionId)}/reply`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ message: clean, adminName: 'Nhân viên tư vấn MORI' }),
+      })
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      setReplyText('')
+      setReplyFeedback('✓ Đã gửi phản hồi trực tiếp tới khung chat của khách hàng.')
+      await onSessionUpdated()
+    } catch {
+      setReplyFeedback('✕ Chưa thể gửi phản hồi lúc này. Vui lòng kiểm tra kết nối API.')
+    } finally {
+      setSending(false)
+    }
+  }
 
   return (
     <div className="session-detail-pane">
@@ -24,17 +55,19 @@ export function AdminAiSessionView({ session, onDeleteSession }: SessionViewProp
         <div className="session-detail-title-group">
           <div className="session-id-row">
             <span className="session-id-badge">{session.sessionId}</span>
+            {isEscalated && <span className="needs-support-pill">CẦN NHÂN VIÊN HỖ TRỢ</span>}
             <span className="session-meta-pill">{session.turnsCount} lượt hỏi đáp</span>
             <span className="session-meta-pill model-pill">{session.lastModelUsed}</span>
           </div>
           <span className="session-timestamp-text">
             Cập nhật lần cuối:{' '}
-            {new Date(session.updatedAt).toLocaleTimeString('vi-VN', {
+            {new Date(session.updatedAt).toLocaleString('vi-VN', {
               hour: '2-digit',
               minute: '2-digit',
-              second: '2-digit',
-            })}{' '}
-            ngày {new Date(session.updatedAt).toLocaleDateString('vi-VN')}
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric',
+            })}
           </span>
         </div>
         <button
@@ -46,123 +79,93 @@ export function AdminAiSessionView({ session, onDeleteSession }: SessionViewProp
         </button>
       </div>
 
-      <div className="session-brief-card">
-        <div className="brief-card-title">✦ Thông tin tiệc cưới riêng biệt của phiên này (Context)</div>
-        {hasBriefInfo ? (
-          <div className="brief-grid">
-            {brief.coupleNames && (
-              <div className="brief-item">
-                <span className="brief-label">Cặp đôi:</span>
-                <span className="brief-value">{brief.coupleNames}</span>
-              </div>
-            )}
-            {brief.weddingDate && (
-              <div className="brief-item">
-                <span className="brief-label">Ngày cưới:</span>
-                <span className="brief-value">{brief.weddingDate}</span>
-              </div>
-            )}
-            {brief.location && (
-              <div className="brief-item">
-                <span className="brief-label">Địa điểm / Không gian:</span>
-                <span className="brief-value">{brief.location}</span>
-              </div>
-            )}
-            {brief.guestCount && (
-              <div className="brief-item">
-                <span className="brief-label">Quy mô tiệc:</span>
-                <span className="brief-value">{brief.guestCount} khách</span>
-              </div>
-            )}
-            {brief.aesthetic && (
-              <div className="brief-item">
-                <span className="brief-label">Gu thẩm mỹ:</span>
-                <span className="brief-value">{brief.aesthetic}</span>
-              </div>
-            )}
-            {brief.targetShape && (
-              <div className="brief-item">
-                <span className="brief-label">Dáng thiệp:</span>
-                <span className="brief-value">
-                  {brief.targetShape === 'BIFOLD' ? 'Gập đôi (Bi-fold)' : 'Khổ phẳng (Flat)'}
-                </span>
-              </div>
-            )}
-            {brief.budget && (
-              <div className="brief-item">
-                <span className="brief-label">Ngân sách tối đa:</span>
-                <span className="brief-value">
-                  {Number(brief.budget).toLocaleString('vi-VN')} ₫
-                </span>
-              </div>
-            )}
+      {isEscalated && (
+        <div className="session-escalation-box" role="status">
+          <strong>Khách hàng đã yêu cầu gặp nhân viên tư vấn MORI</strong>
+          <div className="escalation-meta-lines">
+            <span>Thông tin liên hệ: {contactText || 'Chưa để lại SĐT/Email'}</span>
+            {escalationDetail && <span>Ghi chú của khách: “{escalationDetail}”</span>}
           </div>
-        ) : (
-          <div className="brief-empty-note">
-            Chưa có thông tin trích xuất cụ thể từ các lượt nhắn của khách.
-          </div>
-        )}
-      </div>
+        </div>
+      )}
+
+      <AdminSessionBrief brief={session.brief} />
 
       <div className="session-turns-timeline">
-        <div className="turns-timeline-title">Lịch sử trò chuyện chi tiết ({turns.length} lượt)</div>
-        {turns.map((turn) => {
-          const isCodex = turn.modelUsed.includes('sol') || turn.modelUsed.includes('codex')
-          const isGroq = turn.modelUsed.includes('groq') || turn.modelUsed.includes('oss')
-          const modelClass = isCodex ? 'is-codex' : isGroq ? 'is-groq' : 'is-local'
+        <div className="turns-timeline-title">
+          Lịch sử trò chuyện ({session.turns.length} lượt AI · {staffReplies.length} phản hồi NV)
+        </div>
+        {session.turns.map((turn) => (
+          <div key={turn.id} className="timeline-turn-card">
+            <div className="turn-user-box">
+              <div className="turn-box-header">
+                <span className="turn-badge user-turn-badge">
+                  [Lượt {turn.turnIndex}] Khách hàng nhắn
+                </span>
+                <span className="turn-timestamp">
+                  {new Date(turn.timestamp).toLocaleTimeString('vi-VN', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
+                </span>
+              </div>
+              <div className="turn-user-content">“{turn.userMessage}”</div>
+            </div>
 
+            <div className="turn-assistant-box">
+              <div className="turn-box-header">
+                <span className="turn-badge assistant-turn-badge">Chatbot MORI trả lời</span>
+                <span className="log-model-badge">{turn.modelUsed}</span>
+              </div>
+              <div className="turn-reply-content">{turn.assistantReply}</div>
+            </div>
+          </div>
+        ))}
+
+        {staffReplies.map((reply) => {
+          const senderName = reply.sender || reply.adminName || 'Nhân viên tư vấn MORI'
+          const replyBody = reply.message || reply.content || ''
+          const replyTime = reply.timestamp || reply.createdAt || session.updatedAt
           return (
-            <div key={turn.id} className="timeline-turn-card">
-              <div className="turn-user-box">
-                <div className="turn-box-header">
-                  <span className="turn-badge user-turn-badge">
-                    [Lượt {turn.turnIndex}] Khách hàng đã hỏi
-                  </span>
-                  <span className="turn-timestamp">
-                    {new Date(turn.timestamp).toLocaleTimeString('vi-VN', {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                      second: '2-digit',
-                    })}
-                  </span>
-                </div>
-                <div className="turn-user-content">&ldquo;{turn.userMessage}&rdquo;</div>
+            <div key={reply.id} className="timeline-staff-card">
+              <div className="turn-box-header">
+                <span className="turn-badge staff-turn-badge">
+                  ✓ {senderName} đã trả lời trực tiếp
+                </span>
+                <span className="turn-timestamp">
+                  {new Date(replyTime).toLocaleString('vi-VN', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    day: '2-digit',
+                    month: '2-digit',
+                  })}
+                </span>
               </div>
-
-              <div className="turn-assistant-box">
-                <div className="turn-box-header">
-                  <div className="turn-model-group">
-                    <span className="turn-badge assistant-turn-badge">Nghệ nhân MORI phản hồi</span>
-                    <span className={`log-model-badge ${modelClass}`}>{turn.modelUsed}</span>
-                    <span className="log-tier-badge">Tier {turn.fallbackTier}</span>
-                    <span className="log-latency">{(turn.latencyMs / 1000).toFixed(1)}s</span>
-                  </div>
-                </div>
-                <div className="turn-reply-content">{turn.assistantReply}</div>
-
-                {turn.suggestedProducts && turn.suggestedProducts.length > 0 && (
-                  <div className="turn-suggested-products">
-                    <span className="suggested-label">Mẫu thiệp đã giới thiệu kèm:</span>
-                    <div className="suggested-chips">
-                      {turn.suggestedProducts.map((p) => (
-                        <a
-                          key={p.slug}
-                          href={`/products/${p.slug}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="product-chip-link"
-                        >
-                          <strong>{p.name}</strong> ({p.startingPriceVnd}) &rarr;
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
+              <div className="turn-reply-content">{replyBody}</div>
             </div>
           )
         })}
       </div>
+
+      <form className="admin-reply-composer" onSubmit={(e) => void handleSendReply(e)}>
+        <label htmlFor={`reply-${session.sessionId}`}>
+          Phản hồi trực tiếp tới khách hàng trong phiên chat này
+        </label>
+        <textarea
+          id={`reply-${session.sessionId}`}
+          rows={3}
+          value={replyText}
+          onChange={(e) => setReplyText(e.target.value)}
+          placeholder="Nhập nội dung tư vấn, báo giá hoặc hướng dẫn tiếp theo gửi cho khách hàng..."
+          disabled={sending}
+        />
+        {replyFeedback && <div className="admin-reply-feedback">{replyFeedback}</div>}
+        <div className="admin-reply-actions">
+          <button type="submit" className="btn-primary" disabled={sending || !replyText.trim()}>
+            {sending ? 'Đang gửi phản hồi...' : 'Gửi phản hồi tới khách hàng'}
+          </button>
+        </div>
+      </form>
     </div>
   )
 }

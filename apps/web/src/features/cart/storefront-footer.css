@@ -1,0 +1,101 @@
+/* Shared light ivory storefront footer styling for collections, product, cart, checkout */
+.home-footer {
+  border-top: 1px solid #e5dfd2;
+  background: #f5f2e8;
+  padding: 56px 24px 32px;
+  color: #1f241d;
+}
+
+.footer-inner {
+  max-width: 1280px;
+  margin: 0 auto 40px;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 48px;
+}
+
+@media (max-width: 860px) {
+  .footer-inner {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+
+.footer-brand-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.footer-mark {
+  font-family: var(--a-display, 'Lora', Georgia, serif);
+  font-size: 24px;
+  font-weight: 600;
+  color: #1f241d;
+  letter-spacing: 0.15em;
+}
+
+.footer-tagline {
+  font-size: 10px;
+  font-weight: 700;
+  color: #657344;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.footer-desc {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #5b6355;
+  margin: 6px 0 0;
+  max-width: 440px;
+}
+
+.footer-links-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-links-col strong {
+  font-size: 12px;
+  color: #1f241d;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+
+.footer-links-col a {
+  color: #515a4c;
+  text-decoration: none;
+  font-size: 13px;
+  transition: color 0.15s;
+}
+
+.footer-links-col a:hover {
+  color: #657344;
+  text-decoration: underline;
+}
+
+.footer-bottom {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding-top: 24px;
+  border-top: 1px solid #e2ddd0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: #6d7567;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer-bottom p {
+  margin: 0;
+}
+
+.footer-eco-badge {
+  font-weight: 600;
+  color: #657344;
+}

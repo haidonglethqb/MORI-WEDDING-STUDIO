@@ -35,14 +35,14 @@ export function PortalHero() {
         <div className="portal-veil" aria-hidden="true" />
         <div className="portal-panel portal-panel-left" aria-hidden="true" /><div className="portal-panel portal-panel-right" aria-hidden="true" />
         <span className="portal-dot portal-dot-one" aria-hidden="true" /><span className="portal-dot portal-dot-two" aria-hidden="true" />
-        <div className="portal-meta portal-meta-top"><span>WEDDING STUDIO / VIỆT NAM</span><span>THIỆP GIẤY · THIỆP SỐ</span></div>
+        <div className="portal-meta portal-meta-top"><span>WEDDING STUDIO / VIỆT NAM</span><span>THIỆP GIẤY · THIỆP ONLINE</span></div>
         <h1 id="portal-title" className="portal-wordmark" aria-label="MORI"><span>MO</span><span>RI</span></h1>
         <div className="portal-hero-copy">
           <p className="portal-hero-statement">Một lời mời, <em>trọn câu chuyện của hai bạn.</em></p>
-          <p className="portal-hero-lead">Thiệp giấy và thiệp số được thiết kế cùng xưởng MORI — từ bản phác đầu tiên đến ngày gửi trao.</p>
+          <p className="portal-hero-lead">Thiệp giấy và thiệp online được thiết kế cùng xưởng MORI — từ bản phác đầu tiên đến ngày gửi trao.</p>
           <div className="portal-actions">
             <a className="portal-button portal-button-solid" href="/collections">Khám phá bộ sưu tập ↗</a>
-            <a className="portal-link" href="/workspace">Bắt đầu thiệp số →</a>
+            <a className="portal-link" href="/collections?tab=online">Khám phá thiệp online →</a>
           </div>
         </div>
         <div className="portal-meta portal-meta-bottom"><span>MỘT LỜI MỜI, MỘT CÂU CHUYỆN</span><span>CUỘN ĐỂ KHÁM PHÁ ↓</span></div>

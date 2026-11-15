@@ -1,0 +1,99 @@
+@import './fonts-cards.css';
+
+.fonts-preview-controls {
+  background: #E8EBDD;
+  border: 1px solid #D3D8C5;
+  border-radius: 20px;
+  padding: 26px;
+  margin-bottom: 42px;
+}
+
+.fonts-preview-inputs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.fonts-input-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.fonts-input-field label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #252A24;
+}
+
+.fonts-input-field input {
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 11px;
+  border: 1px solid #C8CEBA;
+  background: #FFFCF7;
+  color: #252A24;
+  font-size: 14.5px;
+  font-family: inherit;
+}
+
+.fonts-input-field input:focus {
+  outline: none;
+  border-color: #657344;
+  box-shadow: 0 0 0 3px rgba(101, 115, 68, 0.16);
+}
+
+.fonts-paper-preview-strip {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  gap: 16px;
+  align-items: center;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #FFFCF7;
+  border: 1px solid #DCE0D0;
+}
+
+.fonts-paper-preview-strip img {
+  width: 110px;
+  height: 74px;
+  object-fit: cover;
+  border-radius: 10px;
+  display: block;
+}
+
+.fonts-paper-preview-strip strong {
+  display: block;
+  font-size: 14px;
+  color: #252A24;
+  margin-bottom: 4px;
+}
+
+.fonts-paper-preview-strip p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: #4A5246;
+}
+
+.fonts-selected-banner {
+  margin-top: 18px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: #FFFCF7;
+  border: 1px solid #657344;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  font-size: 14px;
+  color: #252A24;
+}
+
+.fonts-selected-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}

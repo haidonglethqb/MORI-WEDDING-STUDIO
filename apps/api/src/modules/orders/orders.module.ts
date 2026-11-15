@@ -13,12 +13,20 @@ import { ProductionIssueService } from './production-issue.service.js'
 import { QuoteOfferController } from './quote-offer.controller.js'
 import { QuoteOfferService } from './quote-offer.service.js'
 import { ShipmentEventService } from './shipment-event.service.js'
+import { StorefrontOrderController } from './storefront-order.controller.js'
+import { StorefrontOrderService } from './storefront-order.service.js'
 import { StudioOrderController } from './studio-order.controller.js'
 import { StudioOrderService } from './studio-order.service.js'
 
 @Module({
   imports: [IdentityModule],
-  controllers: [OrderListController, QuoteOfferController, OrderActionController, StudioOrderController],
+  controllers: [
+    OrderListController,
+    QuoteOfferController,
+    OrderActionController,
+    StudioOrderController,
+    StorefrontOrderController,
+  ],
   providers: [
     PlaceOrderService,
     OrderReadService,
@@ -31,7 +39,8 @@ import { StudioOrderService } from './studio-order.service.js'
     ShipmentEventService,
     FulfillmentService,
     StudioOrderService,
+    StorefrontOrderService,
   ],
-  exports: [PlaceOrderService],
+  exports: [PlaceOrderService, StorefrontOrderService],
 })
 export class OrdersModule {}

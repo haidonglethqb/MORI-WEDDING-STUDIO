@@ -14,7 +14,7 @@ const moriStoryClosingBlocks: BlogBlock[] = [
   },
   {
     type: 'paragraph',
-    text: 'Nhóm cũng dự kiến ứng dụng AI Chatbot để hỗ trợ tư vấn ban đầu, gợi ý mẫu thiệp phù hợp với phong cách và ngân sách. Bên cạnh đó, chức năng xem trước mô phỏng 3D được nghiên cứu nhằm giúp khách hàng hình dung rõ hơn kiểu dáng và bố cục thiệp trước khi xác nhận.',
+    text: 'Nhóm cũng dự kiến ứng dụng AI Chatbot để hỗ trợ tư vấn ban đầu, gợi ý mẫu thiệp phù hợp với phong cách và ngân sách. Bên cạnh đó, chức năng xem trước thiết kế 2D trực quan được nghiên cứu nhằm giúp khách hàng hình dung rõ hơn kiểu dáng và bố cục thiệp trước khi xác nhận.',
   },
   {
     type: 'paragraph',
@@ -103,7 +103,7 @@ export const articleMoriStory: BlogArticle = {
   title: 'MORI Wedding Studio – Khi một tấm thiệp nhỏ mang theo những điều lớn lao',
   italicAccent: 'Giữ trọn yêu thương, lan tỏa điều xanh.',
   subtitle:
-    'Câu chuyện hình thành MORI Wedding Studio: từ trăn trở về chất liệu xơ bã mía, trải nghiệm đặt thiệp từ xa với mô phỏng 3D đến sự chăm chút thủ công sau từng đơn hàng.',
+    'Câu chuyện hình thành MORI Wedding Studio: từ trăn trở về chất liệu xơ bã mía, trải nghiệm đặt thiệp từ xa với tính năng xem trước thiết kế 2D trực quan đến sự chăm chút thủ công sau từng đơn hàng.',
   excerpt:
     'Những điều đẹp đẽ không nhất thiết phải thật lớn lao; đôi khi chúng bắt đầu từ cách trân trọng từng chi tiết nhỏ trên tấm thiệp mời gửi đến những người thương yêu.',
   readMinutes: 7,

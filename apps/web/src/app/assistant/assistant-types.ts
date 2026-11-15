@@ -44,6 +44,9 @@ export interface EstimatedBudgetSummary {
 export interface ChatMessageItem {
   id: string
   role: 'user' | 'assistant'
+  senderType?: 'ai' | 'staff' | 'system'
+  senderLabel?: string
+  timestamp?: string
   content: string
   products?: SuggestedProductCard[]
   budget?: EstimatedBudgetSummary | null
@@ -60,6 +63,7 @@ export interface AssistantChatApiResponse {
   suggestedProducts: SuggestedProductCard[]
   estimatedBudget: EstimatedBudgetSummary | null
   quickFollowUps: string[]
+  needsHumanSupport?: boolean
   meta: {
     modelUsed: string
     fallbackTier: number

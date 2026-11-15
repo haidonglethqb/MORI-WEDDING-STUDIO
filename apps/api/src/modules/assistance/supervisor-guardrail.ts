@@ -5,28 +5,13 @@ import type {
   SuggestedProductCard,
 } from './assistant-types.js'
 
-const BANNED_PAYMENT_TERMS = [
-  'chuyển khoản',
-  'đặt cọc',
-  'số tài khoản',
-  'thanh toán online',
-  'thanh toán',
-  'stk',
-  'tiền cọc',
-  'ngân hàng',
-  'momo',
-  'vnpay',
-  'cọc trước',
-]
-
-const ARTISAN_PROOF_POLICY =
-  'MORI vận hành theo quy trình may đo nghệ nhân: Xưởng chuẩn bị bản in mẫu thử (Proof) gửi tận tay để bạn cảm nhận chất giấy và ánh kim trước khi quyết định chế tác.'
+const HUMAN_SUPPORT_GUIDANCE =
+  'Bạn có thể dùng nút "Chuyển yêu cầu gặp nhân viên" ngay trong khung chat hoặc gửi yêu cầu tại mục Thiết kế riêng trong Bộ sưu tập để đội ngũ MORI hỗ trợ trực tiếp nhé.'
 
 @Injectable()
 export class SupervisorGuardrail {
   sanitizeArtisanReply(rawReply: string): string {
     let sanitized = rawReply || 'MORI rất hân hạnh được đồng hành cùng ngày trọng đại của bạn.'
-    let triggered = false
 
     // 1. Strip internal slug leaks like "(slug: traditional-bifold-01)" or "(minimalist-flat-01)"
     sanitized = sanitized.replace(/\s*\([a-z0-9_.\s-]*(?:flat|bifold|traditional|minimalist|editorial|floral|typography|calligraphy|slug|mã)[^)]*\)/gi, '')
@@ -61,16 +46,12 @@ export class SupervisorGuardrail {
     sanitized = sanitized.replace(/\btấm thiệp\b/gi, 'bộ thiệp')
     sanitized = sanitized.replace(/(\d+)\s*tờ\b/gi, '$1 bộ')
 
-    // 5. INV-13 Zero Payment guardrail
-    for (const term of BANNED_PAYMENT_TERMS) {
-      if (new RegExp(term, 'i').test(sanitized)) {
-        triggered = true
-        sanitized = sanitized.replace(new RegExp(term, 'gi'), '[quy trình may đo proof]')
+    // 5. Disallow external Zalo references and direct to on-site escalation/custom design
+    if (/\bzalo\b/i.test(sanitized)) {
+      sanitized = sanitized.replace(/\bzalo(?:\s+oa)?\b/gi, 'kênh hỗ trợ trực tiếp tại MORI')
+      if (!sanitized.includes('Chuyển yêu cầu gặp nhân viên')) {
+        sanitized += `\n\n✦ ${HUMAN_SUPPORT_GUIDANCE}`
       }
-    }
-
-    if (triggered) {
-      sanitized += `\n\n✦ Lưu ý về quy trình đặt may đo: ${ARTISAN_PROOF_POLICY}`
     }
 
     return sanitized

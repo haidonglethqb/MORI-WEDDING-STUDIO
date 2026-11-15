@@ -1,65 +1,64 @@
 import { notFound } from 'next/navigation'
+import { HomeFooter } from '../../home-footer'
 import { HomeNav } from '../../home-nav'
+import { CartDrawerFallback } from '../../../features/cart/cart-drawer-fallback'
+import {
+  DIGITAL_CATALOG_ITEMS,
+  formatVnd,
+  getDigitalMeta,
+  resolveDigitalPriceVnd,
+} from '../../../features/cart/cart-types'
 import { ProductPreview } from '../../../features/preview/product-preview'
 import { resolveProductImageUrl } from '../../../features/preview/product-image'
 import { getBespokeProfile } from '../../collections/collection-catalog-data'
 import {
   COLLECTION_CATEGORIES,
-  resolveCategoryId,
   getPreviewCoupleName,
+  resolveCategoryId,
 } from '../../collections/collection-types'
+import { DigitalProductPreview } from './digital-product-preview'
 import { getShapeLabel, resolveProductCopy } from './product-copy'
+import { loadCatalogueProducts, type CatalogueProduct } from './product-loader'
 import { ProductMetaHeader } from './product-meta-header'
+import { ProductOrderBox } from './product-order-box'
+import '../../../features/cart/storefront-footer.css'
 import './product.css'
 
 export const dynamic = 'force-dynamic'
 
-interface CatalogueVariant {
-  availability: 'AVAILABLE' | 'UNAVAILABLE' | 'QUOTE_REQUIRED'
-  unitAmountVnd: string | null
-  shape: string
-}
-
-interface CatalogueProduct {
-  slug: string
-  name: string
-  description?: string | null
-  imageUrl?: string | null
-  isFixture: boolean
-  variants: CatalogueVariant[]
-}
-
-function apiOrigin(): string {
-  return process.env['API_INTERNAL_ORIGIN'] ?? 'http://127.0.0.1:4000'
-}
-
-async function loadProducts(): Promise<CatalogueProduct[]> {
-  try {
-    const response = await fetch(`${apiOrigin()}/api/v1/catalog/products`, { cache: 'no-store' })
-    if (!response.ok) return []
-    return (await response.json()) as CatalogueProduct[]
-  } catch {
-    return []
-  }
-}
-
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const products = await loadProducts()
-  const product = products.find((item) => item.slug === slug)
+  const products = await loadCatalogueProducts()
+  const apiProduct = products.find((item) => item.slug === slug)
+  const digitalMeta = getDigitalMeta(slug)
 
-  if (!product) notFound()
+  if (!apiProduct && !digitalMeta) notFound()
+
+  const isDigital = apiProduct?.type === 'DIGITAL' || slug.includes('-digital-') || Boolean(digitalMeta)
+  const product: CatalogueProduct = apiProduct ?? {
+    slug,
+    name: digitalMeta?.name ?? slug,
+    type: 'DIGITAL',
+    description: digitalMeta?.description ?? null,
+    imageUrl: null,
+    isFixture: false,
+    variants: [],
+  }
 
   const orderable = product.variants.filter((variant) => variant.availability !== 'UNAVAILABLE')
   const profile = getBespokeProfile(slug)
   const { title: curatedTitle, subtitle: curatedSubtitle } = resolveProductCopy(
     product,
-    profile?.title,
-    profile?.subtitle,
+    profile?.title ?? digitalMeta?.name,
+    profile?.subtitle ?? digitalMeta?.description,
   )
-  const imageUrl = resolveProductImageUrl(product, slug)
+  const imageUrl = isDigital ? null : resolveProductImageUrl(product, slug)
   const categoryId = resolveCategoryId(slug)
   const cat = COLLECTION_CATEGORIES.find((c) => c.id === categoryId)
+  const digitalPriceVnd = resolveDigitalPriceVnd(
+    slug,
+    orderable.find((v) => v.unitAmountVnd !== null)?.unitAmountVnd,
+  )
 
   return (
     <>
@@ -70,8 +69,8 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           <span>/</span>
           <a href="/collections">Bộ sưu tập</a>
           <span>/</span>
-          <a href={`/collections#${categoryId}`}>
-            {cat?.title.replace('Bộ sưu tập ', '') ?? 'Tác phẩm'}
+          <a href={isDigital ? '/collections?tab=online' : `/collections#${categoryId}`}>
+            {isDigital ? 'Thiệp online' : cat?.title.replace('Bộ sưu tập ', '') ?? 'Tác phẩm'}
           </a>
           <span>/</span>
           <span className="product-breadcrumb-current">{curatedTitle}</span>
@@ -79,13 +78,21 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
         <div className="product-layout">
           <div className="product-preview-card">
-            <ProductPreview
-              slug={slug}
-              name={getPreviewCoupleName()}
-              shape={orderable[0]?.shape ?? 'FLAT'}
-              imageUrl={imageUrl}
-              title={curatedTitle}
-            />
+            {isDigital ? (
+              <DigitalProductPreview
+                slug={slug}
+                title={curatedTitle}
+                accentColor={digitalMeta?.accentColor ?? cat?.accentColor}
+              />
+            ) : (
+              <ProductPreview
+                slug={slug}
+                name={getPreviewCoupleName()}
+                shape={orderable[0]?.shape ?? 'FLAT'}
+                imageUrl={imageUrl}
+                title={curatedTitle}
+              />
+            )}
           </div>
 
           <div className="product-info-panel">
@@ -98,46 +105,78 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             />
 
             <p className="product-desc">
-              {product.isFixture
-                ? 'Mẫu minh họa giúp bạn tham khảo phong cách và bố cục. Thông số và giá sản phẩm thực tế đang được cập nhật.'
-                : 'Xem các quy cách hiện có bên dưới. Chất liệu giấy 350gsm, kỹ thuật hoàn thiện và tiến độ sẽ được xưởng xác nhận theo yêu cầu.'}
+              {isDigital
+                ? 'Thiệp mời cưới dạng website riêng có đường link gửi nhanh qua Messenger, SMS hoặc tin nhắn, kèm đếm ngược ngày cưới, bản đồ chỉ đường và nút xác nhận tham dự (RSVP).'
+                : product.isFixture
+                  ? 'Mẫu minh họa giúp bạn tham khảo phong cách và bố cục. Thông số và giá sản phẩm thực tế đang được cập nhật.'
+                  : 'Chất liệu giấy bã mía 350gsm cao cấp. Chọn quy cách, số lượng hoặc mua kèm Thiệp Online để nhận ưu đãi giảm 50%.'}
             </p>
 
             <div className="product-variants-box">
-              <h3 className="product-variants-heading">Quy cách &amp; Giá cơ bản</h3>
-              {orderable.map((variant) => (
-                <div key={variant.shape} className="product-variant-item">
-                  <span className="product-variant-shape">
-                    {getShapeLabel(variant.shape)}
-                  </span>
-                  <span className="product-variant-price">
-                    {product.isFixture
-                      ? 'Mẫu minh họa'
-                      : variant.unitAmountVnd === null
-                      ? 'Liên hệ báo giá'
-                      : `${Number(variant.unitAmountVnd).toLocaleString('vi-VN')} ₫`}
-                  </span>
+              <h3 className="product-variants-heading">
+                {isDigital ? 'Thông tin gói Thiệp Online' : 'Quy cách & Giá cơ bản'}
+              </h3>
+              {isDigital ? (
+                <div className="product-variant-item">
+                  <span className="product-variant-shape">Website thiệp online trọn gói</span>
+                  <span className="product-variant-price">{formatVnd(digitalPriceVnd)}</span>
                 </div>
-              ))}
+              ) : (
+                orderable.map((variant) => (
+                  <div key={variant.shape} className="product-variant-item">
+                    <span className="product-variant-shape">{getShapeLabel(variant.shape)}</span>
+                    <span className="product-variant-price">
+                      {product.isFixture
+                        ? 'Mẫu minh họa'
+                        : variant.unitAmountVnd === null
+                          ? 'Liên hệ báo giá'
+                          : formatVnd(Number(variant.unitAmountVnd))}
+                    </span>
+                  </div>
+                ))
+              )}
             </div>
 
+            <ProductOrderBox
+              slug={slug}
+              title={curatedTitle}
+              productType={isDigital ? 'DIGITAL' : 'PAPER'}
+              imageUrl={imageUrl}
+              variants={orderable.map((v) => ({ shape: v.shape, unitAmountVnd: v.unitAmountVnd }))}
+              digitalPriceVnd={digitalPriceVnd}
+              digitalOptions={DIGITAL_CATALOG_ITEMS}
+              isFixture={product.isFixture}
+            />
+
             <div className="product-specs">
-              <p className="product-specs-title">Thông tin cần xác nhận:</p>
+              <p className="product-specs-title">
+                {isDigital ? 'Bao gồm trong gói Thiệp Online:' : 'Thông tin xưởng MORI:'}
+              </p>
               <ul className="product-specs-list">
-                <li>Chất liệu giấy bã mía 350gsm và kỹ thuật hoàn thiện theo mẫu được chọn.</li>
-                <li>Số lượng bộ thiệp và thời gian thực hiện theo lịch trình của bạn.</li>
-                <li>Chi phí được xác nhận rõ ràng trước khi bạn chốt yêu cầu.</li>
+                {isDigital ? (
+                  <>
+                    <li>Đường link mời riêng gửi nhanh qua Messenger, SMS và ứng dụng nhắn tin.</li>
+                    <li>Đếm ngược ngày cưới, bản đồ chỉ đường và phản hồi RSVP tự động.</li>
+                  </>
+                ) : (
+                  <>
+                    <li>Chất liệu giấy bã mía 350gsm và hoàn thiện sắc nét tại xưởng MORI.</li>
+                    <li>Giảm ngay 50% khi đặt kèm Thiệp Online trong cùng đơn hàng.</li>
+                  </>
+                )}
               </ul>
             </div>
 
             <div className="product-cta-wrap">
               <a href="/assistant" className="product-order-cta">
-                Hỏi về mẫu này &rarr;
+                Hỏi trợ lý AI về mẫu này →
               </a>
             </div>
           </div>
         </div>
       </main>
+      <CartDrawerFallback />
+      <HomeFooter />
     </>
   )
 }

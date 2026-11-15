@@ -1,8 +1,16 @@
+@import './product-order.css';
+
+html body:has(.product-page) {
+  background: #fffcf7;
+  color: #1f241d;
+}
+
 .product-page {
-  max-width: 1080px;
+  max-width: 1120px;
   margin: 0 auto;
   padding: 36px 24px 80px;
   box-sizing: border-box;
+  color: #1f241d;
 }
 
 .product-breadcrumb {
@@ -11,13 +19,14 @@
   align-items: center;
   gap: 6px 8px;
   font-size: 13px;
-  color: var(--a-muted, #62675f);
+  color: #5e6758;
   margin-bottom: 24px;
 }
 
 .product-breadcrumb a {
-  color: var(--a-forest, #1f3329);
+  color: #657344;
   text-decoration: none;
+  font-weight: 500;
 }
 
 .product-breadcrumb a:hover {
@@ -25,14 +34,14 @@
 }
 
 .product-breadcrumb-current {
-  color: var(--a-text, #1d221e);
-  font-weight: 500;
+  color: #1f241d;
+  font-weight: 600;
 }
 
 .product-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 48px;
+  gap: 44px;
   align-items: start;
 }
 
@@ -40,15 +49,15 @@
   min-width: 0;
 }
 
-.product-preview-card {
+html body .product-preview-card {
   width: 100%;
   max-width: 100%;
   min-width: 0;
   box-sizing: border-box;
-  background: var(--a-card, #fffdf8);
-  border-radius: 4px;
-  padding: 24px 20px;
-  border: 1px solid var(--a-line, #e2dccf);
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 20px;
+  border: 1px solid #e4dfd2;
   text-align: center;
 }
 
@@ -64,10 +73,10 @@
 }
 
 .product-info-panel h1 {
-  font-family: var(--a-display, "Lora", Georgia, serif);
-  font-size: clamp(32px, 4vw, 44px);
+  font-family: var(--a-display, 'Lora', Georgia, serif);
+  font-size: clamp(30px, 3.8vw, 42px);
   font-weight: 500;
-  color: var(--a-text, #1d221e);
+  color: #1f241d;
   margin: 0 0 12px;
   letter-spacing: -0.02em;
 }
@@ -75,24 +84,24 @@
 .product-desc {
   font-size: 15px;
   line-height: 1.65;
-  color: var(--a-muted, #62675f);
-  margin: 0 0 24px;
+  color: #596254;
+  margin: 0 0 20px;
 }
 
 .product-variants-box {
-  background: var(--a-card, #fffdf8);
-  border-radius: 4px;
-  border: 1px solid var(--a-line, #e2dccf);
-  padding: 20px;
-  margin-bottom: 20px;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e4dfd2;
+  padding: 18px 20px;
+  margin-bottom: 18px;
 }
 
 .product-variants-heading {
-  font-family: var(--a-ui, "Be Vietnam Pro", sans-serif);
+  font-family: var(--a-ui, 'Be Vietnam Pro', sans-serif);
   font-size: 12px;
-  font-weight: 600;
-  margin: 0 0 12px;
-  color: var(--a-text, #1d221e);
+  font-weight: 700;
+  margin: 0 0 10px;
+  color: #1f241d;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -104,7 +113,7 @@
   align-items: center;
   gap: 8px 12px;
   padding: 10px 0;
-  border-bottom: 1px dashed var(--a-line-strong, #cbc3b2);
+  border-bottom: 1px dashed #dfd9cb;
   font-size: 14px;
 }
 
@@ -114,30 +123,30 @@
 
 .product-variant-shape {
   font-weight: 500;
-  color: var(--a-text, #1d221e);
+  color: #1f241d;
 }
 
 .product-variant-price {
-  font-family: var(--a-display, "Lora", Georgia, serif);
+  font-family: var(--a-display, 'Lora', Georgia, serif);
   font-size: 16px;
   font-weight: 600;
-  color: var(--a-forest, #1f3329);
+  color: #4f5c31;
 }
 
 .product-specs {
-  background: var(--a-paper, #f3f0e8);
-  border: 1px solid var(--a-line, #e2dccf);
-  border-radius: 4px;
+  background: #e8ebdd;
+  border: 1px solid #d5ddc2;
+  border-radius: 12px;
   padding: 16px 18px;
   font-size: 13px;
-  color: var(--a-muted, #62675f);
+  color: #364123;
   line-height: 1.65;
 }
 
 .product-specs-title {
   margin: 0 0 6px;
-  font-weight: 600;
-  color: var(--a-forest, #1f3329);
+  font-weight: 700;
+  color: #2f3a1c;
 }
 
 .product-specs-list {
@@ -146,26 +155,26 @@
 }
 
 .product-cta-wrap {
-  margin-top: 24px;
+  margin-top: 16px;
 }
 
-.product-order-cta {
+html body .product-order-cta {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 52px;
-  padding: 0 24px;
-  border-radius: 2px;
-  background: var(--a-forest, #1f3329);
-  color: var(--a-ivory, #ede7dc);
+  min-height: 44px;
+  padding: 0 20px;
+  border-radius: 10px;
+  background: #fffcf7;
+  border: 1.5px solid #657344;
+  color: #4f5c31;
   text-decoration: none;
-  font-size: 15px;
-  font-weight: 500;
-  transition: background-color 0.2s ease;
+  font-size: 14px;
+  font-weight: 600;
 }
 
-.product-order-cta:hover {
-  background: var(--a-forest-hover, #2d4739);
+html body .product-order-cta:hover {
+  background: #e8ebdd;
 }
 
 @media (max-width: 840px) {
@@ -179,7 +188,6 @@
   .product-page {
     padding: 24px 16px 64px;
   }
-
   .product-preview-card {
     padding: 16px 14px;
   }

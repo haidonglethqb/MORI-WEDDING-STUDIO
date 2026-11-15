@@ -3,9 +3,18 @@ import type { CollectionItem } from './collection-types'
 
 export type { CollectionItem }
 
+function resolveShapeBadge(item: CollectionItem): string {
+  if (item.productType === 'DIGITAL' || item.shape === 'DIGITAL') return 'Website thiệp online'
+  if (item.shape === 'BIFOLD') return 'Khổ gấp đôi'
+  if (item.shape === 'TRIFOLD') return 'Khổ gấp ba'
+  return 'Khổ đơn phẳng'
+}
+
 export function CollectionCard({ item }: { item: CollectionItem }) {
   const formattedPrice = !item.isFixture && item.minPriceVnd
-    ? `Từ ${BigInt(item.minPriceVnd).toLocaleString('vi-VN')} ₫`
+    ? item.productType === 'DIGITAL'
+      ? `${BigInt(item.minPriceVnd).toLocaleString('vi-VN')} ₫`
+      : `Từ ${BigInt(item.minPriceVnd).toLocaleString('vi-VN')} ₫`
     : item.isFixture ? 'Mẫu minh họa' : 'Đang cập nhật'
 
   return (
@@ -15,15 +24,14 @@ export function CollectionCard({ item }: { item: CollectionItem }) {
         className="artisan-card-link"
         aria-label={`Xem chi tiết tác phẩm ${item.curatedTitle}`}
       >
-        {/* Custom Visual Paper Stage */}
         <CollectionCardVisual item={item} />
 
-        {/* Card Content & Metadata */}
         <div className="artisan-card-body">
           <div className="artisan-specs-row">
-            <span className="spec-shape-pill">
-              {item.shape === 'BIFOLD' ? 'Khổ gấp đôi' : item.shape === 'TRIFOLD' ? 'Khổ gấp ba' : 'Khổ đơn phẳng'}
+            <span className="spec-type-pill">
+              {item.productType === 'DIGITAL' ? 'Thiệp online' : 'Thiệp giấy'}
             </span>
+            <span className="spec-shape-pill">{resolveShapeBadge(item)}</span>
             {item.isFixture ? <span className="spec-material-tag">Thông tin mẫu</span> : null}
           </div>
 
@@ -33,12 +41,12 @@ export function CollectionCard({ item }: { item: CollectionItem }) {
 
           <div className="artisan-card-footer">
             <div className="artisan-price-block">
-              <span className="price-lead-label">{item.isFixture ? 'Giá và quy cách' : 'Giá tham khảo'}</span>
+              <span className="price-lead-label">
+                {item.isFixture ? 'Giá và quy cách' : item.productType === 'DIGITAL' ? 'Trọn gói' : 'Giá tham khảo'}
+              </span>
               <span className="price-main-vnd">{formattedPrice}</span>
             </div>
-            <span className="artisan-cta-link">
-              Khám phá &amp; 3D &rarr;
-            </span>
+            <span className="artisan-cta-link">Xem chi tiết &rarr;</span>
           </div>
         </div>
       </a>

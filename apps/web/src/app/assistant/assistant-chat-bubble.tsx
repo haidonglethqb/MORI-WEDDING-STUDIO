@@ -22,10 +22,7 @@ function renderFormattedMessage(content: string): ReactNode {
           const trimmed = line.trim()
           const isBullet =
             trimmed.startsWith('- ') || trimmed.startsWith('• ') || /^\d+\.\s/.test(trimmed)
-          const cleanLine = trimmed
-            .replace(/^[-•]\s*/, '')
-            .replace(/^\d+\.\s*/, '')
-
+          const cleanLine = trimmed.replace(/^[-•]\s*/, '').replace(/^\d+\.\s*/, '')
           const parts = cleanLine.split(/(\*\*[^*]+\*\*)/g)
           const renderedParts = parts.map((part, partIdx) => {
             if (part.startsWith('**') && part.endsWith('**')) {
@@ -47,9 +44,7 @@ function renderFormattedMessage(content: string): ReactNode {
 }
 
 export function AssistantChatBubble({ message }: ChatBubbleProps) {
-  const isUser = message.role === 'user'
-
-  if (isUser) {
+  if (message.role === 'user') {
     return (
       <div className="chat-row user-row">
         <div className="user-bubble">
@@ -59,18 +54,33 @@ export function AssistantChatBubble({ message }: ChatBubbleProps) {
     )
   }
 
+  const isStaff = message.senderType === 'staff'
+  const isSystem = message.senderType === 'system'
+
   return (
-    <div className="chat-row assistant-row">
-      <div className="atelier-avatar" aria-hidden="true">
-        <span>M</span>
+    <div className={`chat-row assistant-row ${isStaff ? 'is-staff-row' : ''}`}>
+      <div className={`atelier-avatar ${isStaff ? 'is-staff-avatar' : ''}`} aria-hidden="true">
+        <span>{isStaff ? 'NV' : 'M'}</span>
       </div>
       <div className="assistant-bubble-container">
         <div className="assistant-bubble-header">
-          <span className="atelier-name">Trợ lý MORI</span>
-          <span className="atelier-role">Nghệ nhân MORI</span>
+          <span className="atelier-name">
+            {isStaff
+              ? message.senderLabel || 'Nhân viên tư vấn MORI'
+              : isSystem
+                ? message.senderLabel || 'Hệ thống hỗ trợ MORI'
+                : 'Trợ lý MORI'}
+          </span>
+          <span className={`atelier-role ${isStaff ? 'is-staff-badge' : ''}`}>
+            {isStaff ? 'Hỗ trợ trực tiếp' : isSystem ? 'Đã chuyển tiếp' : 'Tư vấn viên AI'}
+          </span>
         </div>
 
-        <div className="assistant-bubble-content">
+        <div
+          className={`assistant-bubble-content ${
+            isStaff ? 'staff-bubble-content' : isSystem ? 'system-bubble-content' : ''
+          }`}
+        >
           <div className="bubble-text-flow">{renderFormattedMessage(message.content)}</div>
         </div>
 
@@ -87,7 +97,8 @@ export function AssistantChatBubble({ message }: ChatBubbleProps) {
             <div className="budget-header">
               <span className="budget-title">Dự toán may đo ước tính</span>
               <span className="budget-shape-badge">
-                {message.budget.quantity} bộ thiệp ({message.budget.shape === 'BIFOLD' ? 'Gập đôi' : 'Khổ phẳng'})
+                {message.budget.quantity} bộ thiệp (
+                {message.budget.shape === 'BIFOLD' ? 'Gập đôi' : 'Khổ phẳng'})
               </span>
             </div>
 

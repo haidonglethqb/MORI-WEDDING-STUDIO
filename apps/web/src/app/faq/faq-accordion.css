@@ -1,0 +1,133 @@
+.faq-accordion-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.faq-item-card {
+  background: #FAF7EE;
+  border: 1px solid #E2E5D8;
+  border-radius: 14px;
+  overflow: hidden;
+  transition: border-color 0.16s ease, background-color 0.16s ease;
+}
+
+.faq-item-card.is-open {
+  background: #FFFCF7;
+  border-color: #657344;
+}
+
+.faq-item-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  background: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  color: #252A24;
+}
+
+.faq-item-q {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.faq-item-symbol {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #E8EBDD;
+  color: #657344;
+  font-size: 18px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.faq-item-card.is-open .faq-item-symbol {
+  background: #657344;
+  color: #FFFCF7;
+}
+
+.faq-item-body {
+  padding: 0 20px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.faq-item-body p {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: #3E453B;
+}
+
+.faq-item-bullets {
+  margin: 2px 0 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.faq-item-bullets li {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #252A24;
+}
+
+.faq-bottom-banner {
+  background: #E8EBDD;
+  border: 1px solid #CFD6BE;
+  border-radius: 20px;
+  padding: 36px 28px;
+  text-align: center;
+}
+
+.faq-bottom-qmark {
+  width: 44px;
+  height: 44px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  background: #657344;
+  color: #FFFCF7;
+  font-family: 'Lora', Georgia, serif;
+  font-size: 22px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.faq-bottom-banner h2 {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 26px;
+  color: #252A24;
+  margin: 0 0 8px;
+}
+
+.faq-bottom-banner p {
+  font-size: 14.5px;
+  color: #495145;
+  margin: 0 0 22px;
+}
+
+@media (max-width: 860px) {
+  .faq-two-col {
+    grid-template-columns: 1fr;
+  }
+  .faq-sidebar {
+    position: static;
+  }
+  .faq-content-pane {
+    padding: 20px;
+  }
+}

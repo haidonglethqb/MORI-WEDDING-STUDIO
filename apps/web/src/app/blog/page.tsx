@@ -8,7 +8,7 @@ import './blog-editorial.css'
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'Tạp chí MORI · Chất liệu, Phong cách & Câu chuyện Thiệp cưới',
+  title: 'Blog cưới MORI · Chất liệu, Phong cách & Câu chuyện Thiệp cưới',
   description:
     'Khám phá câu chuyện giấy bã mía, năm phong cách thiệp cưới và nghệ thuật cá nhân hóa cùng xưởng MORI Wedding Studio.',
 }
@@ -19,7 +19,7 @@ export default function BlogIndexPage() {
       <HomeNav />
       <main className="blog-archive-wrap">
         <header className="blog-archive-header">
-          <span className="blog-kicker">TẠP CHÍ &amp; GÓC NHÌN MORI</span>
+          <span className="blog-kicker">BLOG CƯỚI &amp; GÓC NHÌN MORI</span>
           <h1>
             Những câu chuyện <em className="blog-accent">sau từng tấm thiệp.</em>
           </h1>

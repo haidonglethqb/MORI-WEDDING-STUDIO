@@ -1,0 +1,40 @@
+.cart-row-card {
+  display: grid; grid-template-columns: 88px minmax(0, 1fr); gap: 16px;
+  padding: 18px 0; border-bottom: 1px solid #ece7da;
+}
+.cart-row-card:first-child { padding-top: 0; }
+.cart-row-card:last-child { border-bottom: 0; padding-bottom: 0; }
+.cart-row-thumb {
+  width: 88px; height: 112px; border-radius: 8px; overflow: hidden; border: 1px solid #e2ddd0;
+  background: #e8ebdd; display: grid; place-items: center; font-family: var(--a-display, 'Lora', serif);
+  font-size: 12px; color: #495628; text-align: center;
+}
+.cart-row-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cart-row-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.cart-row-title {
+  margin: 0; font-family: var(--a-display, 'Lora', serif); font-size: 18px;
+  font-weight: 500; color: #1f241d; text-decoration: none;
+}
+.cart-row-title:hover { color: #657344; text-decoration: underline; }
+.cart-row-remove { border: 0; background: transparent; color: #8f3929; font-size: 12px; font-weight: 600; cursor: pointer; }
+.cart-row-badges { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 8px; }
+.cart-badge-sage {
+  padding: 3px 9px; border-radius: 999px; background: #e8ebdd; color: #435025; font-size: 11px; font-weight: 700;
+}
+.cart-badge-ivory {
+  padding: 3px 9px; border-radius: 999px; background: #f6f3ea; border: 1px solid #e1dcd0;
+  color: #545d4e; font-size: 11px; font-weight: 600;
+}
+.cart-row-controls { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-top: 10px; }
+.cart-qty-editor { display: inline-flex; align-items: center; border: 1px solid #d5cfc0; border-radius: 8px; background: #fffcf7; }
+.cart-qty-editor button { width: 34px; height: 36px; border: 0; background: transparent; font-weight: 700; cursor: pointer; }
+.cart-qty-editor input {
+  width: 60px; height: 36px; border: 0; border-left: 1px solid #e4dfd2; border-right: 1px solid #e4dfd2;
+  background: transparent; text-align: center; font-size: 13px; font-weight: 600;
+}
+.cart-font-inline { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 8px; font-size: 12px; color: #545d4f; }
+.cart-font-inline input {
+  height: 32px; padding: 4px 10px; border-radius: 6px; border: 1px solid #d5cfc0;
+  background: #fffcf7; font-size: 12px; width: 140px;
+}
+.cart-font-inline a { color: #657344; font-weight: 600; }

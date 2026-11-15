@@ -29,6 +29,30 @@
   .portal-home .portal-reviews::before { font-size: 96px; }
 }
 
-/* Keep the process numbers legible and in the same visual family as the headings. */
-.process-numeral { font: 600 48px/1 'Syne', sans-serif; color: #e9a65e; -webkit-text-stroke: 0; }
+/* Keep the process numbers legible and in the olive palette. */
+.process-numeral { font: 600 48px/1 'Syne', sans-serif; color: #657344; -webkit-text-stroke: 0; }
 @media (max-width: 600px) { .process-numeral { font-size: 38px; } }
+
+/* Override portal-motion.css accent colors (#e9a65e / dark ink) to the olive & ivory palette. */
+.portal-home .portal-scroll-progress { background: #657344; }
+.portal-home .portal-button::before,
+.portal-home .portal-button-solid::before { background: #4F5B35; }
+.portal-home .portal-button:hover,
+.portal-home .portal-button:focus-visible,
+.portal-home .portal-button.portal-button-solid:hover,
+.portal-home .portal-button.portal-button-solid:focus-visible { background: #4F5B35; border-color: #4F5B35; color: #FFFCF7; }
+.portal-home .portal-link {
+  background:
+    linear-gradient(#657344, #657344) left bottom / 0 1px no-repeat,
+    linear-gradient(rgba(101, 115, 68, .45), rgba(101, 115, 68, .45)) left bottom / 100% 1px no-repeat;
+}
+.portal-home .portal-link:hover,
+.portal-home .portal-link:focus-visible { color: #657344; }
+.portal-home .home-nav-links a::after { background: #657344; }
+.portal-home .footer-links-col a:hover { color: #E8EBDD; }
+.portal-home .portal-process-rows > li::before,
+.portal-home .material-notes li::before { background: #657344; }
+.portal-home .portal-process-rows > li:hover strong,
+.portal-home .material-notes li:hover strong { color: #657344; }
+.portal-home .deck-empty:hover .deck-empty-photo { box-shadow: 0 32px 56px rgba(37, 42, 36, .2); }
+@keyframes portal-ink { to { color: #657344; } }

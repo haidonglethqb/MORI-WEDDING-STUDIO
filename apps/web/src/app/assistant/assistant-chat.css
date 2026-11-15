@@ -1,0 +1,115 @@
+html body .assistant-page .assistant-container {
+  width: 100%;
+}
+
+html body .assistant-page .chat-window-pane {
+  background: #FFFCF7;
+  border: 1px solid #D6DBC8;
+  border-radius: 20px;
+  box-shadow: 0 12px 32px rgba(37, 42, 36, 0.06);
+  display: flex;
+  flex-direction: column;
+  min-height: 620px;
+  max-height: 78vh;
+  overflow: hidden;
+}
+
+html body .assistant-page .chat-pane-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 20px;
+  background: #E8EBDD;
+  border-bottom: 1px solid #D3D8C5;
+}
+
+.assistant-page .chat-header-identity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.assistant-page .atelier-avatar-small,
+.assistant-page .atelier-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #657344;
+  color: #FFFCF7;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.assistant-page .atelier-avatar.is-staff-avatar {
+  background: #252A24;
+  color: #FFFCF7;
+}
+
+.assistant-page .chat-header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.assistant-page .chat-header-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #252A24;
+}
+
+.assistant-page .chat-header-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: #4D5549;
+}
+
+.assistant-page .status-indicator-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #657344;
+}
+
+.assistant-page .chat-header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.assistant-page .chat-escalate-btn,
+.assistant-page .chat-header-reset-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.assistant-page .chat-escalate-btn {
+  background: #657344;
+  color: #FFFCF7;
+  border: 1px solid #657344;
+}
+
+.assistant-page .chat-escalate-btn:hover,
+.assistant-page .chat-escalate-btn.is-active {
+  background: #4F5B34;
+  border-color: #4F5B34;
+}
+
+.assistant-page .chat-header-reset-btn {
+  background: #FFFCF7;
+  color: #252A24;
+  border: 1px solid #C8CEBA;
+}

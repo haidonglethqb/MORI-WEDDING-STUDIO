@@ -1,40 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
+import type { AdminReplyItem, AiConversationSession, AiSessionTurn } from './assistant-types.js'
 
-export interface AiSessionTurn {
-  id: string
-  turnIndex: number
-  timestamp: string
-  userMessage: string
-  modelUsed: string
-  fallbackTier: number
-  latencyMs: number
-  assistantReply: string
-  suggestedProducts: Array<{
-    slug: string
-    name: string
-    startingPriceVnd: string
-  }>
-}
-
-export interface AiConversationSession {
-  sessionId: string
-  createdAt: string
-  updatedAt: string
-  turnsCount: number
-  lastModelUsed: string
-  brief: {
-    coupleNames?: string | null | undefined
-    weddingDate?: string | null | undefined
-    location?: string | null | undefined
-    guestCount?: number | null | undefined
-    budget?: string | null | undefined
-    aesthetic?: string | null | undefined
-    targetShape?: string | null | undefined
-  }
-  turns: AiSessionTurn[]
-}
+export type { AdminReplyItem, AiConversationSession, AiSessionTurn }
 
 const MAX_SESSIONS = 100
 
@@ -44,7 +13,7 @@ export class AiLogService {
   private readonly filePath: string
 
   constructor() {
-    this.filePath = join(process.cwd(), '.data', 'ai-sessions.json')
+    this.filePath = process.env['MORI_AI_LOG_PATH'] || join(process.cwd(), '.data', 'ai-sessions.json')
     this.loadSessions()
   }
 
@@ -56,23 +25,10 @@ export class AiLogService {
     const cleanSessionId = sessionId || 'session_guest_default'
     const now = new Date().toISOString()
 
-    let session = this.sessionsMap.get(cleanSessionId)
-    if (!session) {
-      session = {
-        sessionId: cleanSessionId,
-        createdAt: now,
-        updatedAt: now,
-        turnsCount: 0,
-        lastModelUsed: turnData.modelUsed,
-        brief: context ?? {},
-        turns: [],
-      }
-    }
-
-    const turnIndex = session.turns.length + 1
+    const session = this.sessionsMap.get(cleanSessionId) ?? this.createEmptySession(cleanSessionId, turnData.modelUsed, now, context)
     const newTurn: AiSessionTurn = {
       id: `turn_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
-      turnIndex,
+      turnIndex: session.turns.length + 1,
       timestamp: now,
       ...turnData,
     }
@@ -81,13 +37,76 @@ export class AiLogService {
     session.turnsCount = session.turns.length
     session.updatedAt = now
     session.lastModelUsed = turnData.modelUsed
-    if (context) {
-      session.brief = { ...session.brief, ...context }
-    }
+    if (context) session.brief = { ...session.brief, ...context }
 
     this.sessionsMap.set(cleanSessionId, session)
     this.persistSessions()
     return session
+  }
+
+  markEscalated(
+    sessionId: string,
+    opts?: { customerContact?: string | null | undefined; reason?: string | null | undefined },
+  ): AiConversationSession {
+    const cleanId = sessionId.trim() || 'session_guest_default'
+    const now = new Date().toISOString()
+    const session = this.sessionsMap.get(cleanId) ?? this.createEmptySession(cleanId, 'human-handoff', now)
+
+    session.needsHumanSupport = true
+    session.escalatedAt = session.escalatedAt ?? now
+    if (opts?.customerContact?.trim()) session.customerContact = opts.customerContact.trim()
+    if (opts?.reason?.trim()) session.escalationReason = opts.reason.trim()
+    session.adminReplies = session.adminReplies ?? []
+    session.updatedAt = now
+
+    this.sessionsMap.set(cleanId, session)
+    this.persistSessions()
+    return session
+  }
+
+  addAdminReply(
+    sessionId: string,
+    opts: { sender: string; message: string; resolveEscalation?: boolean | undefined },
+  ): AiConversationSession | null {
+    const session = this.sessionsMap.get(sessionId)
+    if (!session) return null
+
+    const now = new Date().toISOString()
+    const item: AdminReplyItem = {
+      id: `reply_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+      timestamp: now,
+      sender: opts.sender,
+      message: opts.message.trim(),
+    }
+    session.adminReplies = [...(session.adminReplies ?? []), item]
+    if (opts.resolveEscalation === true) session.needsHumanSupport = false
+    session.updatedAt = now
+
+    this.sessionsMap.set(sessionId, session)
+    this.persistSessions()
+    return session
+  }
+
+  private createEmptySession(
+    sessionId: string,
+    lastModelUsed: string,
+    now: string,
+    brief?: AiConversationSession['brief'],
+  ): AiConversationSession {
+    return {
+      sessionId,
+      createdAt: now,
+      updatedAt: now,
+      turnsCount: 0,
+      lastModelUsed,
+      brief: brief ?? {},
+      turns: [],
+      needsHumanSupport: false,
+      escalatedAt: null,
+      customerContact: null,
+      escalationReason: null,
+      adminReplies: [],
+    }
   }
 
   getSessions(limit = 50): AiConversationSession[] {

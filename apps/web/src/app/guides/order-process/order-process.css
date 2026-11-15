@@ -1,0 +1,138 @@
+.process-steps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.process-step-card {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 32px;
+  align-items: center;
+  background: #FFFFFF;
+  border: 1px solid #DCE0D0;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 8px 24px rgba(37, 42, 36, 0.04);
+}
+
+.process-step-card.is-reversed .process-step-media {
+  order: -1;
+}
+
+.process-step-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.process-step-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.process-step-num {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: #E8EBDD;
+  color: #657344;
+  font-family: 'Lora', Georgia, serif;
+  font-size: 22px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid #CFD6BE;
+}
+
+.process-step-code {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #657344;
+  margin-bottom: 3px;
+}
+
+.process-step-title {
+  font-family: 'Lora', Georgia, serif;
+  font-size: clamp(19px, 2.2vw, 23px);
+  font-weight: 600;
+  color: #252A24;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.process-step-paragraphs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.process-step-paragraphs p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.72;
+  color: #3B4239;
+}
+
+.process-step-bullets {
+  margin: 2px 0 0;
+  padding: 14px 18px 14px 34px;
+  background: #FAF7EE;
+  border: 1px solid #E8EBDD;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.process-step-bullets li {
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: #252A24;
+}
+
+.process-step-media {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.process-step-photo-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #E8EBDD;
+  border: 1px solid #D5DAC8;
+}
+
+.process-step-photo {
+  object-fit: cover;
+}
+
+.process-step-caption {
+  font-size: 12.5px;
+  color: #5C6458;
+  text-align: center;
+  line-height: 1.45;
+}
+
+@media (max-width: 860px) {
+  .process-step-card {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .process-step-card.is-reversed .process-step-media {
+    order: 0;
+  }
+}

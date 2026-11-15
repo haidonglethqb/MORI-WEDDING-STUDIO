@@ -106,7 +106,7 @@ export const articleSugarcanePaper: BlogArticle = {
     },
     {
       type: 'paragraph',
-      text: 'Thiệp giấy được dự kiến thiết kế, in ấn, gia công và kiểm tra chất lượng tại Đà Nẵng, sau đó giao đến khách hàng trên toàn quốc. Bên cạnh đó, website MORI được định hướng hỗ trợ xem trước mô phỏng 3D để khách hàng hình dung kiểu dáng và bố cục trước khi xác nhận thiết kế.',
+      text: 'Thiệp giấy được dự kiến thiết kế, in ấn, gia công và kiểm tra chất lượng tại Đà Nẵng, sau đó giao đến khách hàng trên toàn quốc. Bên cạnh đó, website MORI được định hướng hỗ trợ xem trước thiết kế 2D trực quan để khách hàng hình dung kiểu dáng và bố cục trước khi xác nhận thiết kế.',
     },
     {
       type: 'paragraph',

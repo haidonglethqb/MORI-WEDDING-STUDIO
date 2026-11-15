@@ -37,7 +37,7 @@ body :is(.workspace-item, .studio-item, .quote-item-card, .proof-item-card, .add
   box-shadow: none;
   transition: border-color .2s, background-color .2s;
 }
-body :is(.workspace-item, .studio-item):hover { border-color: var(--a-line-strong); background: #fffaf1; box-shadow: none; }
+body :is(.workspace-item, .studio-item):hover { border-color: var(--a-line-strong); background: #F5F7EE; box-shadow: none; }
 body :is(.workspace-item-title, .studio-item-title) { color: var(--a-text); font: 500 18px/1.35 var(--a-display); }
 body :is(.workspace-item-meta, .studio-item-meta) { color: var(--a-muted); font-size: 13px; }
 body .workspace-item-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
@@ -57,14 +57,14 @@ body :is(.workspace-empty, .studio-empty, .atelier-empty) {
 body .atelier-empty--inline { padding: 0; border: 0; text-align: left; }
 body :is(.studio-page, .order-detail-page, .workspace-page) > :is(.studio-empty, .workspace-empty, .atelier-empty) { margin-top: 56px; }
 body :is(.workspace-empty, .studio-empty, .atelier-empty) :is(.workspace-btn-primary, .workspace-btn-outline, .workspace-btn-secondary) { margin-top: 16px; font-style: normal; }
-body .workspace-load-error { border-radius: 3px; border-color: #e5cfa8; background: #fbf3e4; }
+body .workspace-load-error { border-radius: 3px; border-color: var(--a-line-strong); background: #E8EBDD; }
 
 /* Notices and conversation. */
 body .notice-list { display: grid; gap: 8px; }
 body .notice-item { display: flex; justify-content: space-between; gap: 12px; padding: 14px 16px; border-radius: 3px; border-color: var(--a-line); background: #fff; font-size: 14px; }
-body .notice-new { align-self: flex-start; border-radius: 99px; background: #f6ead8; color: #8a521d; letter-spacing: .08em; }
+body .notice-new { align-self: flex-start; border-radius: 99px; background: #E8EBDD; color: #3E472D; letter-spacing: .08em; }
 body .message-bubble-list { gap: 10px; }
-body .message-bubble { max-width: 78%; padding: 14px 18px; border: 1px solid var(--a-line); border-radius: 3px 14px 14px 14px; background: #f4f1e9; color: var(--a-text); font-size: 15px; }
+body .message-bubble { max-width: 78%; padding: 14px 18px; border: 1px solid var(--a-line); border-radius: 3px 14px 14px 14px; background: #E8EBDD; color: var(--a-text); font-size: 15px; }
 
 /* Forms. Zero-specificity defaults so component-level styles still win. */
 :where(.workspace-page, .addresses-page, .order-detail-page, .request-detail-page, .studio-page) :where(input:not([type=checkbox], [type=radio], [type=range], [type=file]), textarea, select) {
@@ -74,14 +74,14 @@ body .message-bubble { max-width: 78%; padding: 14px 18px; border: 1px solid var
   padding: 11px 14px;
   border: 1px solid var(--a-line-strong);
   border-radius: 2px;
-  background: #fffefb;
+  background: #FFFFFF;
   color: var(--a-text);
   font: 400 15px/1.5 var(--a-ui);
   transition: border-color .2s, box-shadow .2s;
 }
 :where(.workspace-page, .addresses-page, .order-detail-page, .request-detail-page, .studio-page) :where(textarea) { min-height: 112px; resize: vertical; }
-:where(.workspace-page, .addresses-page, .order-detail-page, .request-detail-page, .studio-page) :where(input, textarea, select):focus { border-color: var(--a-forest); box-shadow: 0 0 0 3px rgba(31, 51, 41, .12); outline: none; }
-:where(.workspace-page, .addresses-page, .order-detail-page, .request-detail-page, .studio-page) :where(input, textarea)::placeholder { color: #8c8f86; }
+:where(.workspace-page, .addresses-page, .order-detail-page, .request-detail-page, .studio-page) :where(input, textarea, select):focus { border-color: var(--a-forest); box-shadow: 0 0 0 3px rgba(101, 115, 68, .18); outline: none; }
+:where(.workspace-page, .addresses-page, .order-detail-page, .request-detail-page, .studio-page) :where(input, textarea)::placeholder { color: #7C846E; }
 body .field-group, body .atelier-field { display: grid; gap: 8px; margin: 0; }
 body :is(.field-group, .atelier-field) > span { color: var(--a-text); font-size: 13px; font-weight: 500; }
 body .atelier-form { display: grid; gap: 18px; }
@@ -92,7 +92,7 @@ body .atelier-reply .atelier-form-actions { justify-content: space-between; }
 body .atelier-hint { margin: 0; color: var(--a-muted); font-size: 13px; }
 body .status-banner { margin: 0; padding: 12px 14px; border-radius: 3px; font-size: 14px; line-height: 1.5; }
 body .status-banner.status-error { background: #f6e3df; border: 1px solid #e8c3ba; color: #8d2f1f; }
-body .status-banner.status-success { background: #e3eee5; border: 1px solid #c3dac9; color: #23503a; }
+body .status-banner.status-success { background: #E8EBDD; border: 1px solid #C6CEB2; color: #3E472D; }
 
 /* Addresses. */
 body .addresses-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-bottom: 32px; }
@@ -103,13 +103,13 @@ body .addresses-page > .atelier-empty { margin-bottom: 24px; }
 
 /* Order detail. */
 body .order-detail-grid { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 28px; align-items: start; }
-body .order-info-row { gap: 16px; padding: 13px 0; border-bottom: 1px solid #efeae0; font-size: 14px; }
+body .order-info-row { gap: 16px; padding: 13px 0; border-bottom: 1px solid var(--a-line); font-size: 14px; }
 body .order-info-row > :first-child { color: var(--a-muted); }
 body .order-info-row > :last-child { color: var(--a-text); text-align: right; font-weight: 500; }
 body .order-info-row.is-total { margin-top: 6px; padding-top: 18px; border-top: 1px solid var(--a-line-strong); border-bottom: 0; }
 body .order-info-row.is-total > :first-child { color: var(--a-text); font-weight: 600; }
 body .order-total-highlight { color: var(--a-forest); font: 500 28px/1.1 var(--a-display); }
-body .atelier-alert { margin-top: 16px; padding: 14px 16px; border: 1px solid #e5cfa8; border-radius: 3px; background: #fbf3e4; color: #6c4a1c; font-size: 14px; line-height: 1.55; }
+body .atelier-alert { margin-top: 16px; padding: 14px 16px; border: 1px solid #C6CEB2; border-radius: 3px; background: #E8EBDD; color: #3E472D; font-size: 14px; line-height: 1.55; }
 body .atelier-list { margin: 0; padding-left: 18px; color: var(--a-muted); font-size: 14px; line-height: 1.7; }
 body .atelier-list.is-danger { color: #9a3523; }
 body .atelier-address strong { display: block; font: 500 18px/1.4 var(--a-display); }

@@ -1,0 +1,154 @@
+@import './cart-drawer-items.css';
+
+.cart-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9990;
+  background: rgba(24, 29, 21, 0.48);
+  backdrop-filter: blur(3px);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cart-drawer-panel {
+  width: min(440px, 100vw);
+  height: 100%;
+  background: #fffcf7;
+  color: #1e241c;
+  border-left: 1px solid #dfd9cb;
+  box-shadow: -12px 0 40px rgba(24, 29, 21, 0.18);
+  display: flex;
+  flex-direction: column;
+  font-family: var(--a-ui, 'Be Vietnam Pro', sans-serif);
+}
+
+.cart-drawer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e6e0d2;
+}
+
+.cart-drawer-head h2 {
+  margin: 0;
+  font-family: var(--a-display, 'Lora', Georgia, serif);
+  font-size: 20px;
+  font-weight: 600;
+  color: #1e241c;
+}
+
+.cart-drawer-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: 1px solid #dad4c5;
+  background: #fff;
+  color: #3f4738;
+  font-size: 16px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.cart-drawer-close:hover {
+  background: #e8ebdd;
+  border-color: #657344;
+}
+
+.cart-drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cart-drawer-empty {
+  margin: auto 0;
+  text-align: center;
+  padding: 32px 16px;
+  color: #5b6354;
+}
+
+.cart-drawer-empty p {
+  margin: 0 0 16px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.cart-drawer-foot {
+  padding: 18px 24px 24px;
+  border-top: 1px solid #e6e0d2;
+  background: #f8f5ec;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cart-summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: #545d4f;
+}
+
+.cart-summary-discount {
+  background: #e8ebdd;
+  color: #3f4e22;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.cart-summary-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 8px;
+  border-top: 1px dashed #d3cdbf;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e241c;
+}
+
+.cart-drawer-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.cart-btn-outline,
+.cart-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.cart-btn-outline {
+  background: #fffcf7;
+  border: 1.5px solid #657344;
+  color: #4f5b33;
+}
+
+.cart-btn-primary {
+  background: #657344;
+  border: 1.5px solid #657344;
+  color: #fffcf7;
+}
+
+.cart-btn-primary:hover {
+  background: #536036;
+}

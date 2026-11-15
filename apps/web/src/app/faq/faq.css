@@ -1,0 +1,115 @@
+@import './faq-accordion.css';
+
+.faq-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.faq-two-col {
+  display: grid;
+  grid-template-columns: 310px 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+.faq-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: sticky;
+  top: 88px;
+}
+
+.faq-cat-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 15px 16px;
+  border-radius: 14px;
+  background: #FFFFFF;
+  border: 1px solid #DCE0D0;
+  color: #252A24;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.faq-cat-btn:hover {
+  background: #FAF7EE;
+  border-color: #657344;
+}
+
+.faq-cat-btn.is-active {
+  background: #E8EBDD;
+  border-color: #657344;
+  box-shadow: 0 4px 12px rgba(101, 115, 68, 0.12);
+}
+
+.faq-cat-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.faq-cat-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: #FAF7EE;
+  color: #657344;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.faq-cat-btn.is-active .faq-cat-icon {
+  background: #657344;
+  color: #FFFCF7;
+}
+
+.faq-cat-name {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.faq-cat-chevron {
+  font-size: 18px;
+  color: #657344;
+  font-weight: 600;
+}
+
+.faq-content-pane {
+  background: #FFFFFF;
+  border: 1px solid #DCE0D0;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 8px 24px rgba(37, 42, 36, 0.04);
+}
+
+.faq-pane-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding-bottom: 16px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid #E8EBDD;
+}
+
+.faq-pane-head h2 {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 24px;
+  color: #252A24;
+  margin: 0;
+}
+
+.faq-pane-head span {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #657344;
+}

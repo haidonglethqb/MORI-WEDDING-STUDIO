@@ -35,12 +35,32 @@ export interface AiSessionTurn {
   }>
 }
 
+export interface AdminReplyMessage {
+  id: string
+  timestamp?: string
+  sender?: string
+  message?: string
+  content?: string
+  adminName?: string
+  createdAt?: string
+}
+
 export interface AiConversationSession {
   sessionId: string
   createdAt: string
   updatedAt: string
   turnsCount: number
   lastModelUsed: string
+  needsHumanSupport?: boolean
+  needsHuman?: boolean
+  escalated?: boolean
+  escalatedAt?: string | null
+  customerContact?: string | null
+  contactInfo?: string | null
+  escalationReason?: string | null
+  escalationNote?: string | null
+  escalationRequestedAt?: string | null
+  adminReplies?: AdminReplyMessage[]
   brief: {
     coupleNames?: string | null
     weddingDate?: string | null
@@ -51,4 +71,36 @@ export interface AiConversationSession {
     targetShape?: string | null
   }
   turns: AiSessionTurn[]
+}
+
+export interface StorefrontOrderRecord {
+  orderCode: string
+  customerName: string
+  contact: string
+  productSummary: string
+  orderType: 'PAPER' | 'DIGITAL' | 'COMBO'
+  quantity: number
+  totalAmountVnd: string
+  paidAmountVnd: string
+  paymentStatus: string
+  shippingAddress: string
+  paperStepIndex: number | null
+  onlineStepIndex: number | null
+  createdAt: string
+}
+
+export interface CustomRequestRecord {
+  id: string
+  customerName: string
+  contact: string
+  email: string
+  coupleNames: string
+  weddingDate: string
+  style: string
+  fontCode: string
+  styleNote: string
+  quantity: string
+  status: string
+  adminNote: string
+  createdAt: string
 }

@@ -15,7 +15,7 @@ export function PortalJournal() {
     <section className="portal-journal" id="tap-chi" aria-labelledby="journal-title">
       <div className="journal-top" data-reveal>
         <div>
-          <span className="portal-kicker">06 / TẠP CHÍ &amp; GÓC NHÌN</span>
+          <span className="portal-kicker">06 / BLOG CƯỚI &amp; GÓC NHÌN</span>
           <h2 id="journal-title">
             Những câu chuyện<br />
             <em>sau từng tấm thiệp.</em>
@@ -27,7 +27,7 @@ export function PortalJournal() {
             lời mời mang dấu ấn riêng của hai bạn.
           </p>
           <Link className="portal-link" href="/blog">
-            Khám phá toàn bộ Tạp chí ↗
+            Khám phá toàn bộ Blog cưới ↗
           </Link>
         </div>
       </div>

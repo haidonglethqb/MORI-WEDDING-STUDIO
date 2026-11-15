@@ -1,103 +1,102 @@
 'use client'
 
-import dynamic from 'next/dynamic'
 import { useState } from 'react'
-import { MoriIcon } from '../components/mori-icon'
 
-const BiFoldCardScene = dynamic(
-  () => import('../features/preview/bifold-card-scene').then((module) => module.BiFoldCardScene),
-  { ssr: false },
-)
-
-const MODELS = [
-  { slug: 'editorial-bifold-01', label: 'Thanh lịch', color: '#c5a059' },
-  { slug: 'traditional-bifold-01', label: 'Á Đông', color: '#7c1f1d' },
-  { slug: 'floral-bifold-01', label: 'Thiên nhiên', color: '#607855' },
-  { slug: 'minimalist-bifold-01', label: 'Tinh giản', color: '#787367' },
-  { slug: 'typography-bifold-01', label: 'Thư pháp', color: '#a67c52' },
+const HERO_STYLES = [
+  {
+    slug: 'editorial-bifold-01',
+    label: 'Thanh lịch',
+    title: "L'Amour Vogue No. 1",
+    image: '/images/products/editorial/editorial-bifold-01.jpg',
+    color: '#c5a059',
+  },
+  {
+    slug: 'traditional-bifold-01',
+    label: 'Á Đông',
+    title: 'Song Hỷ Cung Đình',
+    image: '/images/products/heritage/traditional-bifold-01.jpg',
+    color: '#7c1f1d',
+  },
+  {
+    slug: 'floral-bifold-01',
+    label: 'Thiên nhiên',
+    title: 'Provence Magnolia',
+    image: '/images/products/floral/floral-bifold-01.jpg',
+    color: '#607855',
+  },
+  {
+    slug: 'minimalist-bifold-01',
+    label: 'Tinh giản',
+    title: 'Komorebi Wabi-Sabi',
+    image: '/images/products/minimalist/minimalist-bifold-01.jpg',
+    color: '#787367',
+  },
+  {
+    slug: 'typography-bifold-01',
+    label: 'Thư pháp',
+    title: 'Florence Monogram',
+    image: '/images/products/modern-calligraphy/typography-bifold-01.jpg',
+    color: '#a67c52',
+  },
 ] as const
 
+const BOX_STYLE = {
+  background: 'radial-gradient(circle at center, #ffffff 0%, #f4f0e6 100%)',
+  borderRadius: '20px',
+  border: '1px solid rgba(179, 142, 70, 0.25)',
+  padding: '24px',
+  textAlign: 'center' as const,
+}
+
+const FRAME_STYLE = {
+  width: '100%',
+  maxWidth: '300px',
+  aspectRatio: '3 / 4',
+  margin: '18px auto 12px',
+  overflow: 'hidden',
+  borderRadius: '8px',
+  border: '1px solid #d9d1c2',
+  background: '#fffdf8',
+  boxShadow: '0 14px 32px rgba(48, 43, 34, 0.12)',
+}
+
 export function HeroShowcase() {
-  const [open, setOpen] = useState(0.45)
-  const [selectedSlug, setSelectedSlug] = useState<string>(MODELS[0].slug)
-  const [showPreview, setShowPreview] = useState(false)
-  const [webglUnavailable, setWebglUnavailable] = useState(false)
+  const [selectedSlug, setSelectedSlug] = useState<string>(HERO_STYLES[0].slug)
+  const activeStyle = HERO_STYLES.find((item) => item.slug === selectedSlug) ?? HERO_STYLES[0]
 
   return (
-    <div className="hero-3d-box">
-      <div className="hero-3d-badge">MORI / PHỐI CẢNH 3D</div>
-      {showPreview ? (
-        <>
-          <div className="hero-model-selector" aria-label="Chọn phong cách thiệp">
-            {MODELS.map((model) => (
-              <button
-                key={model.slug}
-                type="button"
-                className="hero-model-button"
-                aria-pressed={selectedSlug === model.slug}
-                onClick={() => setSelectedSlug(model.slug)}
-              >
-                <span className="hero-model-dot" style={{ backgroundColor: model.color }} />
-                {model.label}
-              </button>
-            ))}
-          </div>
-          <div className="hero-3d-canvas-wrap">
-            {webglUnavailable ? (
-              <div className="hero-preview-fallback" role="status">
-                <MoriIcon name="paper" />
-                <span>Thiết bị này chưa hỗ trợ xem trước 3D.</span>
-              </div>
-            ) : (
-              <BiFoldCardScene
-                key={selectedSlug}
-                slug={selectedSlug}
-                openAmount={open}
-                name="Tên hai bạn"
-                onUnavailable={() => setWebglUnavailable(true)}
-              />
-            )}
-          </div>
-          <div className="hero-3d-controls">
-            <label htmlFor="preview-open">Độ mở thiệp</label>
-            <input
-              id="preview-open"
-              type="range"
-              min="0"
-              max="1"
-              step="0.01"
-              value={open}
-              onChange={(event) => setOpen(Number(event.target.value))}
-              className="hero-3d-slider"
-            />
-            <span className="hero-3d-deg">{Math.round(open * 180)}°</span>
-            <button type="button" className="hero-preview-close" onClick={() => setShowPreview(false)}>
-              Thu gọn
-            </button>
-          </div>
-        </>
-      ) : (
-        <>
-          <div className="hero-preview-stage" aria-hidden="true">
-            <div className="hero-preview-envelope" />
-            <div className="hero-preview-card">
-              <small>TRÂN TRỌNG KÍNH MỜI</small>
-              <span className="paper-monogram">M</span>
-              <span className="paper-heading">Ngày chung đôi</span>
-              <small>MỘT KHỞI ĐẦU MỚI<br />MỘT CÂU CHUYỆN RIÊNG</small>
-            </div>
-            <div className="paper-reply">
-              <small>MORI WEDDING STUDIO</small>
-              <span>Hẹn ngày vui.</span>
-              <small>WITH LOVE, ALWAYS</small>
-            </div>
-          </div>
-          <p className="hero-preview-caption">Phối cảnh tham khảo, không thay thế bản duyệt in.</p>
-          <button type="button" className="hero-preview-open" onClick={() => setShowPreview(true)}>
-            <MoriIcon name="paper" /> Xem trước thiệp 3D
+    <div className="hero-showcase-box" style={BOX_STYLE}>
+      <div style={{ fontSize: '10px', letterSpacing: '0.16em', color: '#75664b', fontWeight: 700, marginBottom: '12px' }}>
+        MORI / PHONG CÁCH THIỆP CƯỚI
+      </div>
+      <div className="hero-model-selector" aria-label="Chọn phong cách thiệp">
+        {HERO_STYLES.map((style) => (
+          <button
+            key={style.slug}
+            type="button"
+            className="hero-model-button"
+            aria-pressed={activeStyle.slug === style.slug}
+            onClick={() => setSelectedSlug(style.slug)}
+          >
+            <span className="hero-model-dot" style={{ backgroundColor: style.color }} />
+            {style.label}
           </button>
-        </>
-      )}
+        ))}
+      </div>
+      <div style={FRAME_STYLE}>
+        <img
+          src={activeStyle.image}
+          alt={`Mẫu thiệp cưới ${activeStyle.title} phong cách ${activeStyle.label}`}
+          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+        />
+      </div>
+      <p style={{ margin: '0 0 4px', fontFamily: 'var(--font-serif, "Lora", Georgia, serif)', fontSize: '16px', fontWeight: 500, color: '#272d24' }}>
+        {activeStyle.title}
+      </p>
+      <p className="hero-preview-caption">Ảnh mẫu thiết kế 2D trực quan trên giấy mỹ thuật bã mía 350gsm.</p>
+      <a href="/collections" className="hero-preview-open" style={{ display: 'inline-flex', width: 'fit-content', textDecoration: 'none' }}>
+        Khám phá bộ sưu tập
+      </a>
     </div>
   )
 }

@@ -26,10 +26,10 @@ export async function generateMetadata({
   const { slug } = await params
   const article = getArticleBySlug(slug)
   if (!article) {
-    return { title: 'Bài viết không tồn tại · Tạp chí MORI' }
+    return { title: 'Bài viết không tồn tại · Blog cưới MORI' }
   }
   return {
-    title: `${article.title} · Tạp chí MORI`,
+    title: `${article.title} · Blog cưới MORI`,
     description: article.excerpt,
   }
 }
@@ -56,7 +56,7 @@ export default async function BlogArticlePage({
         <nav aria-label="Đường dẫn" className="blog-breadcrumb">
           <Link href="/">Trang chủ</Link>
           <span aria-hidden="true">/</span>
-          <Link href="/blog">Tạp chí</Link>
+          <Link href="/blog">Blog cưới</Link>
           <span aria-hidden="true">/</span>
           <Link href={`/blog?category=${article.category}`}>{article.categoryLabel}</Link>
         </nav>

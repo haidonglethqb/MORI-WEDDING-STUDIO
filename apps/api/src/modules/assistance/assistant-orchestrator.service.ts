@@ -19,6 +19,7 @@ import {
   buildUserPrompt,
   formatGroundedCatalog,
 } from './assistant-prompts.js'
+import { buildEscalationChatResponse, hasHumanEscalationIntent } from './assistant-escalation.js'
 
 interface ModelRawOutput {
   reply: string
@@ -48,6 +49,14 @@ export class AssistantOrchestratorService {
     const start = Date.now()
     const baseBrief = this.extractor.mergeBrief(this.extractor.createInitialBrief(), req.context)
     const boostedBrief = this.extractor.boostFromText(baseBrief, req.message)
+
+    if (hasHumanEscalationIntent(req.message)) {
+      const escalationResponse = buildEscalationChatResponse(boostedBrief, Date.now() - start)
+      this.recordTurn(sessionId, req.message, escalationResponse)
+      this.logService.markEscalated(sessionId, { reason: req.message })
+      return escalationResponse
+    }
+
     const history = req.history?.slice(-30) ?? []
     const catalog = await this.catalogProvider.getActiveProducts()
 
@@ -68,31 +77,7 @@ export class AssistantOrchestratorService {
       response = this.formatLocalFallback(boostedBrief, catalog, Date.now() - start)
     }
 
-    this.logService.recordTurn(
-      sessionId,
-      {
-        userMessage: req.message,
-        modelUsed: response.meta.modelUsed,
-        fallbackTier: response.meta.fallbackTier,
-        latencyMs: response.meta.latencyMs,
-        assistantReply: response.reply,
-        suggestedProducts: response.suggestedProducts.map((p) => ({
-          slug: p.slug,
-          name: p.name,
-          startingPriceVnd: p.startingPriceVnd,
-        })),
-      },
-      {
-        coupleNames: response.updatedBrief.coupleNames,
-        weddingDate: response.updatedBrief.weddingDate,
-        location: response.updatedBrief.location,
-        guestCount: response.updatedBrief.guestCount,
-        budget: response.updatedBrief.budgetRangeVnd?.max ?? null,
-        aesthetic: response.updatedBrief.aestheticIdentity,
-        targetShape: response.updatedBrief.targetShape,
-      },
-    )
-
+    this.recordTurn(sessionId, req.message, response)
     return response
   }
 
@@ -173,5 +158,32 @@ export class AssistantOrchestratorService {
       quickFollowUps: ['Xem chi tiết mẫu này', 'Tư vấn tiệc ngoài trời', 'Báo giá 100 bộ thiệp'],
       meta: { modelUsed: 'fallback/catalog-offline', fallbackTier: 4, latencyMs, groundedProductCount: catalog.length },
     }
+  }
+
+  private recordTurn(sessionId: string, userMessage: string, res: AssistantChatResponse): void {
+    this.logService.recordTurn(
+      sessionId,
+      {
+        userMessage,
+        modelUsed: res.meta.modelUsed,
+        fallbackTier: res.meta.fallbackTier,
+        latencyMs: res.meta.latencyMs,
+        assistantReply: res.reply,
+        suggestedProducts: res.suggestedProducts.map((p) => ({
+          slug: p.slug,
+          name: p.name,
+          startingPriceVnd: p.startingPriceVnd,
+        })),
+      },
+      {
+        coupleNames: res.updatedBrief.coupleNames,
+        weddingDate: res.updatedBrief.weddingDate,
+        location: res.updatedBrief.location,
+        guestCount: res.updatedBrief.guestCount,
+        budget: res.updatedBrief.budgetRangeVnd?.max ?? null,
+        aesthetic: res.updatedBrief.aestheticIdentity,
+        targetShape: res.updatedBrief.targetShape,
+      },
+    )
   }
 }

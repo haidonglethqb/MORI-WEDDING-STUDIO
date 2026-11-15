@@ -1,4 +1,7 @@
-import { describe, expect, it } from 'vitest'
+import { afterAll, describe, expect, it } from 'vitest'
+import { mkdtempSync, rmSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import { AdminAiConfigController } from './admin-ai-config.controller.js'
 import { AiConfigService } from './ai-config.service.js'
 import { AiLogService } from './ai-log.service.js'
@@ -6,9 +9,16 @@ import { AiProviderTesterService } from './ai-provider-tester.service.js'
 import type { IdentityService } from '../identity/identity.service.js'
 
 describe('AdminAiConfigController', () => {
+  const tempDir = mkdtempSync(join(tmpdir(), 'mori-admin-ai-'))
+  process.env['MORI_AI_LOG_PATH'] = join(tempDir, 'ai-sessions.json')
   const configService = new AiConfigService()
   const testerService = new AiProviderTesterService(configService)
   const logService = new AiLogService()
+
+  afterAll(() => {
+    delete process.env['MORI_AI_LOG_PATH']
+    rmSync(tempDir, { recursive: true, force: true })
+  })
   const mockIdentity = {
     currentUser: () => Promise.resolve({ id: 'admin-1', role: 'ADMIN', status: 'ACTIVE' }),
   } as unknown as IdentityService
@@ -80,5 +90,39 @@ describe('AdminAiConfigController', () => {
     })
     expect(hostRes.ok).toBe(false)
     expect(hostRes.error).toContain('SSRF validation failed')
+  })
+
+  it('allows both ADMIN and STUDIO to read logs and reply to sessions while keeping config ADMIN-only', async () => {
+    logService.markEscalated('sess-esc-admin', {
+      customerContact: '0901234567',
+      reason: 'Cần tư vấn thiết kế riêng',
+    })
+
+    const studioIdentity = {
+      currentUser: () => Promise.resolve({ id: 'studio-1', role: 'STUDIO', status: 'ACTIVE', displayName: 'Studio Stylist' }),
+    } as unknown as IdentityService
+    const studioController = new AdminAiConfigController(configService, logService, studioIdentity, testerService)
+
+    await expect(studioController.getConfig(adminCookie)).rejects.toThrow()
+    const logs = await studioController.getLogs(adminCookie)
+    expect(logs.some((s) => s.sessionId === 'sess-esc-admin')).toBe(true)
+
+    const replyRes = await studioController.replyToSession(adminCookie, 'sess-esc-admin', {
+      message: 'Chào bạn, MORI Studio đã nhận thông tin của bạn rồi nhé!',
+      resolveEscalation: true,
+    })
+    expect(replyRes.ok).toBe(true)
+    expect(replyRes.session.adminReplies).toHaveLength(1)
+    expect(replyRes.session.adminReplies?.[0]?.sender).toBe('Studio Stylist')
+    expect(replyRes.session.needsHumanSupport).toBe(false)
+
+    const customerIdentity = {
+      currentUser: () => Promise.resolve({ id: 'cust-1', role: 'CUSTOMER', status: 'ACTIVE' }),
+    } as unknown as IdentityService
+    const customerController = new AdminAiConfigController(configService, logService, customerIdentity, testerService)
+    await expect(customerController.getLogs(adminCookie)).rejects.toThrow()
+    await expect(
+      customerController.replyToSession(adminCookie, 'sess-esc-admin', { message: 'Hack' }),
+    ).rejects.toThrow()
   })
 })

@@ -1,0 +1,114 @@
+.assistant-page .escalate-drawer {
+  background: #FFFCF7;
+  border: 1px solid #657344;
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.assistant-page .escalate-drawer-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.assistant-page .escalate-drawer-head strong {
+  display: block;
+  font-size: 14px;
+  color: #252A24;
+  margin-bottom: 3px;
+}
+
+.assistant-page .escalate-drawer-head p {
+  margin: 0;
+  font-size: 12.5px;
+  color: #4D5549;
+  line-height: 1.5;
+}
+
+.assistant-page .escalate-close-btn {
+  border: 1px solid #C8CEBA;
+  background: #FAF7EE;
+  color: #252A24;
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.assistant-page .escalate-fields-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.assistant-page .escalate-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.assistant-page .escalate-field span {
+  font-size: 12px;
+  font-weight: 600;
+  color: #252A24;
+}
+
+.assistant-page .escalate-field input {
+  min-height: 38px;
+  padding: 0 12px;
+  border-radius: 9px;
+  border: 1px solid #C8CEBA;
+  background: #FAF7EE;
+  color: #252A24;
+  font-size: 13.5px;
+}
+
+.assistant-page .escalate-error-msg {
+  font-size: 12.5px;
+  color: #8A2B24;
+  background: #FDF1F0;
+  border: 1px solid #E5B9B5;
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+.assistant-page .escalate-drawer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.assistant-page .escalate-alt-hint {
+  font-size: 12.5px;
+  color: #4D5549;
+}
+
+.assistant-page .escalate-alt-link {
+  color: #657344;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.assistant-page .escalate-submit-btn {
+  min-height: 38px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: none;
+  background: #657344;
+  color: #FFFCF7;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+@media (max-width: 680px) {
+  .assistant-page .escalate-fields-row {
+    grid-template-columns: 1fr;
+  }
+}

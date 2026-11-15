@@ -1,32 +1,50 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import type { AiConversationSession } from './admin-ai-types'
+import { useCallback, useEffect, useState } from 'react'
 import { AdminAiSessionView } from './admin-ai-session-view'
+import type { AiConversationSession } from './admin-ai-types'
+import { AdminSessionCard } from './admin-session-card'
+
+function isSessionEscalated(s: AiConversationSession): boolean {
+  return Boolean(
+    s.needsHumanSupport || s.needsHuman || s.escalated || s.customerContact || s.contactInfo,
+  )
+}
+
+function normalizeSessionsPayload(raw: unknown): AiConversationSession[] {
+  if (Array.isArray(raw)) return raw as AiConversationSession[]
+  if (typeof raw === 'object' && raw !== null && Array.isArray((raw as { sessions?: unknown }).sessions)) {
+    return (raw as { sessions: AiConversationSession[] }).sessions
+  }
+  return []
+}
 
 export function AdminAiLogs() {
   const [sessions, setSessions] = useState<AiConversationSession[]>([])
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [onlyEscalated, setOnlyEscalated] = useState(false)
 
-  async function fetchSessions() {
+  const fetchSessions = useCallback(async () => {
     setLoading(true)
     try {
       const res = await fetch('/admin/ai/logs', { cache: 'no-store' })
       if (res.ok) {
-        const data = (await res.json()) as AiConversationSession[]
+        const data = normalizeSessionsPayload((await res.json()) as unknown)
         setSessions(data)
-        if (data.length > 0 && !selectedId) {
-          setSelectedId(data[0]?.sessionId ?? null)
-        }
+        setSelectedId((prev) => prev ?? data[0]?.sessionId ?? null)
       }
     } catch {
-      // Ignore
+      // Ignore transient errors
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    void fetchSessions()
+  }, [fetchSessions])
 
   async function handleClearAll() {
     if (!confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử các phiên trò chuyện AI không?')) return
@@ -48,34 +66,30 @@ export function AdminAiLogs() {
       if (res.ok) {
         const nextList = sessions.filter((s) => s.sessionId !== sessionId)
         setSessions(nextList)
-        if (selectedId === sessionId) {
-          setSelectedId(nextList[0]?.sessionId ?? null)
-        }
+        if (selectedId === sessionId) setSelectedId(nextList[0]?.sessionId ?? null)
       }
     } catch {
       // Ignore
     }
   }
 
-  useEffect(() => {
-    void fetchSessions()
-  }, [])
-
+  const escalatedCount = sessions.filter(isSessionEscalated).length
   const filtered = sessions.filter((s) => {
-    const q = search.toLowerCase()
-    if (s.sessionId.toLowerCase().includes(q)) return true
-    if (s.brief.coupleNames?.toLowerCase().includes(q)) return true
-    if (s.brief.location?.toLowerCase().includes(q)) return true
-    if (s.lastModelUsed.toLowerCase().includes(q)) return true
-    return s.turns.some(
-      (t) =>
-        t.userMessage.toLowerCase().includes(q) ||
-        t.assistantReply.toLowerCase().includes(q) ||
-        t.modelUsed.toLowerCase().includes(q),
+    if (onlyEscalated && !isSessionEscalated(s)) return false
+    const q = search.trim().toLowerCase()
+    if (!q) return true
+    return (
+      s.sessionId.toLowerCase().includes(q) ||
+      Boolean(s.brief.coupleNames?.toLowerCase().includes(q)) ||
+      Boolean(s.customerContact?.toLowerCase().includes(q)) ||
+      Boolean(s.contactInfo?.toLowerCase().includes(q)) ||
+      s.turns.some(
+        (t) => t.userMessage.toLowerCase().includes(q) || t.assistantReply.toLowerCase().includes(q),
+      )
     )
   })
 
-  const currentSession = sessions.find((s) => s.sessionId === selectedId) ?? filtered[0]
+  const currentSession = filtered.find((s) => s.sessionId === selectedId) ?? filtered[0]
 
   return (
     <div className="admin-sessions-container">
@@ -83,13 +97,20 @@ export function AdminAiLogs() {
         <input
           type="text"
           className="logs-search-input"
-          placeholder="Tìm theo mã phiên, tên cặp đôi, câu hỏi khách nhắn hoặc model..."
+          placeholder="Tìm theo mã phiên, SĐT/email khách, tên cặp đôi hoặc nội dung chat..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
         <div className="logs-actions">
+          <button
+            type="button"
+            className={`btn-filter-sm ${onlyEscalated ? 'is-active' : ''}`}
+            onClick={() => setOnlyEscalated((prev) => !prev)}
+          >
+            Cần nhân viên hỗ trợ ({escalatedCount})
+          </button>
           <button type="button" className="btn-secondary-sm" onClick={() => void fetchSessions()}>
-            {loading ? 'Đang tải...' : '✦ Làm mới'}
+            {loading ? 'Đang tải...' : 'Làm mới'}
           </button>
           <button
             type="button"
@@ -107,8 +128,8 @@ export function AdminAiLogs() {
       ) : filtered.length === 0 ? (
         <div className="logs-empty">
           {sessions.length === 0
-            ? 'Chưa có phiên trò chuyện nào. Mỗi khi khách nhắn tin với Trợ lý MORI, phiên chat và context riêng biệt sẽ tự động hiển thị tại đây.'
-            : 'Không tìm thấy phiên hội thoại nào khớp với từ khóa.'}
+            ? 'Chưa có phiên trò chuyện nào. Khi khách nhắn với Trợ lý MORI hoặc bấm “Gặp nhân viên tư vấn”, phiên hội thoại sẽ tự động hiển thị tại đây.'
+            : 'Không tìm thấy phiên hội thoại nào phù hợp bộ lọc.'}
         </div>
       ) : (
         <div className="sessions-master-detail-layout">
@@ -116,45 +137,15 @@ export function AdminAiLogs() {
             <div className="master-list-header">
               <span>Danh sách cuộc trò chuyện ({filtered.length})</span>
             </div>
-            {filtered.map((s) => {
-              const isSelected = (currentSession?.sessionId ?? '') === s.sessionId
-              const lastTurn = s.turns[s.turns.length - 1]
-              const previewText = lastTurn?.userMessage || 'Chưa có tin nhắn'
-              const coupleName = s.brief.coupleNames || null
-
-              return (
-                <div
-                  key={s.sessionId}
-                  className={`session-summary-card ${isSelected ? 'is-active' : ''}`}
-                  onClick={() => setSelectedId(s.sessionId)}
-                  role="button"
-                  tabIndex={0}
-                >
-                  <div className="summary-card-top">
-                    <span className="summary-session-id">{s.sessionId}</span>
-                    <span className="summary-turn-count">{s.turnsCount} lượt</span>
-                  </div>
-
-                  {coupleName && (
-                    <div className="summary-couple-tag">
-                      ✦ Cặp đôi: <strong>{coupleName}</strong>
-                    </div>
-                  )}
-
-                  <div className="summary-preview-message">&ldquo;{previewText}&rdquo;</div>
-
-                  <div className="summary-card-bottom">
-                    <span className="summary-model-pill">{s.lastModelUsed}</span>
-                    <span className="summary-time">
-                      {new Date(s.updatedAt).toLocaleTimeString('vi-VN', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
-                    </span>
-                  </div>
-                </div>
-              )
-            })}
+            {filtered.map((s) => (
+              <AdminSessionCard
+                key={s.sessionId}
+                session={s}
+                isSelected={(currentSession?.sessionId ?? '') === s.sessionId}
+                isEscalated={isSessionEscalated(s)}
+                onSelect={setSelectedId}
+              />
+            ))}
           </div>
 
           <div className="sessions-detail-column">
@@ -162,9 +153,12 @@ export function AdminAiLogs() {
               <AdminAiSessionView
                 session={currentSession}
                 onDeleteSession={handleDeleteSession}
+                onSessionUpdated={fetchSessions}
               />
             ) : (
-              <div className="no-session-selected">Vui lòng chọn một phiên hội thoại từ danh sách bên trái.</div>
+              <div className="no-session-selected">
+                Vui lòng chọn một phiên hội thoại từ danh sách bên trái.
+              </div>
             )}
           </div>
         </div>

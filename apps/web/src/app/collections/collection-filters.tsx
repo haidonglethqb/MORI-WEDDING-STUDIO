@@ -31,10 +31,13 @@ export function CollectionFilters({ items }: { items: CollectionItem[] }) {
   }, [])
 
   function updateUrl(next: { style: string; shape: string; query: string }, mode: 'push' | 'replace' = 'push') {
-    const params = new URLSearchParams()
+    const params = new URLSearchParams(window.location.search)
     if (next.style !== 'ALL') params.set('style', next.style)
+    else params.delete('style')
     if (next.shape !== 'ALL') params.set('shape', next.shape)
+    else params.delete('shape')
     if (next.query.trim()) params.set('q', next.query.trim())
+    else params.delete('q')
     const queryString = params.toString()
     const url = `${window.location.pathname}${queryString ? `?${queryString}` : ''}`
     window.history[`${mode}State`]({}, '', url)

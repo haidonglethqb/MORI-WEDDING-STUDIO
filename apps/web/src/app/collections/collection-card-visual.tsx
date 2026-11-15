@@ -72,9 +72,11 @@ export function CollectionCardVisual({ item }: { item: CollectionItem }) {
         </>
       )}
 
-      <span className="visual-3d-tag">✦ Xem 3D</span>
       <span className={`visual-cat-badge badge-theme-${item.categoryId}`}>
         {item.categoryLabel}
+      </span>
+      <span className="visual-type-badge">
+        {item.productType === 'DIGITAL' ? 'Thiệp online' : 'Thiệp giấy'}
       </span>
     </div>
   )

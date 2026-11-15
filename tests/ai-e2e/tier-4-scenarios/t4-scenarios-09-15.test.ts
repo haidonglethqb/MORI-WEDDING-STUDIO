@@ -107,23 +107,28 @@ describe('Tier 4: Scenarios T09 - T15 (Multi-Intent, Setup Math, Outage, Boundar
     expect(filtered).not.toContain('unknown-luxury-slug-99')
   })
 
-  // T15: User asks payment online
-  it('T15: Explains official studio consultation policy; executes zero payment tools (INV-13)', () => {
+  // T15: User asks payment online & custom support
+  it('T15: Explains storefront demo payment methods, 399k-599k digital pricing, 50% combo discount, and on-site support (no Zalo)', () => {
     const handlePaymentQuery = (query: string) => {
-      const isPaymentQuestion = /(thanh toán|đặt cọc|chuyển khoản|vietqr|online|pay)/i.test(query)
+      const isPaymentQuestion = /(thanh toán|đặt cọc|chuyển khoản|vietqr|momo|vnpay|cod|online|pay)/i.test(query)
       if (isPaymentQuestion) {
         return {
-          reply: 'MORI tư vấn thiết kế và ký hợp đồng trực tiếp tại studio hoặc qua chuyên viên. Hệ thống không thực hiện thanh toán online tự động.',
-          hasPaymentToolCall: false,
-          hasPayButton: false,
+          reply:
+            'Bạn có thể đặt thiệp trực tiếp trên website và thanh toán demo qua MoMo, VNPAY, Chuyển khoản QR hoặc COD. Giá thiệp online 399.000 - 599.000 ₫ (giảm 50% khi mua Combo thiệp giấy + thiệp online). Nếu cần gặp nhân viên, bạn dùng nút "Chuyển yêu cầu gặp nhân viên" hoặc mục Thiết kế riêng nhé.',
+          hasZaloMention: false,
+          supportsStorefrontDemo: true,
         }
       }
-      return { reply: 'Tiếp tục tư vấn', hasPaymentToolCall: false, hasPayButton: false }
+      return { reply: 'Tiếp tục tư vấn', hasZaloMention: false, supportsStorefrontDemo: false }
     }
 
-    const paymentRes = handlePaymentQuery('Tôi muốn thanh toán online đặt cọc 500k qua VietQR')
-    expect(paymentRes.hasPaymentToolCall).toBe(false)
-    expect(paymentRes.hasPayButton).toBe(false)
-    expect(paymentRes.reply).toContain('tư vấn thiết kế')
+    const paymentRes = handlePaymentQuery('Tôi muốn thanh toán online đặt cọc 500k qua MoMo hoặc VNPAY')
+    expect(paymentRes.supportsStorefrontDemo).toBe(true)
+    expect(paymentRes.hasZaloMention).toBe(false)
+    expect(paymentRes.reply).not.toMatch(/zalo/i)
+    expect(paymentRes.reply).toContain('MoMo')
+    expect(paymentRes.reply).toContain('VNPAY')
+    expect(paymentRes.reply).toContain('399.000 - 599.000 ₫')
+    expect(paymentRes.reply).toContain('50%')
   })
 })

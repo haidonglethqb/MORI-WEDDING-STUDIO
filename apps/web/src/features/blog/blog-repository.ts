@@ -31,7 +31,7 @@ export const BLOG_CATEGORIES: BlogCategoryMeta[] = [
     label: 'Câu chuyện MORI',
     kicker: '04 / XƯỞNG & TRIẾT LÝ',
     description:
-      'Những trăn trở đầu tiên, sự kết hợp giữa công nghệ mô phỏng 3D và tâm huyết thủ công đứng sau từng tấm thiệp.',
+      'Những trăn trở đầu tiên, sự kết hợp giữa công nghệ xem trước thiết kế 2D trực quan và tâm huyết thủ công đứng sau từng tấm thiệp.',
   },
 ]
 

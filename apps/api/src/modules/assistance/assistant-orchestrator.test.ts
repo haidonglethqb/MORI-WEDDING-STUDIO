@@ -1,4 +1,7 @@
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { mkdtempSync, rmSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import { ContextExtractor } from './context-extractor.js'
 import { AssistantOrchestratorService } from './assistant-orchestrator.service.js'
 import { GroqAiGateway } from './groq-ai-gateway.js'
@@ -6,6 +9,7 @@ import { CatalogProvider } from './catalog-provider.js'
 import { ScoringMatcher } from './scoring-matcher.js'
 import { BespokeEstimator } from './bespoke-estimator.js'
 import { SupervisorGuardrail } from './supervisor-guardrail.js'
+import { AiLogService } from './ai-log.service.js'
 
 describe('ContextExtractor', () => {
   const extractor = new ContextExtractor()
@@ -49,11 +53,12 @@ describe('AssistantOrchestratorService', () => {
   const estimator = new BespokeEstimator()
   const guardrail = new SupervisorGuardrail()
 
-  it('sanitizes banned payment keywords (INV-13) and generates cards', async () => {
+  it('preserves demo payment guidance, strips Zalo mentions, and generates cards', async () => {
     const mockGateway = {
       executeCompletion: vi.fn().mockResolvedValue({
         data: {
-          reply: 'Vui lòng chuyển khoản đặt cọc qua số tài khoản để hoàn tất thanh toán online.',
+          reply:
+            'Bạn có thể đặt thiệp và thanh toán demo qua MoMo, VNPAY, Chuyển khoản QR hoặc COD, hoặc nhắn Zalo nếu cần hỗ trợ.',
           suggestedSlugs: ['floral-bifold-01'],
         },
         modelUsed: 'openai/gpt-oss-120b',
@@ -88,13 +93,47 @@ describe('AssistantOrchestratorService', () => {
     )
 
     const res = await orchestrator.handleChat({ message: 'Tư vấn thiệp' })
-    expect(res.reply).not.toContain('chuyển khoản')
-    expect(res.reply).not.toContain('đặt cọc')
-    expect(res.reply).not.toContain('số tài khoản')
-    expect(res.reply).toContain('quy trình may đo')
+    expect(res.reply).toContain('MoMo')
+    expect(res.reply).toContain('VNPAY')
+    expect(res.reply).not.toMatch(/\bzalo\b/i)
+    expect(res.reply).toContain('Chuyển yêu cầu gặp nhân viên')
     expect(res.suggestedProducts.length).toBeGreaterThan(0)
     expect(res.suggestedProducts[0]?.slug).toBe('floral-bifold-01')
     expect(res.suggestedProducts[0]?.imageUrl).toBe('/images/products/floral/floral-bifold-01.jpg')
+  })
+
+  describe('escalation handoff', () => {
+    let tempDir = ''
+    afterEach(() => {
+      delete process.env['MORI_AI_LOG_PATH']
+      if (tempDir) rmSync(tempDir, { recursive: true, force: true })
+    })
+
+    it('auto-escalates session when customer asks to talk to human staff or Admin', async () => {
+      tempDir = mkdtempSync(join(tmpdir(), 'mori-orch-'))
+      process.env['MORI_AI_LOG_PATH'] = join(tempDir, 'ai-sessions.json')
+      const logService = new AiLogService()
+      const mockGateway = { executeCompletion: vi.fn() } as unknown as GroqAiGateway
+      const mockCatalogProvider = { getActiveProducts: vi.fn().mockResolvedValue([]) } as unknown as CatalogProvider
+
+      const orchestrator = new AssistantOrchestratorService(
+        mockGateway,
+        extractor,
+        mockCatalogProvider,
+        matcher,
+        estimator,
+        guardrail,
+        undefined,
+        logService,
+      )
+
+      const res = await orchestrator.handleChat({ message: 'Mình muốn gặp nhân viên tư vấn trực tiếp' }, 'sess-esc-1')
+      expect(res.needsHumanSupport).toBe(true)
+      expect(res.reply).toContain('Admin / nhân viên tư vấn MORI')
+      const saved = logService.getSession('sess-esc-1')
+      expect(saved?.needsHumanSupport).toBe(true)
+      expect(saved?.escalationReason).toBe('Mình muốn gặp nhân viên tư vấn trực tiếp')
+    })
   })
 
   it('activates deterministic local fallback gracefully when Groq fails', async () => {

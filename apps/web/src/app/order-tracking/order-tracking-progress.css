@@ -1,0 +1,126 @@
+.tracking-tracks-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tracking-progress-block {
+  background: #FAF7EE;
+  border: 1px solid #DCE0D0;
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.tracking-progress-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.tracking-progress-head h3 {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 17px;
+  color: #252A24;
+  margin: 0;
+}
+
+.tracking-progress-status {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #657344;
+  background: #E8EBDD;
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+.tracking-stepper {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+  gap: 12px;
+}
+
+.tracking-step-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  padding: 12px 8px;
+  border-radius: 12px;
+  background: #FFFCF7;
+  border: 1px solid #E2E5D8;
+}
+
+.tracking-node-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #EFF1E6;
+  color: #687063;
+}
+
+.tracking-step-node.is-done {
+  background: #E8EBDD;
+  border-color: #BAC3A5;
+}
+
+.tracking-step-node.is-done .tracking-node-icon {
+  background: #657344;
+  color: #FFFCF7;
+}
+
+.tracking-step-node.is-current {
+  background: #E8EBDD;
+  border: 2px solid #657344;
+  box-shadow: 0 4px 14px rgba(101, 115, 68, 0.16);
+}
+
+.tracking-step-node.is-current .tracking-node-icon {
+  background: #657344;
+  color: #FFFCF7;
+}
+
+.tracking-node-index {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #657344;
+}
+
+.tracking-node-label {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: #252A24;
+}
+
+.tracking-step-node.is-upcoming .tracking-node-label {
+  color: #6D7568;
+  font-weight: 500;
+}
+
+.tracking-result-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding-top: 18px;
+  border-top: 1px solid #E8EBDD;
+}
+
+.tracking-result-footer p {
+  margin: 0;
+  font-size: 14px;
+  color: #495245;
+}

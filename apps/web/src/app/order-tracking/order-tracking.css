@@ -1,0 +1,120 @@
+@import './order-tracking-progress.css';
+@import './order-tracking-card.css';
+
+.tracking-workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.tracking-search-card {
+  max-width: 780px;
+  width: 100%;
+  margin: 0 auto;
+  background: #FFFFFF;
+  border: 1px solid #DCE0D0;
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 10px 28px rgba(37, 42, 36, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  box-sizing: border-box;
+}
+
+.tracking-inputs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.tracking-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tracking-field span {
+  font-size: 13px;
+  font-weight: 600;
+  color: #252A24;
+}
+
+.tracking-field input {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid #CFD6BE;
+  background: #FFFCF7;
+  color: #252A24;
+  font-size: 14.5px;
+  box-sizing: border-box;
+}
+
+.tracking-field input:focus {
+  outline: none;
+  border-color: #657344;
+  box-shadow: 0 0 0 3px rgba(101, 115, 68, 0.16);
+}
+
+.tracking-submit-btn {
+  min-height: 50px;
+  padding: 0 28px;
+  border-radius: 999px;
+  border: none;
+  background: #657344;
+  color: #FFFCF7;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  align-self: center;
+  transition: background-color 0.18s ease;
+}
+
+.tracking-submit-btn:hover:not(:disabled) {
+  background: #515D35;
+}
+
+.tracking-submit-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.tracking-demo-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: #5C6458;
+}
+
+.tracking-demo-pill {
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid #D3D8C6;
+  background: #FAF7EE;
+  color: #657344;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tracking-demo-pill:hover {
+  background: #E8EBDD;
+  border-color: #657344;
+}
+
+.tracking-alert-error {
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #FDF1EE;
+  border: 1px solid #E5B9AF;
+  color: #873222;
+  font-size: 14px;
+  line-height: 1.55;
+  text-align: center;
+}

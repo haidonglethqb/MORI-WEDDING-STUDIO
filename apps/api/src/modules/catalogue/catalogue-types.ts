@@ -3,7 +3,7 @@ export interface CatalogueDefinition {
   name: string
   description: string
   type: 'PAPER' | 'DIGITAL'
-  shape?: 'FLAT' | 'BIFOLD'
+  shape: 'FLAT' | 'BIFOLD'
   styleTags: string[]
   colourTags: string[]
   unitAmountVnd: bigint

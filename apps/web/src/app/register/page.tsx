@@ -17,7 +17,7 @@ export default function RegisterPage() {
               <h2>Khởi đầu hành trình lưu giữ khoảnh khắc</h2>
               <p>
                 Đăng ký tài khoản để may đo thiết kế thiệp cưới, lưu danh sách khách mời
-                và trải nghiệm công nghệ xem trước 3D chuẩn xác từng đường nét ép kim.
+                và trải nghiệm công nghệ xem trước thiết kế 2D trực quan chuẩn xác từng đường nét ép kim.
               </p>
             </div>
 
@@ -32,7 +32,7 @@ export default function RegisterPage() {
               <div className="feature-pill">
                 <MoriIcon name="envelope" />
                 <div>
-                  <strong>Quản lý khách mời & thiệp số</strong>
+                  <strong>Quản lý khách mời & thiệp online</strong>
                   <small>Gửi thiệp online và thống kê phản hồi RSVP tự động</small>
                 </div>
               </div>

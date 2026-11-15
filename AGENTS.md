@@ -8,7 +8,7 @@ This file tells agents how to execute the MORI Wedding Studio specification.
 
 From handoff-brief section 3:
 
-1. **No payments:** No entity/status/SDK/"Pay/Deposit/Paid" copy (INV-13, TC-125)
+1. **Storefront demo checkout & support policy:** Storefront checkout supports demo payments (**MoMo, VNPAY, Bank QR, COD**), digital invitations **399.000 - 599.000 ₫** (50% off in PAPER + DIGITAL combos), and on-site Admin/Studio escalation or custom design requests (never mention Zalo)
 2. **Next.js never touches Prisma:** Business rules/authz/pricing live in NestJS (ADR-02)
 3. **Private queries filter by owner/assignment** in the `where`; inaccessible → 404
 4. Commands marked **I** in spec 11.3 require `Idempotency-Key`; **Vsn** require `expectedVersion`

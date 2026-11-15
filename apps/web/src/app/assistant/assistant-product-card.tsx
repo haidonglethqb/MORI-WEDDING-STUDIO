@@ -5,8 +5,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { getBespokeProfile, resolveProductImageUrl } from '../collections/collection-catalog-data'
 import { renderCardMotif } from '../collections/collection-motif-svgs'
-import { getPreviewCoupleName } from '../collections/collection-types'
-import { ProductPreview } from '../../features/preview/product-preview'
 import type { SuggestedProductCard } from './assistant-types'
 import { MoriIcon } from '../../components/mori-icon'
 import './assistant-product-card.css'
@@ -31,7 +29,6 @@ function formatStartingPrice(raw: string, isFixture: boolean): string {
 }
 
 export function AssistantProductCard({ item }: ProductCardProps) {
-  const [show3D, setShow3D] = useState(false)
   const [imgFailed, setImgFailed] = useState(false)
 
   const profile = getBespokeProfile(item.slug)
@@ -50,7 +47,6 @@ export function AssistantProductCard({ item }: ProductCardProps) {
   const borderColor = profile?.borderColor ?? '#c5a059'
   const accentColor = profile?.accentColor ?? '#b38e46'
   const motifType = profile?.motifType ?? 'arch-vogue'
-  const coupleName = getPreviewCoupleName()
   const textColor = isDark ? '#fbf8ee' : '#222820'
   const displayPrice = formatStartingPrice(item.startingPriceVnd, isFixture)
 
@@ -97,23 +93,6 @@ export function AssistantProductCard({ item }: ProductCardProps) {
       <h4 className="embedded-product-title">{title}</h4>
       <p className="embedded-product-subtitle">{subtitle}</p>
 
-      {show3D && (
-        <div className="inline-3d-scene-box">
-          <div className="inline-3d-header">
-            <span className="inline-3d-label">Xem trước 3D</span>
-            <button
-              type="button"
-              className="inline-3d-close-btn"
-              aria-label="Thu gọn phối cảnh 3D"
-              onClick={() => setShow3D(false)}
-            >
-              Thu gọn
-            </button>
-          </div>
-          <ProductPreview slug={item.slug} name={coupleName} shape={item.shape} />
-        </div>
-      )}
-
       <div className="embedded-product-footer">
         <div className="embedded-product-price">
           <span className="price-label">{isFixture ? 'Giá và quy cách' : 'Giá tham khảo'}</span>
@@ -121,13 +100,6 @@ export function AssistantProductCard({ item }: ProductCardProps) {
         </div>
 
         <div className="embedded-product-actions">
-          <button
-            type="button"
-            className={`embedded-preview-3d-btn ${show3D ? 'active' : ''}`}
-            onClick={() => setShow3D(!show3D)}
-          >
-            {show3D ? 'Đóng xem trước' : <><MoriIcon name="paper" /> Xem trước 3D</>}
-          </button>
           <Link href={`/products/${item.slug}`} className="embedded-product-action">
             Xem mẫu <MoriIcon name="arrow-right" />
           </Link>

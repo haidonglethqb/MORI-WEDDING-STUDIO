@@ -20,7 +20,8 @@ export interface CollectionItem {
   curatedDesc: string
   categoryId: StyleCategoryId
   categoryLabel: string
-  shape: 'BIFOLD' | 'FLAT' | 'TRIFOLD'
+  productType: 'PAPER' | 'DIGITAL'
+  shape: 'BIFOLD' | 'FLAT' | 'TRIFOLD' | 'DIGITAL'
   minPriceVnd: string | null
   isFixture: boolean
   imageUrl: string | null
@@ -85,7 +86,8 @@ export function resolveCategoryId(slug: string): StyleCategoryId {
 export function buildCuratedItem(raw: {
   slug: string
   name: string
-  shape: 'BIFOLD' | 'FLAT' | 'TRIFOLD'
+  productType?: 'PAPER' | 'DIGITAL' | undefined
+  shape: 'BIFOLD' | 'FLAT' | 'TRIFOLD' | 'DIGITAL'
   minPriceVnd: string | null
   isFixture: boolean
   imageUrl?: string | null | undefined
@@ -95,6 +97,7 @@ export function buildCuratedItem(raw: {
   const categoryLabel = cat?.title.replace('Bộ sưu tập ', '') ?? 'Nghệ nhân'
   const profile = BESPOKE_PROFILES[raw.slug]
   const imageUrl = resolveProductImageUrl(raw)
+  const productType = raw.productType ?? (raw.slug.includes('-digital-') ? 'DIGITAL' : 'PAPER')
 
   return {
     slug: raw.slug,
@@ -105,6 +108,7 @@ export function buildCuratedItem(raw: {
       : profile?.subtitle ?? 'Thiệp cưới in trên giấy ngà sinh thái tại xưởng MORI.',
     categoryId,
     categoryLabel,
+    productType,
     shape: raw.shape,
     minPriceVnd: raw.minPriceVnd,
     isFixture: raw.isFixture,

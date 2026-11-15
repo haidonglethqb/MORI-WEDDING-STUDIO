@@ -1,0 +1,147 @@
+.admin-ai-page .session-detail-pane {
+  background: #FAF7EE;
+  border: 1px solid #D6DBC8;
+  border-radius: 16px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-ai-page .session-escalation-box {
+  background: #E8EBDD;
+  border: 1px solid #657344;
+  border-radius: 12px;
+  padding: 12px 14px;
+  color: #252A24;
+}
+
+.admin-ai-page .escalation-meta-lines {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13.5px;
+}
+
+.admin-ai-page .session-brief-card {
+  background: #FFFCF7;
+  border: 1px solid #DCE0D0;
+  border-radius: 12px;
+  padding: 13px 15px;
+}
+
+.admin-ai-page .brief-card-title,
+.admin-ai-page .turns-timeline-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #252A24;
+  margin-bottom: 10px;
+}
+
+.admin-ai-page .brief-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 8px 14px;
+  font-size: 13px;
+}
+
+.admin-ai-page .brief-label {
+  color: #5D6559;
+  margin-right: 6px;
+}
+
+.admin-ai-page .session-turns-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-ai-page .timeline-turn-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-ai-page .turn-user-box,
+.admin-ai-page .turn-assistant-box,
+.admin-ai-page .timeline-staff-card {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid #DCE0D0;
+}
+
+.admin-ai-page .turn-user-box {
+  background: #FFFCF7;
+}
+
+.admin-ai-page .turn-assistant-box {
+  background: #F4F6ED;
+}
+
+.admin-ai-page .timeline-staff-card {
+  background: #E8EBDD;
+  border-color: #657344;
+}
+
+.admin-ai-page .turn-box-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #464E42;
+}
+
+.admin-ai-page .staff-turn-badge {
+  color: #46502E;
+}
+
+.admin-ai-page .turn-reply-content,
+.admin-ai-page .turn-user-content {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: #252A24;
+  white-space: pre-wrap;
+}
+
+.admin-ai-page .admin-reply-composer {
+  background: #FFFCF7;
+  border: 1px solid #657344;
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.admin-ai-page .admin-reply-composer label {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #252A24;
+}
+
+.admin-ai-page .admin-reply-composer textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #C8CEBA;
+  background: #FAF7EE;
+  color: #252A24;
+  font-family: inherit;
+  font-size: 13.5px;
+}
+
+.admin-ai-page .admin-reply-feedback {
+  font-size: 13px;
+  color: #46502E;
+  font-weight: 600;
+}
+
+.admin-ai-page .admin-reply-actions {
+  display: flex;
+  justify-content: flex-end;
+}

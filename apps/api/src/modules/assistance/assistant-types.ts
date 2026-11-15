@@ -60,6 +60,7 @@ export interface AssistantChatResponse {
   suggestedProducts: SuggestedProductCard[]
   estimatedBudget: EstimatedBudgetSummary | null
   quickFollowUps: string[]
+  needsHumanSupport?: boolean
   meta: {
     modelUsed: string
     fallbackTier: number
@@ -79,4 +80,46 @@ export interface CatalogProductItem {
   formattedPriceVnd: string
   imageUrl?: string | null
   isFixture?: boolean
+}
+
+export interface AiSessionTurn {
+  id: string
+  turnIndex: number
+  timestamp: string
+  userMessage: string
+  modelUsed: string
+  fallbackTier: number
+  latencyMs: number
+  assistantReply: string
+  suggestedProducts: Array<{ slug: string; name: string; startingPriceVnd: string }>
+}
+
+export interface AdminReplyItem {
+  id: string
+  timestamp: string
+  sender: string
+  message: string
+}
+
+export interface AiConversationSession {
+  sessionId: string
+  createdAt: string
+  updatedAt: string
+  turnsCount: number
+  lastModelUsed: string
+  brief: {
+    coupleNames?: string | null | undefined
+    weddingDate?: string | null | undefined
+    location?: string | null | undefined
+    guestCount?: number | null | undefined
+    budget?: string | null | undefined
+    aesthetic?: string | null | undefined
+    targetShape?: string | null | undefined
+  }
+  turns: AiSessionTurn[]
+  needsHumanSupport?: boolean
+  escalatedAt?: string | null
+  customerContact?: string | null
+  escalationReason?: string | null
+  adminReplies?: AdminReplyItem[]
 }

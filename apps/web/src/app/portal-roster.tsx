@@ -14,7 +14,7 @@ interface RosterRow {
 
 const rows: RosterRow[] = [
   { href: '/collections', index: '01 / THIẾT KẾ', title: 'Thiệp cưới', action: 'KHÁM PHÁ ↗', photo: landingPhotos.rosterPaper },
-  { href: '/workspace', index: '02 / TRỰC TUYẾN', title: 'Thiệp số & RSVP', action: 'BẮT ĐẦU ↗', photo: landingPhotos.rosterDigital },
+  { href: '/collections?tab=online', index: '02 / TRỰC TUYẾN', title: 'Thiệp Online & RSVP', action: 'KHÁM PHÁ ↗', photo: landingPhotos.rosterDigital },
   { href: '/assistant', index: '03 / CẢM HỨNG', title: 'Trợ lý gợi ý', action: 'TRÒ CHUYỆN ↗', photo: landingPhotos.rosterIdeas },
 ]
 
@@ -28,7 +28,7 @@ function trackPointer(event: PointerEvent<HTMLAnchorElement>) {
 
 export function PortalRoster() {
   return (
-    <section className="portal-roster" id="thiep-so" aria-labelledby="roster-title">
+    <section className="portal-roster" id="thiep-online" aria-labelledby="roster-title">
       <div className="portal-section-top" data-reveal>
         <span className="portal-kicker">04 / CÙNG MORI</span>
         <h2 id="roster-title">

@@ -95,7 +95,7 @@ export function SampleShowcase({ products }: { products: ShowcaseProduct[] }) {
                       <span className="price-lead-label">{item.isFixture ? 'Giá và quy cách' : 'Giá tham khảo'}</span>
                       <span className="price-main-vnd">{item.isFixture ? 'Mẫu minh họa' : item.priceVnd ? `Từ ${BigInt(item.priceVnd).toLocaleString('vi-VN')} ₫` : 'Đang cập nhật'}</span>
                     </div>
-                    <span className="artisan-cta-link">Trải nghiệm 3D &rarr;</span>
+                    <span className="artisan-cta-link">Xem chi tiết &rarr;</span>
                   </div>
                 </div>
               </a>

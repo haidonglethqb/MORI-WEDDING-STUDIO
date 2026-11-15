@@ -9,7 +9,7 @@ import './atelier-pages.css'
 
 export const metadata: Metadata = {
   title: 'MORI Wedding Studio · Xưởng thiệp cưới giấy ngà',
-  description: 'Thiệp cưới in trên giấy ngà, sắp riêng từng cặp. Thiết kế thủ công và thiệp số cá nhân hoá.',
+  description: 'Thiệp cưới in trên giấy ngà, sắp riêng từng cặp. Thiết kế thủ công và thiệp online cá nhân hoá.',
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {

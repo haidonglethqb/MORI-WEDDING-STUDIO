@@ -1,5 +1,9 @@
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { mkdtempSync, rmSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import { UnprocessableEntityException } from '@nestjs/common'
+import { AiLogService } from './ai-log.service.js'
 import { AssistantController } from './assistant.controller.js'
 import type { RecommendationService } from './recommendation.service.js'
 import type { AssistantQuotaService } from './assistant-quota.service.js'
@@ -77,5 +81,47 @@ describe('AssistantController runtime validation and actor identification', () =
       { message: 'Tư vấn thiệp hoa' },
     )
     expect(mockReserve).toHaveBeenCalled()
+  })
+
+  describe('escalate & session polling', () => {
+    let tempDir = ''
+    afterEach(() => {
+      delete process.env['MORI_AI_LOG_PATH']
+      if (tempDir) rmSync(tempDir, { recursive: true, force: true })
+    })
+
+    it('escalates session and returns adminReplies on session lookup', async () => {
+      tempDir = mkdtempSync(join(tmpdir(), 'mori-ctrl-'))
+      process.env['MORI_AI_LOG_PATH'] = join(tempDir, 'ai-sessions.json')
+      const logService = new AiLogService()
+      const ctrl = new AssistantController(
+        mockRecommendations,
+        mockQuota,
+        mockTools,
+        mockIdentity,
+        mockOrchestrator,
+        logService,
+      )
+
+      const empty = ctrl.getSession(undefined, undefined, 'sess-new-99')
+      expect(empty.needsHumanSupport).toBe(false)
+      expect(empty.adminReplies).toEqual([])
+
+      const esc = await ctrl.escalate(
+        undefined,
+        undefined,
+        { ip: '127.0.0.1' },
+        { sessionId: 'sess-new-99', customerContact: '0901234567', reason: 'Cần báo giá thiết kế riêng' },
+      )
+      expect(esc.ok).toBe(true)
+      expect(esc.session.needsHumanSupport).toBe(true)
+      expect(esc.session.customerContact).toBe('0901234567')
+
+      logService.addAdminReply('sess-new-99', { sender: 'Admin MORI', message: 'MORI đã tiếp nhận yêu cầu của bạn.' })
+      const loaded = ctrl.getSession(undefined, undefined, 'sess-new-99')
+      expect(loaded.needsHumanSupport).toBe(true)
+      expect(loaded.adminReplies).toHaveLength(1)
+      expect(loaded.adminReplies[0]?.message).toContain('MORI đã tiếp nhận')
+    })
   })
 })

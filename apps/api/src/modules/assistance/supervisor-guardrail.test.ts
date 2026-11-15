@@ -4,17 +4,16 @@ import { SupervisorGuardrail } from './supervisor-guardrail.js'
 describe('SupervisorGuardrail', () => {
   const guardrail = new SupervisorGuardrail()
 
-  it('sanitizes banned payment keywords and appends artisan proof policy', () => {
-    const raw =
-      'Bạn vui lòng chuyển khoản đặt cọc 50% qua số tài khoản ngân hàng hoặc thanh toán online nhé.'
-    const cleaned = guardrail.sanitizeArtisanReply(raw)
+  it('preserves demo payment policy terms and replaces Zalo with on-site escalation guidance', () => {
+    const paymentReply =
+      'Bạn có thể đặt thiệp trực tiếp trên website và thanh toán demo qua MoMo, VNPAY, Chuyển khoản QR hoặc COD. Giá thiệp online 399.000 - 599.000 ₫ (giảm 50% khi mua Combo).'
+    expect(guardrail.sanitizeArtisanReply(paymentReply)).toBe(paymentReply)
 
-    expect(cleaned).not.toContain('chuyển khoản')
-    expect(cleaned).not.toContain('đặt cọc')
-    expect(cleaned).not.toContain('số tài khoản')
-    expect(cleaned).not.toContain('thanh toán online')
-    expect(cleaned).toContain('quy trình may đo nghệ nhân')
-    expect(cleaned).toContain('Proof')
+    const zaloReply = 'Bạn nhắn qua Zalo để được thiết kế riêng và gặp nhân viên nhé.'
+    const cleaned = guardrail.sanitizeArtisanReply(zaloReply)
+    expect(cleaned).not.toMatch(/\bzalo\b/i)
+    expect(cleaned).toContain('Chuyển yêu cầu gặp nhân viên')
+    expect(cleaned).toContain('Thiết kế riêng')
   })
 
   it('keeps clean replies intact without altering them unnecessarily', () => {
