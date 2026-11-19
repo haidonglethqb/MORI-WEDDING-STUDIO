@@ -28,14 +28,14 @@ export const INITIAL_GREETING: ChatMessageItem = {
   role: 'assistant',
   senderType: 'ai',
   content:
-    'Chào bạn, mình là trợ lý MORI. Hãy chia sẻ phong cách yêu thích hoặc số lượng khách mời, mình sẽ giúp bạn tìm hướng thiết kế phù hợp nhé.',
+    'Chào bạn, mình là MORI Atelier AI Agent. Bạn có thể hỏi gợi ý mẫu thiệp, tính báo giá combo giảm 50%, hoặc mô tả tên hai bạn, màu sắc & phong cách (có thể gửi kèm ảnh) để mình tự thiết kế một mẫu Thiệp Online độc bản cho bạn xem trực tiếp nhé!',
 }
 
 export const QUICK_STARTERS = [
+  'Thiết kế riêng mẫu thiệp online Đêm Sao Đà Lạt cho Minh Quân (28t) & Thảo Vy (26t)',
   'Tiệc sân vườn ngoài trời Đà Lạt 120 khách',
-  'Lễ cưới truyền thống Song Hỷ Á Đông',
   'Gợi ý combo thiệp giấy & thiệp online giảm 50%',
-  'Mình muốn gặp nhân viên tư vấn thiết kế riêng',
+  'Tra cứu đơn hàng MORI',
 ]
 
 export function createAssistantSessionId(): string {

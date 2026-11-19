@@ -7,11 +7,7 @@ import { DigitalTemplateRenderer } from '../../features/digital-templates/digita
 import { AssistantBespokeModal } from './assistant-bespoke-modal'
 import type { AgentBespokeDesignActionPayload } from './assistant-types'
 
-interface Props {
-  action: AgentBespokeDesignActionPayload
-}
-
-export function AssistantBespokeCard({ action }: Props) {
+export function AssistantBespokeCard({ action }: { action: AgentBespokeDesignActionPayload }) {
   const [modalOpen, setModalOpen] = useState(false)
   const [status, setStatus] = useState<'idle' | 'busy' | 'done' | 'auth' | 'error'>('idle')
   const [message, setMessage] = useState('')
@@ -37,10 +33,7 @@ export function AssistantBespokeCard({ action }: Props) {
       ...(d.venueAddress ? { venueAddress: d.venueAddress } : {}),
       ...(d.families ? { families: d.families } : {}),
       ...(d.scheduleItems ? { scheduleItems: d.scheduleItems } : {}),
-      photos: {
-        ...(d.heroUrl ? { heroUrl: d.heroUrl } : {}),
-        ...(d.storyCaption ? { storyCaption: d.storyCaption } : {}),
-      },
+      photos: { ...(d.heroUrl ? { heroUrl: d.heroUrl } : {}), ...(d.storyCaption ? { storyCaption: d.storyCaption } : {}) },
     })
   }, [action])
 
@@ -108,18 +101,13 @@ export function AssistantBespokeCard({ action }: Props) {
         coupleNames: model.displayNames.join(' & '),
         weddingDate: model.eventLocalStart,
         style: action.conceptName,
-        notes: `Đặt in thiệp giấy đồng bộ concept AI "${action.conceptName}" (${action.customDesign.typography}, ${action.customDesign.frameStyle}, màu chủ đạo ${action.customDesign.theme.bg} / ${action.customDesign.theme.accent}).`,
+        notes: `Đặt in thiệp giấy đồng bộ concept AI "${action.conceptName}" (${action.customDesign.typography}, ${action.customDesign.frameStyle}, màu ${action.customDesign.theme.bg} / ${action.customDesign.theme.accent}).`,
       }),
     })
     setPrintDone(res.ok ? '✓ Đã gửi yêu cầu đặt in mẫu này tới Xưởng MORI!' : 'Chưa gửi được yêu cầu. Vui lòng thử lại.')
   }
 
-  const swatches = [
-    action.customDesign.theme.bg,
-    action.customDesign.theme.surface,
-    action.customDesign.theme.accent,
-    action.customDesign.theme.text,
-  ]
+  const swatches = [action.customDesign.theme.bg, action.customDesign.theme.surface, action.customDesign.theme.accent, action.customDesign.theme.text]
 
   return (
     <div className="bsp-chat-card">
@@ -130,9 +118,7 @@ export function AssistantBespokeCard({ action }: Props) {
           <p className="bsp-chat-sub">{action.subtitle}</p>
         </div>
         <div className="bsp-chat-swatches" aria-label="Bảng màu thiết kế">
-          {swatches.map((hex, idx) => (
-            <span key={`${hex}-${idx}`} style={{ background: hex }} title={hex} />
-          ))}
+          {swatches.map((hex, idx) => <span key={`${hex}-${idx}`} style={{ background: hex }} title={hex} />)}
         </div>
       </div>
 
@@ -140,39 +126,24 @@ export function AssistantBespokeCard({ action }: Props) {
         <div className="bsp-preview-inner">
           <DigitalTemplateRenderer model={model} partyName="Khách Mời Danh Dự" compact />
         </div>
-        <div className="bsp-preview-fade">
-          <span>Bấm để xem toàn bộ trang Thiệp Online ↗</span>
-        </div>
+        <div className="bsp-preview-fade"><span>Bấm để xem toàn bộ trang Thiệp Online ↗</span></div>
       </div>
 
       <div className="bsp-chat-actions">
-        <button type="button" className="bsp-btn-primary" onClick={() => setModalOpen(true)}>
-          Xem trang Thiệp Online đầy đủ
-        </button>
-
+        <button type="button" className="bsp-btn-primary" onClick={() => setModalOpen(true)}>Xem trang Thiệp Online đầy đủ</button>
         {liveUrl ? (
-          <a href={liveUrl} target="_blank" rel="noreferrer" className="bsp-btn-accent">
-            Mở link thiệp sống ({liveUrl}) ↗
-          </a>
+          <a href={liveUrl} target="_blank" rel="noreferrer" className="bsp-btn-accent">Mở link thiệp sống ({liveUrl}) ↗</a>
         ) : (
           <button type="button" className="bsp-btn-accent" disabled={status === 'busy'} onClick={() => void persistInvitation(true)}>
             {status === 'busy' ? 'Đang xuất bản...' : 'Xuất bản & Mở link /i/... ngay ✦'}
           </button>
         )}
-
         {editorUrl ? (
-          <Link href={editorUrl} className="bsp-btn-secondary">
-            Chỉnh sửa chi tiết →
-          </Link>
+          <Link href={editorUrl} className="bsp-btn-secondary">Chỉnh sửa chi tiết →</Link>
         ) : (
-          <button type="button" className="bsp-btn-secondary" disabled={status === 'busy'} onClick={() => void persistInvitation(false)}>
-            Lưu nháp &amp; Chỉnh sửa
-          </button>
+          <button type="button" className="bsp-btn-secondary" disabled={status === 'busy'} onClick={() => void persistInvitation(false)}>Lưu nháp &amp; Chỉnh sửa</button>
         )}
-
-        <button type="button" className="bsp-btn-ghost" onClick={() => setShowPrintForm((v) => !v)}>
-          Đặt in mẫu này tại Xưởng
-        </button>
+        <button type="button" className="bsp-btn-ghost" onClick={() => setShowPrintForm((v) => !v)}>Đặt in mẫu này tại Xưởng</button>
       </div>
 
       {status === 'auth' ? (
@@ -188,9 +159,7 @@ export function AssistantBespokeCard({ action }: Props) {
         <div className="bsp-print-form">
           <input type="text" placeholder="Tên của bạn *" value={customerName} onChange={(e) => setCustomerName(e.target.value)} />
           <input type="tel" placeholder="Số điện thoại *" value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} />
-          <button type="button" className="bsp-btn-primary" onClick={() => void submitCustomPrint()}>
-            Gửi yêu cầu in thiệp giấy
-          </button>
+          <button type="button" className="bsp-btn-primary" onClick={() => void submitCustomPrint()}>Gửi yêu cầu in thiệp giấy</button>
           {printDone ? <small>{printDone}</small> : null}
         </div>
       ) : null}

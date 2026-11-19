@@ -4,36 +4,16 @@ import type { BespokeDesignBlueprint } from '@mori/contracts'
 import type { DigitalInvitationModel } from './digital-template-types'
 import { coupleInitials } from './template-view-utils'
 
-export function BespokeOrnament({
-  ornament,
-  names,
-}: {
-  ornament: BespokeDesignBlueprint['ornament']
-  names: [string, string]
-}) {
-  if (ornament === 'double-happiness') {
-    return (
-      <div className="bsp-ornament bsp-ornament--seal" aria-hidden="true">
-        <span>囍</span>
-      </div>
-    )
-  }
-  if (ornament === 'wax-seal') {
-    return (
-      <div className="bsp-ornament bsp-ornament--seal" aria-hidden="true">
-        <small>{coupleInitials(names)}</small>
-      </div>
-    )
-  }
+export function BespokeOrnament({ ornament, names }: { ornament: BespokeDesignBlueprint['ornament']; names: [string, string] }) {
+  if (ornament === 'double-happiness') return <div className="bsp-ornament bsp-ornament--seal" aria-hidden="true"><span>囍</span></div>
+  if (ornament === 'wax-seal') return <div className="bsp-ornament bsp-ornament--seal" aria-hidden="true"><small>{coupleInitials(names)}</small></div>
   if (ornament === 'constellation') {
     return (
       <div className="bsp-ornament" aria-hidden="true">
         <svg viewBox="0 0 120 28" width="120" height="28" fill="none">
           <path d="M12 18L38 9L60 17L84 7L108 16" stroke="currentColor" strokeWidth="1" strokeDasharray="2 3" />
-          <circle cx="12" cy="18" r="2.2" fill="currentColor" />
-          <circle cx="38" cy="9" r="2.5" fill="currentColor" />
-          <circle cx="60" cy="17" r="3.4" fill="currentColor" />
-          <circle cx="84" cy="7" r="2.5" fill="currentColor" />
+          <circle cx="12" cy="18" r="2.2" fill="currentColor" /><circle cx="38" cy="9" r="2.5" fill="currentColor" />
+          <circle cx="60" cy="17" r="3.4" fill="currentColor" /><circle cx="84" cy="7" r="2.5" fill="currentColor" />
           <circle cx="108" cy="16" r="2.2" fill="currentColor" />
         </svg>
       </div>
@@ -44,9 +24,7 @@ export function BespokeOrnament({
       <div className="bsp-ornament" aria-hidden="true">
         <svg viewBox="0 0 110 26" width="110" height="26" fill="none">
           <path d="M10 18C32 10 78 10 100 18" stroke="currentColor" strokeWidth="1.2" />
-          <path d="M36 14C32 7 38 4 44 10" stroke="currentColor" strokeWidth="1.2" />
-          <path d="M55 11C53 4 59 3 62 11" stroke="currentColor" strokeWidth="1.2" />
-          <path d="M74 14C78 7 72 4 66 10" stroke="currentColor" strokeWidth="1.2" />
+          <path d="M36 14C32 7 38 4 44 10M55 11C53 4 59 3 62 11M74 14C78 7 72 4 66 10" stroke="currentColor" strokeWidth="1.2" />
         </svg>
       </div>
     )
@@ -78,11 +56,7 @@ export function BespokeHeroSection({
   const namesNode = (
     <div className="bsp-hero-copy">
       <span className="tpl-eyebrow">{design.eyebrowTag || design.conceptName}</span>
-      {partyName ? (
-        <div className="tpl-guest-pill">
-          <span>Trân trọng kính mời:</span> <strong>{partyName}</strong>
-        </div>
-      ) : null}
+      {partyName ? <div className="tpl-guest-pill"><span>Trân trọng kính mời:</span> <strong>{partyName}</strong></div> : null}
       <h1 className="bsp-couple-names">
         <span>{model.displayNames[0]}</span>
         <em className="bsp-amp">&amp;</em>
@@ -122,22 +96,14 @@ export function BespokeHeroSection({
       {heroUrl ? (
         <figure className={`bsp-hero-photo bsp-hero-photo--${design.heroLayout}`}>
           <img src={heroUrl} alt={`${model.displayNames[0]} & ${model.displayNames[1]}`} />
-          {design.heroLayout === 'polaroid-story' ? (
-            <figcaption>{model.displayNames[0]} &amp; {model.displayNames[1]}</figcaption>
-          ) : null}
+          {design.heroLayout === 'polaroid-story' ? <figcaption>{model.displayNames[0]} &amp; {model.displayNames[1]}</figcaption> : null}
         </figure>
       ) : null}
     </header>
   )
 }
 
-export function BespokeCoupleBioSection({
-  names,
-  bio,
-}: {
-  names: [string, string]
-  bio: NonNullable<BespokeDesignBlueprint['coupleBio']>
-}) {
+export function BespokeCoupleBioSection({ names, bio }: { names: [string, string]; bio: NonNullable<BespokeDesignBlueprint['coupleBio']> }) {
   if (!bio.groomMeta && !bio.brideMeta) return null
   return (
     <section className="bsp-card-block bsp-bio-grid">
@@ -155,11 +121,7 @@ export function BespokeCoupleBioSection({
   )
 }
 
-export function BespokeStorySection({
-  milestones,
-}: {
-  milestones: NonNullable<BespokeDesignBlueprint['storyMilestones']>
-}) {
+export function BespokeStorySection({ milestones }: { milestones: NonNullable<BespokeDesignBlueprint['storyMilestones']> }) {
   if (milestones.length === 0) return null
   return (
     <section className="bsp-card-block">
@@ -179,11 +141,7 @@ export function BespokeStorySection({
   )
 }
 
-export function BespokeDressCodeSection({
-  dressCode,
-}: {
-  dressCode: NonNullable<BespokeDesignBlueprint['dressCode']>
-}) {
+export function BespokeDressCodeSection({ dressCode }: { dressCode: NonNullable<BespokeDesignBlueprint['dressCode']> }) {
   return (
     <section className="bsp-card-block bsp-dress-block">
       <span className="tpl-micro-label">{dressCode.title || 'DRESS CODE'}</span>
@@ -199,11 +157,7 @@ export function BespokeDressCodeSection({
   )
 }
 
-export function BespokeGiftNoteSection({
-  giftNote,
-}: {
-  giftNote: NonNullable<BespokeDesignBlueprint['giftNote']>
-}) {
+export function BespokeGiftNoteSection({ giftNote }: { giftNote: NonNullable<BespokeDesignBlueprint['giftNote']> }) {
   return (
     <section className="bsp-card-block bsp-gift-block">
       <span className="tpl-micro-label">{giftNote.heading || 'LỜI NHẮN TỪ HAI BẠN'}</span>

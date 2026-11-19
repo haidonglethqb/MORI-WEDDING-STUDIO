@@ -70,4 +70,60 @@ describe('public invitation DTO & schema', () => {
       }),
     ).toThrow()
   })
+
+  it('accepts custom-ai templateId with bespoke customDesign and rejects invalid hex theme', () => {
+    const bespoke = toPublicInvitation('nam-phuong', {
+      schemaVersion: 1,
+      displayNames: ['Nam', 'Phương'],
+      eventTitle: 'Tiệc Cưới Biển',
+      templateId: 'custom-ai',
+      customDesign: {
+        conceptName: 'Biển Hoàng Hôn',
+        typography: 'editorial-serif',
+        frameStyle: 'arch-dome',
+        bgPattern: 'gold-aura',
+        ornament: 'wax-seal',
+        heroLayout: 'arch-portrait',
+        theme: {
+          bg: '#FFF8F0',
+          surface: '#FFFFFF',
+          text: '#24231F',
+          muted: '#6E695E',
+          accent: '#C46D45',
+          border: '#E4C7B2',
+          buttonText: '#FFFFFF',
+        },
+        sectionOrder: ['hero', 'event-card', 'countdown'],
+      },
+    })
+    expect(bespoke.templateId).toBe('custom-ai')
+    expect(bespoke.customDesign?.conceptName).toBe('Biển Hoàng Hôn')
+
+    expect(() =>
+      InvitationContentSchema.parse({
+        schemaVersion: 1,
+        displayNames: ['A', 'B'],
+        eventTitle: 'Cưới',
+        templateId: 'custom-ai',
+        customDesign: {
+          conceptName: 'Bad',
+          typography: 'editorial-serif',
+          frameStyle: 'arch-dome',
+          bgPattern: 'none',
+          ornament: 'wax-seal',
+          heroLayout: 'arch-portrait',
+          theme: {
+            bg: 'url(javascript:alert(1))',
+            surface: '#FFFFFF',
+            text: '#000000',
+            muted: '#666666',
+            accent: '#59634A',
+            border: '#CCCCCC',
+            buttonText: '#FFFFFF',
+          },
+          sectionOrder: ['hero', 'event-card'],
+        },
+      }),
+    ).toThrow()
+  })
 })

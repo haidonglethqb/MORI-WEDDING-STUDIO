@@ -9,26 +9,10 @@
   gap: 12px;
   box-shadow: 0 10px 28px rgba(34, 38, 28, 0.08);
 }
-
-.bsp-chat-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.bsp-ai-badge {
-  display: inline-block;
-  font-size: 9.5px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  color: #4f5e3e;
-  text-transform: uppercase;
-}
-
+.bsp-chat-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.bsp-ai-badge { display: inline-block; font-size: 9.5px; font-weight: 700; letter-spacing: 0.14em; color: #4f5e3e; text-transform: uppercase; }
 .bsp-chat-title { display: block; font-family: var(--font-serif, 'Lora', serif); font-size: 16px; color: #1f241c; margin-top: 2px; }
 .bsp-chat-sub { margin: 2px 0 0; font-size: 12px; color: #686359; }
-
 .bsp-chat-swatches { display: flex; gap: 5px; flex-shrink: 0; padding-top: 4px; }
 .bsp-chat-swatches span { width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, 0.16); }
 
@@ -41,11 +25,7 @@
   background: #f3efe6;
   cursor: pointer;
 }
-.bsp-preview-inner {
-  pointer-events: none;
-  transform-origin: top center;
-  padding: 10px;
-}
+.bsp-preview-inner { pointer-events: none; padding: 10px; }
 .bsp-preview-fade {
   position: absolute;
   inset: auto 0 0 0;
@@ -56,14 +36,7 @@
   justify-content: center;
   padding-bottom: 12px;
 }
-.bsp-preview-fade span {
-  padding: 5px 14px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.94);
-  color: #1f241c;
-  font-size: 11.5px;
-  font-weight: 600;
-}
+.bsp-preview-fade span { padding: 5px 14px; border-radius: 999px; background: rgba(255, 255, 255, 0.94); color: #1f241c; font-size: 11.5px; font-weight: 600; }
 
 .bsp-chat-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .bsp-btn-primary, .bsp-btn-accent, .bsp-btn-secondary, .bsp-btn-ghost {
@@ -78,12 +51,12 @@
   text-decoration: none;
   cursor: pointer;
   border: 1px solid transparent;
-  transition: opacity 0.15s ease, transform 0.15s ease;
+  transition: opacity 0.15s ease;
 }
 .bsp-btn-primary { background: #3e4a34; color: #ffffff; }
 .bsp-btn-accent { background: #8f6b2e; color: #ffffff; }
 .bsp-btn-secondary { background: #ffffff; color: #2b3325; border-color: #d3ccb9; }
-.bsp-btn-ghost { background: transparent; color: #5b6352; border-color: transparent; text-decoration: underline; }
+.bsp-btn-ghost { background: transparent; color: #5b6352; text-decoration: underline; }
 .bsp-btn-primary:hover, .bsp-btn-accent:hover, .bsp-btn-secondary:hover { opacity: 0.92; }
 .bsp-btn-primary:disabled, .bsp-btn-accent:disabled, .bsp-btn-secondary:disabled { opacity: 0.55; cursor: wait; }
 
@@ -111,17 +84,10 @@
   background: #f5f2ea;
   border: 1px solid #dfd8c8;
 }
-.bsp-print-form input {
-  padding: 7px 10px;
-  border-radius: 8px;
-  border: 1px solid #d5cebe;
-  font-size: 12px;
-  background: #ffffff;
-}
+.bsp-print-form input { padding: 7px 10px; border-radius: 8px; border: 1px solid #d5cebe; font-size: 12px; background: #ffffff; }
 .bsp-print-form small { grid-column: 1 / -1; font-size: 11.5px; color: #3e4a34; }
 @media (max-width: 600px) { .bsp-print-form { grid-template-columns: 1fr; } }
 
-/* Full-screen Modal */
 .bsp-modal-backdrop {
   position: fixed;
   inset: 0;
@@ -145,29 +111,12 @@
   overflow: hidden;
   box-shadow: 0 28px 64px rgba(0, 0, 0, 0.35);
 }
-.bsp-modal-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px 16px;
-  background: #ffffff;
-  border-bottom: 1px solid #e5dfd1;
-}
+.bsp-modal-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; background: #ffffff; border-bottom: 1px solid #e5dfd1; }
 .bsp-modal-title { display: flex; flex-direction: column; min-width: 0; }
 .bsp-modal-title strong { font-size: 14.5px; color: #1f241c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .bsp-viewport-switch { display: inline-flex; padding: 3px; border-radius: 999px; background: #f1ede4; border: 1px solid #ded7c8; }
-.bsp-viewport-switch button {
-  padding: 4px 12px;
-  border-radius: 999px;
-  border: none;
-  background: transparent;
-  font-size: 11.5px;
-  font-weight: 600;
-  color: #5b6352;
-  cursor: pointer;
-}
+.bsp-viewport-switch button { padding: 4px 12px; border-radius: 999px; border: none; background: transparent; font-size: 11.5px; font-weight: 600; color: #5b6352; cursor: pointer; }
 .bsp-viewport-switch button.is-active { background: #3e4a34; color: #ffffff; }
 .bsp-modal-close { width: 32px; height: 32px; border-radius: 50%; border: 1px solid #ded7c8; background: #ffffff; color: #2b3325; cursor: pointer; font-size: 14px; }
 
@@ -176,28 +125,10 @@
 .bsp-modal-frame.is-mobile { max-width: 410px; }
 .bsp-modal-frame.is-desktop { max-width: 620px; }
 
-.bsp-modal-rsvp {
-  padding: 16px;
-  border-radius: 14px;
-  background: #ffffff;
-  border: 1px solid #ded7c8;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
+.bsp-modal-rsvp { padding: 16px; border-radius: 14px; background: #ffffff; border: 1px solid #ded7c8; display: flex; flex-direction: column; align-items: center; gap: 10px; }
 .bsp-modal-rsvp-tag { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; color: #5b6352; }
 .bsp-modal-rsvp-row, .bsp-modal-rsvp-done { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; }
 .bsp-modal-rsvp-stepper { display: inline-flex; align-items: center; gap: 8px; border: 1px solid #d5cebe; border-radius: 10px; padding: 3px 8px; }
 .bsp-modal-rsvp-stepper button { width: 24px; height: 24px; border: none; background: #f1ede4; border-radius: 6px; cursor: pointer; font-weight: 700; }
 .bsp-modal-rsvp-done button { border: none; background: transparent; color: #5b6352; text-decoration: underline; cursor: pointer; font-size: 12px; }
-
-.bsp-modal-footer {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 8px;
-  padding: 12px 16px;
-  background: #ffffff;
-  border-top: 1px solid #e5dfd1;
-}
+.bsp-modal-footer { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; padding: 12px 16px; background: #ffffff; border-top: 1px solid #e5dfd1; }

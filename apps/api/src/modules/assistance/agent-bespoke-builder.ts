@@ -10,10 +10,7 @@ import type { AgentAttachment, AgentBespokeDraftData } from './agent-types.js'
 
 const HEX_RE = /^#[0-9A-Fa-f]{6}$/
 const ISO_LOCAL_RE = /^\d{8}T\d{6}$/
-
-const VALID_SECTIONS: readonly BespokeSectionKey[] = [
-  'hero', 'couple-bio', 'story', 'families', 'event-card', 'dress-code', 'gallery', 'countdown', 'gift-note',
-]
+const VALID_SECTIONS: readonly BespokeSectionKey[] = ['hero', 'couple-bio', 'story', 'families', 'event-card', 'dress-code', 'gallery', 'countdown', 'gift-note']
 const VALID_TYPO = ['editorial-serif', 'modern-sans', 'romantic-italic', 'heritage-classic'] as const
 const VALID_FRAME = ['arch-dome', 'sharp-magazine', 'glass-card', 'imperial-corner', 'polaroid-mat', 'soft-organic'] as const
 const VALID_PATTERN = ['none', 'linen-grain', 'starry-dots', 'botanical-wash', 'gold-aura'] as const
@@ -21,20 +18,11 @@ const VALID_ORNAMENT = ['wax-seal', 'botanical-branch', 'double-happiness', 'con
 const VALID_HERO = ['arch-portrait', 'full-overlay', 'split-editorial', 'polaroid-story'] as const
 
 const DEFAULT_THEME = {
-  bg: '#F8F5EF',
-  bgAccent: '#EFE9DD',
-  surface: '#FFFFFF',
-  text: '#24231F',
-  muted: '#6E695E',
-  accent: '#59634A',
-  border: '#DDD5C7',
-  buttonText: '#FFFFFF',
+  bg: '#F8F5EF', surface: '#FFFFFF', text: '#24231F', muted: '#6E695E', accent: '#59634A', border: '#DDD5C7', buttonText: '#FFFFFF',
 } as const
 
 function pickEnum<T extends string>(raw: unknown, allowed: readonly T[], fallback: T): T {
-  return typeof raw === 'string' && (allowed as readonly string[]).includes(raw.trim())
-    ? (raw.trim() as T)
-    : fallback
+  return typeof raw === 'string' && (allowed as readonly string[]).includes(raw.trim()) ? (raw.trim() as T) : fallback
 }
 
 function safeHex(raw: unknown, fallback: string): string {
@@ -66,7 +54,7 @@ function parseSchedule(raw: unknown): InvitationScheduleItem[] {
   })
 }
 
-function normalizeSectionOrder(raw: unknown, hasBio: boolean, hasStory: boolean, hasDressCode: boolean, hasGift: boolean): BespokeSectionKey[] {
+function normalizeSectionOrder(raw: unknown, flags: { bio: boolean; story: boolean; dress: boolean; gift: boolean }): BespokeSectionKey[] {
   const picked: BespokeSectionKey[] = ['hero']
   if (Array.isArray(raw)) {
     for (const item of raw) {
@@ -78,17 +66,15 @@ function normalizeSectionOrder(raw: unknown, hasBio: boolean, hasStory: boolean,
   }
   if (picked.length < 3) {
     const defaults: BespokeSectionKey[] = [
-      ...(hasBio ? (['couple-bio'] as const) : []),
-      ...(hasStory ? (['story'] as const) : []),
+      ...(flags.bio ? (['couple-bio'] as const) : []),
+      ...(flags.story ? (['story'] as const) : []),
       'event-card',
-      ...(hasDressCode ? (['dress-code'] as const) : []),
+      ...(flags.dress ? (['dress-code'] as const) : []),
       'gallery',
       'countdown',
-      ...(hasGift ? (['gift-note'] as const) : []),
+      ...(flags.gift ? (['gift-note'] as const) : []),
     ]
-    for (const key of defaults) {
-      if (!picked.includes(key)) picked.push(key)
-    }
+    for (const key of defaults) if (!picked.includes(key)) picked.push(key)
   }
   return picked.slice(0, 9)
 }
@@ -104,9 +90,7 @@ export function executeGenerateBespokeInvitation(
   const eventTitle = (readStr(args, 'eventTitle', 'Lễ Thành Hôn & Tiệc Cưới Thân Mật') || 'Lễ Thành Hôn & Tiệc Cưới Thân Mật').slice(0, 120)
 
   const rawTheme = asObj(args['theme'])
-  const bgAccent = typeof rawTheme['bgAccent'] === 'string' && HEX_RE.test(rawTheme['bgAccent'].trim())
-    ? rawTheme['bgAccent'].trim().toUpperCase()
-    : undefined
+  const bgAccent = typeof rawTheme['bgAccent'] === 'string' && HEX_RE.test(rawTheme['bgAccent'].trim()) ? rawTheme['bgAccent'].trim().toUpperCase() : undefined
   const theme = {
     bg: safeHex(rawTheme['bg'], DEFAULT_THEME.bg),
     ...(bgAccent ? { bgAccent } : {}),
@@ -120,10 +104,7 @@ export function executeGenerateBespokeInvitation(
 
   const groomMeta = readStr(args, 'groomMeta').slice(0, 120)
   const brideMeta = readStr(args, 'brideMeta').slice(0, 120)
-  const coupleBio = groomMeta || brideMeta
-    ? { ...(groomMeta ? { groomMeta } : {}), ...(brideMeta ? { brideMeta } : {}) }
-    : undefined
-
+  const coupleBio = groomMeta || brideMeta ? { ...(groomMeta ? { groomMeta } : {}), ...(brideMeta ? { brideMeta } : {}) } : undefined
   const storyMilestones = parseMilestones(args['storyMilestones'])
 
   const rawDress = asObj(args['dressCode'])
@@ -139,17 +120,14 @@ export function executeGenerateBespokeInvitation(
   const rawGift = asObj(args['giftNote'])
   const giftHeading = readStr(rawGift, 'heading').slice(0, 80)
   const giftMessage = readStr(rawGift, 'message').slice(0, 260)
-  const giftNote = giftHeading || giftMessage
-    ? { ...(giftHeading ? { heading: giftHeading } : {}), ...(giftMessage ? { message: giftMessage } : {}) }
-    : undefined
+  const giftNote = giftHeading || giftMessage ? { ...(giftHeading ? { heading: giftHeading } : {}), ...(giftMessage ? { message: giftMessage } : {}) } : undefined
 
-  const sectionOrder = normalizeSectionOrder(
-    args['sectionOrder'],
-    Boolean(coupleBio),
-    storyMilestones.length > 0,
-    Boolean(dressCode),
-    Boolean(giftNote),
-  )
+  const sectionOrder = normalizeSectionOrder(args['sectionOrder'], {
+    bio: Boolean(coupleBio),
+    story: storyMilestones.length > 0,
+    dress: Boolean(dressCode),
+    gift: Boolean(giftNote),
+  })
 
   const customDesign = BespokeDesignBlueprintSchema.parse({
     conceptName,
@@ -170,10 +148,7 @@ export function executeGenerateBespokeInvitation(
   const groomParents = readStr(args, 'groomParents').slice(0, 160)
   const brideParents = readStr(args, 'brideParents').slice(0, 160)
   const families: InvitationFamilies | undefined = groomParents || brideParents
-    ? {
-        ...(groomParents ? { groomParents } : {}),
-        ...(brideParents ? { brideParents } : {}),
-      }
+    ? { ...(groomParents ? { groomParents } : {}), ...(brideParents ? { brideParents } : {}) }
     : undefined
 
   const rawDate = readStr(args, 'weddingDate')
@@ -184,19 +159,12 @@ export function executeGenerateBespokeInvitation(
   const venueName = readStr(args, 'venueName').slice(0, 120)
   const venueAddress = readStr(args, 'venueAddress').slice(0, 220)
   const storyCaption = readStr(args, 'storyCaption').slice(0, 220)
-
   const draftData: AgentBespokeDraftData = {
-    displayNames: [groomName, brideName],
-    eventTitle,
-    ...(greeting ? { greeting } : {}),
-    ...(ISO_LOCAL_RE.test(rawDate) ? { eventLocalStart: rawDate } : {}),
-    ...(lunarDate ? { lunarDate } : {}),
-    ...(venueName ? { venueName } : {}),
-    ...(venueAddress ? { venueAddress } : {}),
-    ...(families ? { families } : {}),
-    ...(scheduleItems.length > 0 ? { scheduleItems } : {}),
-    ...(uploadedImg ? { heroUrl: uploadedImg.dataUrl } : {}),
-    ...(storyCaption ? { storyCaption } : {}),
+    displayNames: [groomName, brideName], eventTitle,
+    ...(greeting ? { greeting } : {}), ...(ISO_LOCAL_RE.test(rawDate) ? { eventLocalStart: rawDate } : {}),
+    ...(lunarDate ? { lunarDate } : {}), ...(venueName ? { venueName } : {}), ...(venueAddress ? { venueAddress } : {}),
+    ...(families ? { families } : {}), ...(scheduleItems.length > 0 ? { scheduleItems } : {}),
+    ...(uploadedImg ? { heroUrl: uploadedImg.dataUrl } : {}), ...(storyCaption ? { storyCaption } : {}),
   }
 
   return {
@@ -210,15 +178,9 @@ export function executeGenerateBespokeInvitation(
       draftData,
     },
     output: {
-      ok: true,
-      conceptName,
-      typography: customDesign.typography,
-      frameStyle: customDesign.frameStyle,
-      heroLayout: customDesign.heroLayout,
-      themeBg: customDesign.theme.bg,
-      themeAccent: customDesign.theme.accent,
-      sections: customDesign.sectionOrder,
-      attachedUserPhoto: Boolean(uploadedImg),
+      ok: true, conceptName, typography: customDesign.typography, frameStyle: customDesign.frameStyle,
+      heroLayout: customDesign.heroLayout, themeBg: customDesign.theme.bg, themeAccent: customDesign.theme.accent,
+      sections: customDesign.sectionOrder, attachedUserPhoto: Boolean(uploadedImg),
     },
   }
 }
