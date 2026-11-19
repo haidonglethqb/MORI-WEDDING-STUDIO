@@ -11,7 +11,9 @@ import {
   Post,
   Query,
   Req,
+  Res,
 } from '@nestjs/common'
+import type { Response } from 'express'
 import { SESSION_COOKIE } from '@mori/contracts'
 import { IdentityService } from '../identity/identity.service.js'
 import { readCookie } from '../identity/read-cookie.js'
@@ -71,6 +73,40 @@ export class AssistantController {
     await this.quota.reserve(actor.subject, actor.limit)
     const effectiveSessionId = validRequest.sessionId || xSessionId || actor.subject
     return this.orchestrator.handleChat(validRequest, effectiveSessionId)
+  }
+
+  @Post('chat/stream')
+  @HttpCode(200)
+  async chatStream(
+    @Headers('cookie') cookie: string | undefined,
+    @Headers('x-session-id') xSessionId: string | undefined,
+    @Req() req: { ip?: string; socket?: { remoteAddress?: string } },
+    @Body() body: unknown,
+    @Res() res: Response,
+  ) {
+    const validRequest = validateChatRequest(body)
+    const actor = await this.actor(cookie, req)
+    await this.quota.reserve(actor.subject, actor.limit)
+    const effectiveSessionId = validRequest.sessionId || xSessionId || actor.subject
+
+    res.setHeader('Content-Type', 'text/event-stream; charset=utf-8')
+    res.setHeader('Cache-Control', 'private, no-store, no-transform')
+    res.setHeader('Connection', 'keep-alive')
+    res.setHeader('X-Accel-Buffering', 'no')
+    if (typeof res.flushHeaders === 'function') res.flushHeaders()
+
+    const emit = (ev: { type: string }) => {
+      res.write(`event: ${ev.type}\ndata: ${JSON.stringify(ev)}\n\n`)
+    }
+
+    try {
+      await this.orchestrator.handleChatStream(validRequest, effectiveSessionId, emit)
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Lỗi xử lý Agent'
+      emit({ type: 'error', message: msg } as { type: string })
+    } finally {
+      res.end()
+    }
   }
 
   @Post('escalate')

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { compressImageFileToDataUrl } from '../../features/digital-templates/photo-upload-helper'
 import {
   DEFAULT_BRIEF,
   INITIAL_GREETING,
@@ -8,23 +9,23 @@ import {
   createAssistantSessionId,
   loadOrCreateChatStorage,
   persistChatStorage,
-  postAssistantTurn,
   postHumanEscalation,
   resetChatStorage,
 } from './assistant-chat-api'
-import {
-  extractEscalatedFlag,
-  extractStaffReplies,
-  mergeSyncedStaffMessages,
-} from './assistant-session-sync'
-import type { ChatMessageItem, ConversationWeddingBrief } from './assistant-types'
+import { extractEscalatedFlag, extractStaffReplies, mergeSyncedStaffMessages } from './assistant-session-sync'
+import { streamAssistantTurn } from './assistant-stream-client'
+import type { AgentAttachment, AgentToolTraceItem, ChatMessageItem, ConversationWeddingBrief } from './assistant-types'
 
 export function useAssistantChat() {
   const [messages, setMessages] = useState<ChatMessageItem[]>([INITIAL_GREETING])
   const [brief, setBrief] = useState<ConversationWeddingBrief>(DEFAULT_BRIEF)
-  const [sessionId, setSessionId] = useState<string>('')
+  const [sessionId, setSessionId] = useState('')
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const [activeStatus, setActiveStatus] = useState('')
+  const [activeTraces, setActiveTraces] = useState<AgentToolTraceItem[]>([])
+  const [streamingText, setStreamingText] = useState('')
+  const [attachment, setAttachment] = useState<AgentAttachment | null>(null)
   const [escalated, setEscalated] = useState(false)
   const [escalating, setEscalating] = useState(false)
   const [escalateError, setEscalateError] = useState<string | null>(null)
@@ -46,30 +47,24 @@ export function useAssistantChat() {
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
       pane.scrollTo({ top: pane.scrollHeight, behavior: reduce ? 'auto' : 'smooth' })
     }
-  }, [messages, brief, escalated])
+  }, [messages, brief, escalated, activeTraces, streamingText])
 
   useEffect(() => {
     if (!sessionId) return
     let active = true
-
     async function syncSessionReplies() {
       if (!active || document.visibilityState === 'hidden') return
       try {
-        const res = await fetch(`/assistant/session?sessionId=${encodeURIComponent(sessionId)}`, {
-          cache: 'no-store',
-        })
+        const res = await fetch(`/assistant/session?sessionId=${encodeURIComponent(sessionId)}`, { cache: 'no-store' })
         if (!res.ok || !active) return
         const payload = (await res.json()) as unknown
         if (extractEscalatedFlag(payload)) setEscalated(true)
         const staffReplies = extractStaffReplies(payload)
-        if (staffReplies.length > 0) {
-          setMessages((prev) => mergeSyncedStaffMessages(prev, staffReplies))
-        }
+        if (staffReplies.length > 0) setMessages((prev) => mergeSyncedStaffMessages(prev, staffReplies))
       } catch {
         // Ignore polling errors
       }
     }
-
     void syncSessionReplies()
     const timer = window.setInterval(() => void syncSessionReplies(), 5000)
     return () => {
@@ -78,44 +73,62 @@ export function useAssistantChat() {
     }
   }, [sessionId])
 
+  async function attachMoodboardImage(file: File | undefined) {
+    if (!file) return
+    try {
+      const dataUrl = await compressImageFileToDataUrl(file)
+      setAttachment({ kind: 'image', dataUrl, label: file.name })
+    } catch {
+      setAttachment(null)
+    }
+  }
+
   async function sendMessage(textToSend: string) {
     const text = textToSend.trim()
     if (!text || loading) return
-
-    const updated = [...messages, { id: `u-${Date.now()}`, role: 'user' as const, content: text }]
+    const currentAttach = attachment
+    const updated: ChatMessageItem[] = [
+      ...messages,
+      { id: `u-${Date.now()}`, role: 'user', content: text, ...(currentAttach ? { attachmentDataUrl: currentAttach.dataUrl } : {}) },
+    ]
     setMessages(updated)
     setInput('')
+    setAttachment(null)
     setLoading(true)
+    setActiveStatus('MORI Agent đang kết nối...')
+    setActiveTraces([])
+    setStreamingText('')
 
-    const result = await postAssistantTurn(
+    const result = await streamAssistantTurn(
       text,
       updated,
       brief,
       sessionId || createAssistantSessionId(),
+      currentAttach ? [currentAttach] : [],
+      {
+        onStatus: setActiveStatus,
+        onToolStart: (t) => setActiveTraces((prev) => [...prev, t]),
+        onToolDone: (t) => setActiveTraces((prev) => prev.map((x) => (x.id === t.id ? t : x))),
+        onDelta: (chunk) => setStreamingText((prev) => prev + chunk),
+      },
     )
+
     setLoading(false)
+    setActiveStatus('')
+    setActiveTraces([])
+    setStreamingText('')
 
     if (result.kind === 'quota') {
       setMessages((prev) => [
         ...prev,
-        {
-          id: `quota-${Date.now()}`,
-          role: 'assistant',
-          content:
-            'Bạn đã dùng hết hạn mức tư vấn hôm nay dành cho khách vãng lai. Hãy đăng nhập hoặc bấm “Gặp nhân viên tư vấn (Admin)” để được hỗ trợ trực tiếp nhé.',
-        },
+        { id: `quota-${Date.now()}`, role: 'assistant', content: 'Bạn đã dùng hết hạn mức tư vấn hôm nay dành cho khách vãng lai. Hãy đăng nhập hoặc bấm “Gặp nhân viên tư vấn (Admin)” để được hỗ trợ trực tiếp nhé.' },
       ])
       return
     }
     if (result.kind === 'error') {
       setMessages((prev) => [
         ...prev,
-        {
-          id: `err-${Date.now()}`,
-          role: 'assistant',
-          content:
-            'MORI xin lỗi, kết nối tới trợ lý đang gián đoạn. Bạn có thể bấm “Gặp nhân viên tư vấn (Admin)” hoặc gửi yêu cầu thiết kế riêng trên trang Bộ sưu tập.',
-        },
+        { id: `err-${Date.now()}`, role: 'assistant', content: 'MORI xin lỗi, kết nối tới trợ lý đang gián đoạn. Bạn có thể bấm “Gặp nhân viên tư vấn (Admin)” hoặc gửi yêu cầu thiết kế riêng trên trang Bộ sưu tập.' },
       ])
       return
     }
@@ -129,6 +142,8 @@ export function useAssistantChat() {
         content: result.data.reply,
         products: result.data.suggestedProducts,
         budget: result.data.estimatedBudget,
+        ...(result.data.toolTraces ? { toolTraces: result.data.toolTraces } : {}),
+        ...(result.data.proposedActions ? { proposedActions: result.data.proposedActions } : {}),
       },
     ])
     if (result.data.needsHumanSupport) setEscalated(true)
@@ -139,21 +154,12 @@ export function useAssistantChat() {
   async function escalateToHuman(contact: string, note: string): Promise<boolean> {
     setEscalating(true)
     setEscalateError(null)
-    const ok = await postHumanEscalation(
-      sessionId || createAssistantSessionId(),
-      contact,
-      note,
-      messages,
-    )
+    const ok = await postHumanEscalation(sessionId || createAssistantSessionId(), contact, note, messages)
     setEscalating(false)
-
     if (!ok) {
-      setEscalateError(
-        'Chưa thể chuyển phiên tự động lúc này. Bạn vui lòng gửi yêu cầu thiết kế riêng trên trang Bộ sưu tập hoặc thử lại sau nhé.',
-      )
+      setEscalateError('Chưa thể chuyển phiên tự động lúc này. Bạn vui lòng gửi yêu cầu thiết kế riêng trên trang Bộ sưu tập hoặc thử lại sau nhé.')
       return false
     }
-
     setEscalated(true)
     setMessages((prev) => [
       ...prev,
@@ -172,24 +178,16 @@ export function useAssistantChat() {
     setSessionId(resetChatStorage())
     setMessages([INITIAL_GREETING])
     setBrief(DEFAULT_BRIEF)
+    setAttachment(null)
     setEscalated(false)
     setEscalateError(null)
     setQuickOptions(QUICK_STARTERS)
   }
 
   return {
-    messages,
-    brief,
-    input,
-    setInput,
-    loading,
-    escalated,
-    escalating,
-    escalateError,
-    quickOptions,
-    scrollAnchorRef,
-    sendMessage,
-    escalateToHuman,
-    handleReset,
+    messages, brief, input, setInput, loading, activeStatus, activeTraces,
+    streamingText, attachment, setAttachment, attachMoodboardImage, escalated,
+    escalating, escalateError, quickOptions, scrollAnchorRef, sendMessage,
+    escalateToHuman, handleReset,
   }
 }

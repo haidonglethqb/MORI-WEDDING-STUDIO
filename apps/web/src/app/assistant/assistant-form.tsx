@@ -2,16 +2,25 @@
 
 import { useState } from 'react'
 import { AssistantChatBubble } from './assistant-chat-bubble'
+import { AssistantContextBar } from './assistant-context-bar'
 import { AssistantEscalatePanel } from './assistant-escalate-panel'
+import { AssistantToolTrace } from './assistant-tool-trace'
 import { useAssistantChat } from './use-assistant-chat'
 
 export function AssistantForm() {
   const [showEscalate, setShowEscalate] = useState(false)
   const {
     messages,
+    brief,
     input,
     setInput,
     loading,
+    activeStatus,
+    activeTraces,
+    streamingText,
+    attachment,
+    setAttachment,
+    attachMoodboardImage,
     escalated,
     escalating,
     escalateError,
@@ -27,16 +36,14 @@ export function AssistantForm() {
       <div className="chat-window-pane">
         <div className="chat-pane-header">
           <div className="chat-header-identity">
-            <div className="atelier-avatar-small" aria-hidden="true">
-              <span>M</span>
-            </div>
+            <div className="atelier-avatar-small" aria-hidden="true"><span>M</span></div>
             <div className="chat-header-text">
-              <span className="chat-header-title">MORI · Trợ lý gợi ý</span>
+              <span className="chat-header-title">MORI · Atelier AI Agent</span>
               <span className="chat-header-status">
                 <span className="status-indicator-dot" />
                 {escalated
                   ? 'Đã kết nối với Nhân viên tư vấn MORI (phản hồi tự cập nhật)'
-                  : 'Hỗ trợ chọn mẫu, báo giá và chuyển nhân viên khi cần'}
+                  : 'Tư vấn · Báo giá thật · Tra đơn · Tạo thiệp online · Thêm giỏ hàng'}
               </span>
             </div>
           </div>
@@ -49,16 +56,13 @@ export function AssistantForm() {
             >
               {escalated ? '✓ Đang kết nối Nhân viên' : 'Gặp nhân viên tư vấn (Admin)'}
             </button>
-            <button
-              type="button"
-              className="chat-header-reset-btn"
-              title="Làm mới cuộc trò chuyện"
-              onClick={handleReset}
-            >
+            <button type="button" className="chat-header-reset-btn" onClick={handleReset}>
               Làm mới
             </button>
           </div>
         </div>
+
+        <AssistantContextBar brief={brief} onReset={handleReset} />
 
         <div
           className="chat-messages-flow"
@@ -70,26 +74,38 @@ export function AssistantForm() {
           {messages.map((m) => (
             <AssistantChatBubble key={m.id} message={m} />
           ))}
-          {loading && (
+
+          {loading ? (
             <div className="chat-row assistant-row">
-              <div className="atelier-avatar" aria-hidden="true">
-                <span>M</span>
-              </div>
+              <div className="atelier-avatar" aria-hidden="true"><span>M</span></div>
               <div className="assistant-bubble-container">
-                <div className="typing-indicator-bar">
-                  <span className="typing-dot" />
-                  <span className="typing-dot" />
-                  <span className="typing-dot" />
-                  <span className="typing-label">MORI đang chuẩn bị câu trả lời...</span>
-                </div>
+                {activeTraces.length > 0 ? (
+                  <AssistantToolTrace traces={activeTraces} live />
+                ) : null}
+
+                {streamingText ? (
+                  <div className="assistant-bubble-content">
+                    <div className="bubble-text-flow">
+                      {streamingText}
+                      <span className="agent-streaming-cursor" aria-hidden="true" />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="typing-indicator-bar">
+                    <span className="typing-dot" />
+                    <span className="typing-dot" />
+                    <span className="typing-dot" />
+                    <span className="typing-label">{activeStatus || 'MORI Agent đang xử lý...'}</span>
+                  </div>
+                )}
               </div>
             </div>
-          )}
+          ) : null}
           <div ref={scrollAnchorRef} />
         </div>
 
         <div className="chat-input-dock">
-          {showEscalate && (
+          {showEscalate ? (
             <AssistantEscalatePanel
               escalated={escalated}
               submitting={escalating}
@@ -97,7 +113,15 @@ export function AssistantForm() {
               onSubmit={escalateToHuman}
               onClose={() => setShowEscalate(false)}
             />
-          )}
+          ) : null}
+
+          {attachment ? (
+            <div className="agent-attach-preview">
+              <img src={attachment.dataUrl} alt="Ảnh đính kèm" />
+              <span>{attachment.label || 'Ảnh moodboard'}</span>
+              <button type="button" onClick={() => setAttachment(null)} aria-label="Bỏ ảnh">✕</button>
+            </div>
+          ) : null}
 
           <div className="quick-chips-row">
             {quickOptions.map((opt) => (
@@ -120,14 +144,25 @@ export function AssistantForm() {
               void sendMessage(input)
             }}
           >
-            <label className="assistant-sr-only" htmlFor="assistant-message">
-              Tin nhắn của bạn
+            <label className="agent-attach-btn" title="Gửi ảnh moodboard hoặc mẫu thiệp tham khảo">
+              + Ảnh
+              <input
+                type="file"
+                accept="image/*"
+                hidden
+                disabled={loading}
+                onChange={(e) => {
+                  void attachMoodboardImage(e.target.files?.[0])
+                  e.currentTarget.value = ''
+                }}
+              />
             </label>
+            <label className="assistant-sr-only" htmlFor="assistant-message">Tin nhắn của bạn</label>
             <input
               id="assistant-message"
               type="text"
               className="chat-input-field"
-              placeholder="Bạn muốn hỏi MORI điều gì? (Hoặc bấm Gặp nhân viên tư vấn ở góc trên)"
+              placeholder="Hỏi mẫu, tính combo, tra đơn MORI-1001, hoặc nhờ Agent tạo thiệp online..."
               value={input}
               disabled={loading}
               onChange={(e) => setInput(e.target.value)}
@@ -141,16 +176,7 @@ export function AssistantForm() {
               {loading ? (
                 <span className="btn-spinner" />
               ) : (
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M12 19V5M5 12l7-7 7 7" />
                 </svg>
               )}

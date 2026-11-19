@@ -3,6 +3,30 @@ import { z } from 'zod'
 import type { CataloguePreference } from '@mori/domain'
 import type { AssistantChatRequest } from './assistant-types.js'
 
+const safeDataImage = z
+  .string()
+  .trim()
+  .max(60_000)
+  .refine(
+    (v) => /^data:image\/(jpeg|jpg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(v),
+    'Invalid base64 image attachment',
+  )
+
+const LiveContextSchema = z
+  .object({
+    currentPath: z.string().trim().max(120).optional(),
+    cartCount: z.number().int().min(0).max(100).optional(),
+    cartTotalVnd: z.number().min(0).optional(),
+    cartItemsSummary: z.array(z.string().trim().max(120)).max(12).optional(),
+  })
+  .optional()
+
+const AttachmentSchema = z.object({
+  kind: z.literal('image'),
+  dataUrl: safeDataImage,
+  label: z.string().trim().max(80).optional(),
+})
+
 const AssistantChatRequestSchema = z.object({
   message: z
     .string()
@@ -15,6 +39,8 @@ const AssistantChatRequestSchema = z.object({
   history: z
     .array(z.object({ role: z.enum(['user', 'assistant']), content: z.string() }))
     .optional(),
+  liveContext: LiveContextSchema,
+  attachments: z.array(AttachmentSchema).max(1).optional(),
 })
 
 const EscalateRequestSchema = z.object({

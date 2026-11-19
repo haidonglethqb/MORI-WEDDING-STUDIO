@@ -1,18 +1,13 @@
 import { Injectable } from '@nestjs/common'
 import { AiConfigService, type AiSystemConfig } from './ai-config.service.js'
+import { callToolCompletion, type CandidateSpec } from './agent-gateway-client.js'
+import type { LlmToolMessage, LlmToolStepResult } from './agent-types.js'
 
 export interface ModelCompletionResult<T> {
   data: T
   modelUsed: string
   fallbackTier: number
   latencyMs: number
-}
-
-interface ProviderCandidate {
-  id: string
-  endpoint: string
-  apiKey: string
-  timeoutMs: number
 }
 
 const GROQ_ENDPOINT = 'https://api.groq.com/openai/v1/chat/completions'
@@ -70,8 +65,38 @@ export class GroqAiGateway {
     throw new Error(`All failover models exhausted: ${errors.join('; ')}`)
   }
 
-  private buildCandidates(cfg: AiSystemConfig): ProviderCandidate[] {
-    const list: ProviderCandidate[] = []
+  async executeToolStep(
+    messages: LlmToolMessage[],
+    tools: unknown[],
+  ): Promise<LlmToolStepResult> {
+    const config = this.config.getConfig()
+    if (config.provider === 'LOCAL_ONLY') {
+      throw new Error('Configured to use Local Deterministic Atelier fallback')
+    }
+
+    const candidates = this.buildCandidates(config)
+    if (candidates.length === 0) {
+      throw new Error('No AI provider API key configured')
+    }
+
+    const errors: string[] = []
+    for (let tier = 0; tier < candidates.length; tier++) {
+      const candidate = candidates[tier]
+      if (!candidate) continue
+      try {
+        const res = await callToolCompletion(candidate, messages, tools, config.temperature)
+        return { ...res, modelUsed: candidate.id, fallbackTier: tier + 1 }
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err)
+        errors.push(`Tier ${tier + 1} (${candidate.id}) failed: ${msg}`)
+      }
+    }
+
+    throw new Error(`All failover models exhausted: ${errors.join('; ')}`)
+  }
+
+  private buildCandidates(cfg: AiSystemConfig): CandidateSpec[] {
+    const list: CandidateSpec[] = []
     const codexEndpoint = `${cfg.codexBaseUrl.replace(/\/+$/, '')}/chat/completions`
 
     if (cfg.provider === 'CODEX') {
@@ -110,16 +135,10 @@ export class GroqAiGateway {
     try {
       const response = await fetch(endpoint, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${apiKey}`,
-        },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
         body: JSON.stringify({
           model: modelId,
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: userPrompt },
-          ],
+          messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userPrompt }],
           temperature,
           response_format: { type: 'json_object' },
         }),
@@ -131,9 +150,7 @@ export class GroqAiGateway {
         throw new Error(`HTTP ${response.status}: ${errText.slice(0, 150)}`)
       }
 
-      const json = (await response.json()) as {
-        choices?: Array<{ message?: { content?: string } }>
-      }
+      const json = (await response.json()) as { choices?: Array<{ message?: { content?: string } }> }
       const content = json.choices?.[0]?.message?.content
       if (!content) throw new Error('Empty completion content from model')
       return content

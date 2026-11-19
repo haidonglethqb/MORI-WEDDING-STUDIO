@@ -1,9 +1,11 @@
 import { cookies } from 'next/headers'
 import Link from 'next/link'
+import { CartDrawerFallback } from '../../features/cart/cart-drawer-fallback'
 import { HomeNav } from '../home-nav'
 import { HomeFooter } from '../home-footer'
 import { AdminAiLogs } from '../admin/ai/admin-ai-logs'
 import { AssistantForm } from './assistant-form'
+import '../../features/cart/storefront-footer.css'
 import '../admin/ai/admin-ai.css'
 import './assistant.css'
 import './radiant-prompt.css'
@@ -74,17 +76,18 @@ export default async function AssistantPage() {
       ) : (
         <main className="assistant-page">
           <header className="assistant-header">
-            <span className="assistant-badge">MORI WEDDING STUDIO · TRỢ LÝ TƯ VẤN</span>
-            <h1>Trợ Lý Tư Vấn Thiệp Cưới MORI</h1>
+            <span className="assistant-badge">MORI WEDDING STUDIO · AI AGENT</span>
+            <h1>MORI Atelier AI Agent</h1>
             <p>
-              Gợi ý mẫu thiệp giấy bã mía, thiệp cưới online và combo ưu đãi 50%, hoặc kết nối trực
-              tiếp với nhân viên tư vấn khi bạn cần thiết kế riêng.
+              Tư vấn mẫu thiệp theo không gian tiệc &amp; moodboard, tính combo giảm 50%, tra cứu
+              đơn hàng và khởi tạo bản nháp Thiệp Online chỉ với một chạm.
             </p>
           </header>
 
           <AssistantForm />
         </main>
       )}
+      <CartDrawerFallback />
       <HomeFooter />
     </div>
   )

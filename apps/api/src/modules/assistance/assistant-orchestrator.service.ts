@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Optional } from '@nestjs/common'
 import type {
   AssistantChatRequest,
   AssistantChatResponse,
@@ -6,6 +6,8 @@ import type {
   ConversationWeddingBrief,
   EstimatedBudgetSummary,
 } from './assistant-types.js'
+import type { AgentStreamEvent } from './agent-types.js'
+import { AgentLoopService } from './agent-loop.service.js'
 import { ContextExtractor } from './context-extractor.js'
 import { GroqAiGateway } from './groq-ai-gateway.js'
 import { CatalogProvider } from './catalog-provider.js'
@@ -41,11 +43,20 @@ export class AssistantOrchestratorService {
     private readonly guardrail: SupervisorGuardrail,
     private readonly pricingTool?: AiPricingTool,
     logService?: AiLogService,
+    @Optional() private readonly agentLoop?: AgentLoopService,
   ) {
     this.logService = logService ?? new AiLogService()
   }
 
   async handleChat(req: AssistantChatRequest, sessionId = 'session_guest_default'): Promise<AssistantChatResponse> {
+    return this.handleChatStream(req, sessionId)
+  }
+
+  async handleChatStream(
+    req: AssistantChatRequest,
+    sessionId = 'session_guest_default',
+    onEvent?: (ev: AgentStreamEvent) => void,
+  ): Promise<AssistantChatResponse> {
     const start = Date.now()
     const baseBrief = this.extractor.mergeBrief(this.extractor.createInitialBrief(), req.context)
     const boostedBrief = this.extractor.boostFromText(baseBrief, req.message)
@@ -54,14 +65,22 @@ export class AssistantOrchestratorService {
       const escalationResponse = buildEscalationChatResponse(boostedBrief, Date.now() - start)
       this.recordTurn(sessionId, req.message, escalationResponse)
       this.logService.markEscalated(sessionId, { reason: req.message })
+      onEvent?.({ type: 'delta', text: escalationResponse.reply })
+      onEvent?.({ type: 'complete', response: escalationResponse })
       return escalationResponse
     }
 
-    const history = req.history?.slice(-30) ?? []
     const catalog = await this.catalogProvider.getActiveProducts()
 
-    const catalogGrounding = formatGroundedCatalog(catalog)
-    const systemPrompt = `${ATELIER_MASTER_SYSTEM_PROMPT}\n\n${catalogGrounding}`
+    if (this.agentLoop && typeof this.groqGateway.executeToolStep === 'function') {
+      const agentResponse = await this.agentLoop.run(req, catalog, boostedBrief, onEvent)
+      this.recordTurn(sessionId, req.message, agentResponse)
+      onEvent?.({ type: 'complete', response: agentResponse })
+      return agentResponse
+    }
+
+    const history = req.history?.slice(-30) ?? []
+    const systemPrompt = `${ATELIER_MASTER_SYSTEM_PROMPT}\n\n${formatGroundedCatalog(catalog)}`
     const userPrompt = buildUserPrompt(boostedBrief, history, req.message)
 
     let response: AssistantChatResponse
@@ -78,6 +97,8 @@ export class AssistantOrchestratorService {
     }
 
     this.recordTurn(sessionId, req.message, response)
+    onEvent?.({ type: 'delta', text: response.reply })
+    onEvent?.({ type: 'complete', response })
     return response
   }
 
@@ -98,14 +119,10 @@ export class AssistantOrchestratorService {
     }
     mentionedFromReply.sort((a, b) => a.index - b.index)
 
-    const effectiveSlugs = mentionedFromReply.length > 0
-      ? mentionedFromReply.map((m) => m.slug)
-      : (raw.suggestedSlugs ?? [])
-
+    const effectiveSlugs = mentionedFromReply.length > 0 ? mentionedFromReply.map((m) => m.slug) : (raw.suggestedSlugs ?? [])
     const matchedProducts = this.matcher.rankProducts(catalog, updatedBrief, effectiveSlugs)
     const suggestedCards = this.guardrail.buildProductCards(matchedProducts)
 
-    // Ground card prices and budget via EstimateService / AiPricingTool (T28)
     let estimatedBudget: EstimatedBudgetSummary | null = null
     const suites = updatedBrief.estimatedSuites
     const pricedProducts = matchedProducts.filter((product) => !product.isFixture)
@@ -169,11 +186,7 @@ export class AssistantOrchestratorService {
         fallbackTier: res.meta.fallbackTier,
         latencyMs: res.meta.latencyMs,
         assistantReply: res.reply,
-        suggestedProducts: res.suggestedProducts.map((p) => ({
-          slug: p.slug,
-          name: p.name,
-          startingPriceVnd: p.startingPriceVnd,
-        })),
+        suggestedProducts: res.suggestedProducts.map((p) => ({ slug: p.slug, name: p.name, startingPriceVnd: p.startingPriceVnd })),
       },
       {
         coupleNames: res.updatedBrief.coupleNames,

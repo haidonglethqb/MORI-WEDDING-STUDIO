@@ -1,8 +1,10 @@
 'use client'
 
 import type { ReactNode } from 'react'
-import type { ChatMessageItem } from './assistant-types'
+import { AssistantActionCard } from './assistant-action-card'
 import { AssistantProductCard } from './assistant-product-card'
+import { AssistantToolTrace } from './assistant-tool-trace'
+import type { ChatMessageItem } from './assistant-types'
 
 interface ChatBubbleProps {
   message: ChatMessageItem
@@ -48,6 +50,11 @@ export function AssistantChatBubble({ message }: ChatBubbleProps) {
     return (
       <div className="chat-row user-row">
         <div className="user-bubble">
+          {message.attachmentDataUrl ? (
+            <div className="agent-bubble-thumb">
+              <img src={message.attachmentDataUrl} alt="Ảnh ý tưởng gửi kèm" />
+            </div>
+          ) : null}
           <p className="bubble-text">{message.content}</p>
         </div>
       </div>
@@ -69,12 +76,16 @@ export function AssistantChatBubble({ message }: ChatBubbleProps) {
               ? message.senderLabel || 'Nhân viên tư vấn MORI'
               : isSystem
                 ? message.senderLabel || 'Hệ thống hỗ trợ MORI'
-                : 'Trợ lý MORI'}
+                : 'MORI Atelier Agent'}
           </span>
           <span className={`atelier-role ${isStaff ? 'is-staff-badge' : ''}`}>
-            {isStaff ? 'Hỗ trợ trực tiếp' : isSystem ? 'Đã chuyển tiếp' : 'Tư vấn viên AI'}
+            {isStaff ? 'Hỗ trợ trực tiếp' : isSystem ? 'Đã chuyển tiếp' : 'AI Agent'}
           </span>
         </div>
+
+        {message.toolTraces && message.toolTraces.length > 0 ? (
+          <AssistantToolTrace traces={message.toolTraces} />
+        ) : null}
 
         <div
           className={`assistant-bubble-content ${
@@ -84,15 +95,15 @@ export function AssistantChatBubble({ message }: ChatBubbleProps) {
           <div className="bubble-text-flow">{renderFormattedMessage(message.content)}</div>
         </div>
 
-        {message.products && message.products.length > 0 && (
+        {message.products && message.products.length > 0 ? (
           <div className="embedded-products-grid">
             {message.products.map((prod) => (
               <AssistantProductCard key={prod.slug} item={prod} />
             ))}
           </div>
-        )}
+        ) : null}
 
-        {message.budget && (
+        {message.budget ? (
           <div className="embedded-budget-card">
             <div className="budget-header">
               <span className="budget-title">Dự toán may đo ước tính</span>
@@ -108,7 +119,7 @@ export function AssistantChatBubble({ message }: ChatBubbleProps) {
                 <strong>{formatVnd(message.budget.baseAmountVnd)}</strong>
               </div>
               <div className="budget-row">
-                <span>Gia công theo lựa chọn:</span>
+                <span>Tùy chọn / Thiệp online:</span>
                 <strong>{formatVnd(message.budget.finishesAmountVnd)}</strong>
               </div>
               <div className="budget-row budget-total-row">
@@ -117,14 +128,22 @@ export function AssistantChatBubble({ message }: ChatBubbleProps) {
               </div>
             </div>
 
-            {message.budget.giftComplimentary && (
+            {message.budget.giftComplimentary ? (
               <div className="budget-gift-card">
-                <span className="gift-badge">Đặc quyền đính kèm</span>
+                <span className="gift-badge">Ưu đãi áp dụng</span>
                 <span className="gift-text">{message.budget.giftComplimentary}</span>
               </div>
-            )}
+            ) : null}
           </div>
-        )}
+        ) : null}
+
+        {message.proposedActions && message.proposedActions.length > 0 ? (
+          <div className="agent-actions-stack">
+            {message.proposedActions.map((act, idx) => (
+              <AssistantActionCard key={`${act.type}-${idx}`} action={act} />
+            ))}
+          </div>
+        ) : null}
       </div>
     </div>
   )

@@ -1,3 +1,10 @@
+import type {
+  AgentAttachment,
+  AgentLiveContext,
+  AgentProposedAction,
+  AgentToolTraceItem,
+} from './agent-types.js'
+
 export interface ConversationWeddingBrief {
   coupleNames: string | null
   weddingDate: string | null
@@ -30,6 +37,8 @@ export interface AssistantChatRequest {
   history?: AssistantChatMessage[]
   context?: Partial<ConversationWeddingBrief> | null
   sessionId?: string
+  liveContext?: AgentLiveContext
+  attachments?: AgentAttachment[]
 }
 
 export interface SuggestedProductCard {
@@ -61,6 +70,8 @@ export interface AssistantChatResponse {
   estimatedBudget: EstimatedBudgetSummary | null
   quickFollowUps: string[]
   needsHumanSupport?: boolean
+  toolTraces?: AgentToolTraceItem[]
+  proposedActions?: AgentProposedAction[]
   meta: {
     modelUsed: string
     fallbackTier: number

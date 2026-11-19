@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
 import { IdentityModule } from '../identity/identity.module.js'
+import { OrdersModule } from '../orders/orders.module.js'
 import { PricingModule } from '../pricing/pricing.module.js'
 import { AiToolBoundary } from './ai-tool-boundary.js'
 import { AssistantController } from './assistant.controller.js'
@@ -18,9 +19,11 @@ import { AdminAiConfigController } from './admin-ai-config.controller.js'
 import { AiProviderTesterService } from './ai-provider-tester.service.js'
 import { AiPricingTool } from './ai-pricing-tool.js'
 import { AiCatalogueTool } from './ai-catalogue-tool.js'
+import { AgentToolExecutorService } from './agent-tool-executor.service.js'
+import { AgentLoopService } from './agent-loop.service.js'
 
 @Module({
-  imports: [IdentityModule, PricingModule],
+  imports: [IdentityModule, PricingModule, OrdersModule],
   controllers: [AssistantController, AdminAiConfigController],
   providers: [
     AiConfigService,
@@ -37,6 +40,8 @@ import { AiCatalogueTool } from './ai-catalogue-tool.js'
     SupervisorGuardrail,
     AiPricingTool,
     AiCatalogueTool,
+    AgentToolExecutorService,
+    AgentLoopService,
     AssistantOrchestratorService,
   ],
   exports: [
@@ -45,6 +50,7 @@ import { AiCatalogueTool } from './ai-catalogue-tool.js'
     AiLogService,
     AiPricingTool,
     AiCatalogueTool,
+    AgentLoopService,
   ],
 })
 export class AssistanceModule {}

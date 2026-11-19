@@ -27,6 +27,7 @@ export interface SuggestedProductCard {
   subtitle: string
   shape: string
   startingPriceVnd: string
+  imageUrl?: string | null
   isFixture?: boolean
   silhouette?: string
   accentColor?: string
@@ -41,6 +42,75 @@ export interface EstimatedBudgetSummary {
   giftComplimentary: string
 }
 
+export interface AgentToolTraceItem {
+  id: string
+  tool: string
+  label: string
+  status: 'running' | 'done' | 'error'
+  summary?: string
+  durationMs?: number
+}
+
+export type AgentProposedAction =
+  | {
+      type: 'ADD_TO_CART'
+      title: string
+      subtitle: string
+      productType: 'PAPER' | 'DIGITAL' | 'COMBO'
+      slug: string
+      name: string
+      shape: string
+      quantity: number
+      unitAmountVnd: number
+      imageUrl?: string | null
+      linkedDigitalSlug?: string
+      linkedDigitalName?: string
+      linkedDigitalUnitVnd?: number
+    }
+  | {
+      type: 'CREATE_DIGITAL_INVITATION'
+      title: string
+      subtitle: string
+      templateId: 'editorial-vogue' | 'heritage-palace' | 'botanical-zen'
+      groomName: string
+      brideName: string
+      eventTitle: string
+      weddingDate?: string
+      lunarDate?: string
+      venueName?: string
+      venueAddress?: string
+      greeting?: string
+    }
+  | {
+      type: 'SUBMIT_CUSTOM_REQUEST'
+      title: string
+      subtitle: string
+      coupleNames?: string
+      weddingDate?: string
+      quantity?: string
+      style?: string
+      notes: string
+    }
+  | {
+      type: 'NAVIGATE'
+      title: string
+      subtitle: string
+      href: string
+    }
+
+export interface AgentLiveContext {
+  currentPath?: string
+  cartCount?: number
+  cartTotalVnd?: number
+  cartItemsSummary?: string[]
+}
+
+export interface AgentAttachment {
+  kind: 'image'
+  dataUrl: string
+  label?: string
+}
+
 export interface ChatMessageItem {
   id: string
   role: 'user' | 'assistant'
@@ -48,8 +118,11 @@ export interface ChatMessageItem {
   senderLabel?: string
   timestamp?: string
   content: string
+  attachmentDataUrl?: string
   products?: SuggestedProductCard[]
   budget?: EstimatedBudgetSummary | null
+  toolTraces?: AgentToolTraceItem[]
+  proposedActions?: AgentProposedAction[]
   meta?: {
     modelUsed: string
     fallbackTier: number
@@ -64,6 +137,8 @@ export interface AssistantChatApiResponse {
   estimatedBudget: EstimatedBudgetSummary | null
   quickFollowUps: string[]
   needsHumanSupport?: boolean
+  toolTraces?: AgentToolTraceItem[]
+  proposedActions?: AgentProposedAction[]
   meta: {
     modelUsed: string
     fallbackTier: number
