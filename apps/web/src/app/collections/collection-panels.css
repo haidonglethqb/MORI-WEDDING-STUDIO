@@ -1,4 +1,5 @@
 @import './collection-custom.css';
+@import './online-studio.css';
 
 .collection-tabs-bar {
   display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 32px; padding: 12px;

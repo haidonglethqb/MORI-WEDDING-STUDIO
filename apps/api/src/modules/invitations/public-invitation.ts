@@ -10,5 +10,15 @@ export function toPublicInvitation(slug: string, payload: unknown): PublicInvita
     greeting: content.greeting ?? null,
     ...(content.eventLocalStart ? { eventLocalStart: content.eventLocalStart } : {}),
     ...(content.timeZone ? { timeZone: content.timeZone } : {}),
+    ...(content.templateId ? { templateId: content.templateId } : {}),
+    ...(content.coupleRoles ? { coupleRoles: content.coupleRoles } : {}),
+    ...(content.families ? { families: content.families } : {}),
+    ...(content.lunarDate ? { lunarDate: content.lunarDate } : {}),
+    ...(content.venueName ? { venueName: content.venueName } : {}),
+    ...(content.venueAddress ? { venueAddress: content.venueAddress } : {}),
+    ...(content.mapUrl ? { mapUrl: content.mapUrl } : {}),
+    ...(content.scheduleItems ? { scheduleItems: content.scheduleItems } : {}),
+    ...(content.photos ? { photos: content.photos } : {}),
+    ...(content.templateConfig ? { templateConfig: content.templateConfig } : {}),
   }
 }

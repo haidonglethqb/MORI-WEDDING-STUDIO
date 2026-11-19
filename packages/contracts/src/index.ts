@@ -46,6 +46,11 @@ export type { CatalogueProduct, CatalogueQuery } from './catalogue.js'
 export {
   GuestLinkExchangeSchema,
   InvitationContentSchema,
+  InvitationFamiliesSchema,
+  InvitationPhotosSchema,
+  InvitationScheduleItemSchema,
+  InvitationTemplateConfigSchema,
+  InvitationTemplateIdSchema,
   PublicInvitationSchema,
   PublishInvitationSchema,
   SaveInvitationDraftSchema,
@@ -53,6 +58,11 @@ export {
 export type {
   GuestLinkExchange,
   InvitationContent,
+  InvitationFamilies,
+  InvitationPhotos,
+  InvitationScheduleItem,
+  InvitationTemplateConfig,
+  InvitationTemplateId,
   PublicInvitation,
   PublishInvitation,
   SaveInvitationDraft,

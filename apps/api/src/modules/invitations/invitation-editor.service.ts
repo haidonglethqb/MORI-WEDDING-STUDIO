@@ -1,5 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
-import { InvitationContentSchema, type SaveInvitationDraft } from '@mori/contracts'
+import {
+  InvitationContentSchema,
+  type InvitationFamilies,
+  type InvitationPhotos,
+  type InvitationScheduleItem,
+  type InvitationTemplateConfig,
+  type InvitationTemplateId,
+  type SaveInvitationDraft,
+} from '@mori/contracts'
 import { getPrismaClient } from '@mori/database'
 import { InvitationService } from './invitation.service.js'
 
@@ -14,6 +22,18 @@ export interface InvitationEditorDraft {
   rsvpMode: 'OFF' | 'OPEN' | 'GUEST_LIST'
   moderationState: 'ACTIVE' | 'SUSPENDED'
   moderationReason: string | null
+  eventLocalStart?: string
+  timeZone?: string
+  templateId?: InvitationTemplateId
+  coupleRoles?: [string, string]
+  families?: InvitationFamilies
+  lunarDate?: string
+  venueName?: string
+  venueAddress?: string
+  mapUrl?: string
+  scheduleItems?: InvitationScheduleItem[]
+  photos?: InvitationPhotos
+  templateConfig?: InvitationTemplateConfig
 }
 
 @Injectable()
@@ -38,6 +58,18 @@ export class InvitationEditorService {
       rsvpMode: invitation.rsvpMode,
       moderationState: invitation.moderationState,
       moderationReason: invitation.moderationReason,
+      ...(content.eventLocalStart ? { eventLocalStart: content.eventLocalStart } : {}),
+      ...(content.timeZone ? { timeZone: content.timeZone } : {}),
+      ...(content.templateId ? { templateId: content.templateId } : {}),
+      ...(content.coupleRoles ? { coupleRoles: content.coupleRoles } : {}),
+      ...(content.families ? { families: content.families } : {}),
+      ...(content.lunarDate ? { lunarDate: content.lunarDate } : {}),
+      ...(content.venueName ? { venueName: content.venueName } : {}),
+      ...(content.venueAddress ? { venueAddress: content.venueAddress } : {}),
+      ...(content.mapUrl ? { mapUrl: content.mapUrl } : {}),
+      ...(content.scheduleItems ? { scheduleItems: content.scheduleItems } : {}),
+      ...(content.photos ? { photos: content.photos } : {}),
+      ...(content.templateConfig ? { templateConfig: content.templateConfig } : {}),
     }
   }
 

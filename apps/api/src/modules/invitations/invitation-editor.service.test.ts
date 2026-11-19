@@ -41,12 +41,21 @@ describe('invitation editor', () => {
         displayNames: ['Mai', 'An'],
         eventTitle: 'Lễ tại nhà',
         greeting: 'Mời bạn đến chung vui',
+        templateId: 'heritage-palace',
+        families: { groomParents: 'Ông Bà Nam', brideParents: 'Ông Bà Lan' },
+        lunarDate: 'Ngày 20 tháng 10 năm Bính Ngọ',
+        venueName: 'Grand Ballroom',
+        photos: { heroUrl: '/images/blog/style-classic-blossom.jpg' },
+        templateConfig: { paletteId: 'imperial-crimson', showFamilies: true, showLunarDate: true },
       },
     })
     expect(saved.version).toBe(1)
     expect(saved.displayNames).toEqual(['Mai', 'An'])
     expect(saved.eventTitle).toBe('Lễ tại nhà')
     expect(saved.greeting).toBe('Mời bạn đến chung vui')
+    expect(saved.templateId).toBe('heritage-palace')
+    expect(saved.venueName).toBe('Grand Ballroom')
+    expect(saved.templateConfig?.paletteId).toBe('imperial-crimson')
     expect((await editor.read(owner.id, created.id)).greeting).toBe('Mời bạn đến chung vui')
 
     await expect(editor.read(other.id, created.id)).rejects.toBeInstanceOf(NotFoundException)
@@ -71,6 +80,9 @@ describe('invitation editor', () => {
       displayNames: ['Mai', 'An'],
       eventTitle: 'Lễ tại nhà',
       greeting: 'Mời bạn đến chung vui',
+      templateId: 'heritage-palace',
+      lunarDate: 'Ngày 20 tháng 10 năm Bính Ngọ',
+      venueName: 'Grand Ballroom',
     })
   })
 

@@ -1,25 +1,18 @@
-import { GUEST_COOKIE } from '@mori/contracts'
+import { GUEST_COOKIE, type PublicInvitation } from '@mori/contracts'
 import { cookies } from 'next/headers'
 import { notFound } from 'next/navigation'
+import { DigitalInvitationView } from './digital-invitation-view'
 import { GuestFragment } from './guest-fragment'
 import { GuestRsvp } from './guest-rsvp'
 import { PasscodeForm } from './passcode-form'
 import { ReportInvitation } from './report-invitation'
-import { DigitalInvitationView } from './digital-invitation-view'
+import '../../../features/digital-templates/digital-templates.css'
+import '../../../features/digital-templates/digital-templates-themes.css'
 import './guest.css'
-import './guest-templates.css'
-import '../../collections/collections-motifs.css'
 
 export const dynamic = 'force-dynamic'
 
-interface OpenInvitation {
-  gated?: false
-  displayNames: [string, string]
-  eventTitle: string
-  greeting: string | null
-  eventLocalStart?: string
-  timeZone?: string
-}
+type OpenInvitation = PublicInvitation & { gated?: false }
 
 interface GatedInvitation {
   gated: true
@@ -95,17 +88,9 @@ export default async function GuestInvitationPage({
 
         <DigitalInvitationView
           slug={slug}
-          displayNames={page.displayNames}
-          eventTitle={page.eventTitle}
-          greeting={page.greeting}
-          eventLocalStart={page.eventLocalStart}
-          timeZone={page.timeZone}
+          invitation={page}
           partyName={guest?.partyName ?? null}
-          rsvpSection={
-            <GuestRsvp
-              slug={slug}
-            />
-          }
+          rsvpSection={<GuestRsvp slug={slug} />}
         />
 
         <ReportInvitation slug={slug} />
