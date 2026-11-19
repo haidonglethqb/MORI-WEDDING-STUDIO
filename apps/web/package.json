@@ -12,7 +12,7 @@
     "@mori/contracts": "workspace:*",
     "@mori/domain": "workspace:*",
     "@mori/invitation-renderer": "workspace:*",
-    "next": "16.4.3",
+    "next": "16.4.6",
     "react": "19.3.1",
     "react-dom": "19.3.1"
   },

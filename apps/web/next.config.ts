@@ -35,6 +35,7 @@ const nextConfig: NextConfig = {
   // (enforced further by dependency-cruiser in P01; this is a build-time hint)
   experimental: {
     optimizePackageImports: [],
+    agentUpgrade: 'security',
   },
 
   // API origin is a server-side runtime env var, never exposed as NEXT_PUBLIC_
