@@ -11,6 +11,8 @@ import {
   type ProposalToolOutcome,
 } from './agent-action-proposals.js'
 import { executeGenerateBespokeInvitation } from './agent-bespoke-builder.js'
+import { searchDesignSystem } from './agent-design-systems.js'
+import { searchMotionArtworkKits } from './agent-motion-kits.js'
 import { DIGITAL_AGENT_CATALOG, type AgentAttachment, type AgentToolName } from './agent-types.js'
 import { AiPricingTool } from './ai-pricing-tool.js'
 import type { CatalogProductItem, EstimatedBudgetSummary } from './assistant-types.js'
@@ -37,6 +39,40 @@ export class AgentToolExecutorService {
     if (name === 'track_order') return this.runTrackOrder(args)
     if (name === 'propose_add_to_cart') return executeProposeCart(args, catalog)
     if (name === 'propose_create_digital_invitation') return executeProposeDigitalDraft(args)
+    if (name === 'get_design_system') {
+      const sys = searchDesignSystem(readStr(args, 'query'), readStr(args, 'mood'))
+      return {
+        summary: `Áp dụng hệ thiết kế ${sys.name}`,
+        output: {
+          designSystemId: sys.id,
+          name: sys.name,
+          typography: sys.typography,
+          frameStyle: sys.frameStyle,
+          bgPattern: sys.bgPattern,
+          ornament: sys.ornament,
+          heroLayout: sys.heroLayout,
+          theme: sys.theme,
+          fontStack: sys.fontStack,
+          cssRecipe: sys.cssRecipe,
+          antiPatterns: sys.antiPatterns,
+        },
+      }
+    }
+    if (name === 'get_motion_artwork_kit') {
+      const kits = searchMotionArtworkKits(readStr(args, 'motif'))
+      return {
+        summary: `Đã nạp ${kits.map((k) => k.id).join(' + ')}`,
+        output: {
+          kits: kits.map((k) => ({
+            id: k.id,
+            name: k.name,
+            usageNote: k.usageNote,
+            htmlSnippet: k.htmlSnippet,
+            cssSnippet: k.cssSnippet,
+          })),
+        },
+      }
+    }
     if (name === 'generate_bespoke_invitation') return executeGenerateBespokeInvitation(args, attachments)
     if (name === 'propose_custom_request') return executeProposeCustomRequest(args)
     return executeUpdateBrief(args)

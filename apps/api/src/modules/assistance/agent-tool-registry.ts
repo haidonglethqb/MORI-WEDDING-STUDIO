@@ -1,4 +1,8 @@
-import { BESPOKE_INVITATION_TOOL } from './agent-bespoke-tool-schema.js'
+import {
+  BESPOKE_INVITATION_TOOL,
+  DESIGN_SYSTEM_TOOL,
+  MOTION_ARTWORK_KIT_TOOL,
+} from './agent-bespoke-tool-schema.js'
 
 export const AGENT_TOOLS = [
   {
@@ -126,5 +130,7 @@ export const AGENT_TOOLS = [
       },
     },
   },
+  DESIGN_SYSTEM_TOOL,
+  MOTION_ARTWORK_KIT_TOOL,
   BESPOKE_INVITATION_TOOL,
 ]

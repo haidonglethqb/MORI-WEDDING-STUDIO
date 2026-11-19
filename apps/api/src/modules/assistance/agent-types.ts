@@ -10,6 +10,8 @@ export type AgentToolName =
   | 'track_order'
   | 'propose_add_to_cart'
   | 'propose_create_digital_invitation'
+  | 'get_design_system'
+  | 'get_motion_artwork_kit'
   | 'generate_bespoke_invitation'
   | 'propose_custom_request'
   | 'update_wedding_brief'

@@ -6,6 +6,8 @@ const TOOL_STREAM_HINTS: Record<string, string> = {
   track_order: 'Đang kiểm tra trạng thái đơn hàng...',
   propose_add_to_cart: 'Đang chuẩn bị thông tin thêm giỏ hàng...',
   propose_create_digital_invitation: 'Đang chuẩn bị bản nháp thiệp online...',
+  get_design_system: 'Đang tra cứu hệ thiết kế chuẩn UI/UX Pro Max...',
+  get_motion_artwork_kit: 'Đang nạp bộ đồ họa SVG & hiệu ứng chuyển động studio...',
   generate_bespoke_invitation: 'Đang lên ý tưởng & phối bảng màu thiệp độc bản...',
   propose_custom_request: 'Đang soạn phiếu thiết kế riêng...',
   update_wedding_brief: 'Đang ghi nhận thông tin tiệc cưới...',

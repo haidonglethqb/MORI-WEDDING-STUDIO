@@ -7,6 +7,7 @@ import {
 } from '@mori/contracts'
 import { readStr, type ProposalToolOutcome } from './agent-action-proposals.js'
 import { sanitizeBespokeCss, sanitizeBespokeHtml } from './agent-bespoke-sanitizer.js'
+import { auditAndEnhanceBespokeDesign } from './agent-design-auditor.js'
 import type { AgentAttachment, AgentBespokeDraftData } from './agent-types.js'
 
 const HEX_RE = /^#[0-9A-Fa-f]{6}$/
@@ -133,7 +134,7 @@ export function executeGenerateBespokeInvitation(
   const customHtml = sanitizeBespokeHtml(args['customHtml'])
   const customCss = sanitizeBespokeCss(args['customCss'])
 
-  const customDesign = BespokeDesignBlueprintSchema.parse({
+  const parsedBlueprint = BespokeDesignBlueprintSchema.parse({
     conceptName,
     ...(eyebrowTag ? { eyebrowTag } : {}),
     typography: pickEnum(args['typography'], VALID_TYPO, 'editorial-serif'),
@@ -150,6 +151,7 @@ export function executeGenerateBespokeInvitation(
     ...(customHtml ? { customHtml } : {}),
     ...(customCss ? { customCss } : {}),
   })
+  const { design: customDesign, audit } = auditAndEnhanceBespokeDesign(parsedBlueprint)
 
   const groomParents = readStr(args, 'groomParents').slice(0, 160)
   const brideParents = readStr(args, 'brideParents').slice(0, 160)
@@ -186,7 +188,9 @@ export function executeGenerateBespokeInvitation(
     output: {
       ok: true, conceptName, typography: customDesign.typography, frameStyle: customDesign.frameStyle,
       heroLayout: customDesign.heroLayout, themeBg: customDesign.theme.bg, themeAccent: customDesign.theme.accent,
-      sections: customDesign.sectionOrder, attachedUserPhoto: Boolean(uploadedImg), hasCustomCanvas: Boolean(customHtml),
+      sections: customDesign.sectionOrder, attachedUserPhoto: Boolean(uploadedImg),
+      hasCustomCanvas: Boolean(customDesign.customHtml), qualityScore: audit.score,
+      wcagTextContrast: audit.wcagTextContrast, autoFixes: audit.autoFixes,
     },
   }
 }

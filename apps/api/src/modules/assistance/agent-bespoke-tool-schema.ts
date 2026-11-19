@@ -1,3 +1,36 @@
+export const DESIGN_SYSTEM_TOOL = {
+  type: 'function',
+  function: {
+    name: 'get_design_system',
+    description:
+      'Tra cứu hệ thiết kế chuẩn UI/UX Pro Max (bảng màu độ tương phản WCAG >= 4.5:1, cặp font tiếng Việt, công thức CSS và checklist chống AI slop) theo phong cách khách yêu cầu. BẮT BUỘC gọi trước khi thiết kế mẫu thiệp mới.',
+    parameters: {
+      type: 'object',
+      required: ['query'],
+      properties: {
+        query: { type: 'string', description: 'Phong cách, chủ đề hoặc không gian tiệc (VD: "cyberpunk neon rồng phượng", "song hỷ đỏ cung đình", "hoa anh đào nhật", "editorial vogue", "đêm sao đà lạt")' },
+        mood: { type: 'string', description: 'Cảm xúc chủ đạo: luxury, futuristic, romantic, heritage, minimal' },
+      },
+    },
+  },
+} as const
+
+export const MOTION_ARTWORK_KIT_TOOL = {
+  type: 'function',
+  function: {
+    name: 'get_motion_artwork_kit',
+    description:
+      'Nạp bộ đồ họa vector SVG & CSS @keyframes chất lượng studio (Long Phụng rồng bay phượng múa, Cyberpunk Neon Grid/HUD, Hoa anh đào rơi, Đèn lồng bay, Cực quang sao băng) để ghép vào customHtml/customCss thay vì tự đoán tọa độ SVG thô.',
+    parameters: {
+      type: 'object',
+      required: ['motif'],
+      properties: {
+        motif: { type: 'string', description: 'Họa tiết & hiệu ứng động cần dùng (VD: "rồng bay phượng múa cyberpunk", "hoa anh đào rơi", "đèn lồng thả trời", "sao băng cực quang")' },
+      },
+    },
+  },
+} as const
+
 export const BESPOKE_INVITATION_TOOL = {
   type: 'function',
   function: {

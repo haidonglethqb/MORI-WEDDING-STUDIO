@@ -11,7 +11,7 @@ import { GroqAiGateway } from './groq-ai-gateway.js'
 import { ScoringMatcher } from './scoring-matcher.js'
 import { SupervisorGuardrail } from './supervisor-guardrail.js'
 
-const MAX_STEPS = 4
+const MAX_STEPS = 5
 
 const TOOL_LABELS: Record<AgentToolName, string> = {
   search_catalog: 'Tìm mẫu thiệp trong kho dữ liệu',
@@ -19,6 +19,8 @@ const TOOL_LABELS: Record<AgentToolName, string> = {
   track_order: 'Tra cứu trạng thái đơn hàng',
   propose_add_to_cart: 'Chuẩn bị nút thêm giỏ hàng',
   propose_create_digital_invitation: 'Chuẩn bị bản nháp Thiệp Online',
+  get_design_system: 'Tra cứu hệ thiết kế UI/UX Pro Max',
+  get_motion_artwork_kit: 'Nạp bộ đồ họa & animation SVG studio',
   generate_bespoke_invitation: 'Thiết kế mẫu Thiệp Online độc bản',
   propose_custom_request: 'Soạn phiếu Thiết kế riêng',
   update_wedding_brief: 'Cập nhật hồ sơ tiệc cưới',
