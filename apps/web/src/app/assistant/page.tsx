@@ -6,6 +6,9 @@ import { HomeFooter } from '../home-footer'
 import { AdminAiLogs } from '../admin/ai/admin-ai-logs'
 import { AssistantForm } from './assistant-form'
 import '../../features/cart/storefront-footer.css'
+import '../../features/digital-templates/digital-templates.css'
+import '../../features/digital-templates/digital-templates-themes.css'
+import '../../features/digital-templates/template-custom-ai.css'
 import '../admin/ai/admin-ai.css'
 import './assistant.css'
 import './radiant-prompt.css'
@@ -81,7 +84,7 @@ export default async function AssistantPage() {
     <div className="assistant-shell is-fullpage">
       <HomeNav />
       <main className="assistant-page is-fullpage">
-        <AssistantForm />
+        <AssistantForm isLoggedIn={Boolean(role)} />
       </main>
       <CartDrawerFallback />
     </div>

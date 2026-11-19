@@ -166,14 +166,14 @@ export class AssistantController {
     } catch (error) {
       if (error instanceof ForbiddenException) throw error
     }
-    const isDev = process.env['APP_ENV'] !== 'production'
+    const GUEST_DAILY_LIMIT = 5
     const sessionCookie = readCookie(cookie, 'mori_assistant_session_id')
     if (sessionCookie) {
       const hash = createHash('sha256').update(`sess:${sessionCookie}`).digest('hex')
-      return { subject: `anon:${hash}`, limit: isDev ? 1000 : 5 }
+      return { subject: `anon:${hash}`, limit: GUEST_DAILY_LIMIT }
     }
     const ip = req?.ip || req?.socket?.remoteAddress || '127.0.0.1'
     const hash = createHash('sha256').update(`anon:${ip}`).digest('hex')
-    return { subject: `anon:${hash}`, limit: isDev ? 1000 : 5 }
+    return { subject: `anon:${hash}`, limit: GUEST_DAILY_LIMIT }
   }
 }

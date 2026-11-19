@@ -4,6 +4,7 @@ import type { ReactNode } from 'react'
 import { resolvePalette } from './digital-template-presets'
 import type { DigitalInvitationModel } from './digital-template-types'
 import { TemplateBotanicalZen } from './template-botanical-zen'
+import { TemplateCustomAi } from './template-custom-ai'
 import { TemplateEditorialVogue } from './template-editorial-vogue'
 import { TemplateHeritagePalace } from './template-heritage-palace'
 
@@ -26,7 +27,16 @@ export function DigitalTemplateRenderer({
 
   return (
     <div className={`mori-tpl-stage${compact ? ' is-compact' : ''}`}>
-      {model.templateId === 'editorial-vogue' ? (
+      {model.templateId === 'custom-ai' && model.customDesign ? (
+        <TemplateCustomAi
+          model={model}
+          design={model.customDesign}
+          partyName={partyName}
+          calendarHref={calendarHref}
+        />
+      ) : null}
+
+      {model.templateId === 'editorial-vogue' || (model.templateId === 'custom-ai' && !model.customDesign) ? (
         <TemplateEditorialVogue
           model={model}
           palette={palette}

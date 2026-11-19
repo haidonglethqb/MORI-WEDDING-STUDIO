@@ -10,7 +10,8 @@ import {
   readStr,
   type ProposalToolOutcome,
 } from './agent-action-proposals.js'
-import { DIGITAL_AGENT_CATALOG, type AgentToolName } from './agent-types.js'
+import { executeGenerateBespokeInvitation } from './agent-bespoke-builder.js'
+import { DIGITAL_AGENT_CATALOG, type AgentAttachment, type AgentToolName } from './agent-types.js'
 import { AiPricingTool } from './ai-pricing-tool.js'
 import type { CatalogProductItem, EstimatedBudgetSummary } from './assistant-types.js'
 
@@ -29,12 +30,14 @@ export class AgentToolExecutorService {
     name: AgentToolName,
     args: Record<string, unknown>,
     catalog: CatalogProductItem[],
+    attachments?: AgentAttachment[],
   ): Promise<ToolExecutionOutcome> {
     if (name === 'search_catalog') return executeSearchCatalog(args, catalog)
     if (name === 'calculate_quote') return this.runCalculateQuote(args, catalog)
     if (name === 'track_order') return this.runTrackOrder(args)
     if (name === 'propose_add_to_cart') return executeProposeCart(args, catalog)
     if (name === 'propose_create_digital_invitation') return executeProposeDigitalDraft(args)
+    if (name === 'generate_bespoke_invitation') return executeGenerateBespokeInvitation(args, attachments)
     if (name === 'propose_custom_request') return executeProposeCustomRequest(args)
     return executeUpdateBrief(args)
   }

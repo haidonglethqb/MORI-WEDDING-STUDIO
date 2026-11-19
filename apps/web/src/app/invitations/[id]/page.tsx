@@ -5,6 +5,7 @@ import { ExcludeReply } from './exclude-reply'
 import { GuestPartyForm } from './guest-party-form'
 import '../../../features/digital-templates/digital-templates.css'
 import '../../../features/digital-templates/digital-templates-themes.css'
+import '../../../features/digital-templates/template-custom-ai.css'
 import '../../../features/digital-templates/template-customizer.css'
 import './editor.css'
 

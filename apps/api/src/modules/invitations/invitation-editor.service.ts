@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import {
   InvitationContentSchema,
+  type BespokeDesignBlueprint,
   type InvitationFamilies,
   type InvitationPhotos,
   type InvitationScheduleItem,
@@ -34,6 +35,7 @@ export interface InvitationEditorDraft {
   scheduleItems?: InvitationScheduleItem[]
   photos?: InvitationPhotos
   templateConfig?: InvitationTemplateConfig
+  customDesign?: BespokeDesignBlueprint
 }
 
 @Injectable()
@@ -70,6 +72,7 @@ export class InvitationEditorService {
       ...(content.scheduleItems ? { scheduleItems: content.scheduleItems } : {}),
       ...(content.photos ? { photos: content.photos } : {}),
       ...(content.templateConfig ? { templateConfig: content.templateConfig } : {}),
+      ...(content.customDesign ? { customDesign: content.customDesign } : {}),
     }
   }
 

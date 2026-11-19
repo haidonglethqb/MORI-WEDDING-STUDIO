@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import type {
+  BespokeDesignBlueprint,
   InvitationFamilies,
   InvitationPhotos,
   InvitationScheduleItem,
@@ -42,6 +43,7 @@ export interface EditorDraft {
   scheduleItems?: InvitationScheduleItem[]
   photos?: InvitationPhotos
   templateConfig?: InvitationTemplateConfig
+  customDesign?: BespokeDesignBlueprint
 }
 
 export function EditorForm({ draft }: { draft: EditorDraft }) {

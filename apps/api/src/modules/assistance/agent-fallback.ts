@@ -67,8 +67,33 @@ export async function runAgentDeterministicFallback(
     }
   }
 
+  const wantsBespoke = /mẫu mới|thiết kế riêng|độc bản|tự thiết kế|bespoke|phong cách .* (màu|tone)|tạo mẫu/i.test(text)
   const wantsDigitalDraft = /tạo thiệp|thiệp online|website cưới|mẫu thiệp số/i.test(text)
-  if (wantsDigitalDraft) {
+  if (wantsBespoke) {
+    const names = (brief.coupleNames ?? 'Minh Quân & Thảo Vy').split(/\s*[&và-]\s*/i)
+    const isNight = /đêm|sao|xanh đen|navy|tối|star|midnight/i.test(text)
+    const bespokeArgs = {
+      conceptName: isNight ? 'Đêm Sao Atelier' : 'Vườn Sương Mai Atelier',
+      eyebrowTag: 'MORI BESPOKE · SAVE THE DATE',
+      typography: isNight ? 'romantic-italic' : 'editorial-serif',
+      frameStyle: isNight ? 'glass-card' : 'arch-dome',
+      bgPattern: isNight ? 'starry-dots' : 'botanical-wash',
+      ornament: isNight ? 'constellation' : 'botanical-branch',
+      heroLayout: isNight ? 'full-overlay' : 'arch-portrait',
+      theme: isNight
+        ? { bg: '#0F1A2B', bgAccent: '#1B2D48', surface: '#17263D', text: '#F5EFE6', muted: '#B8C4D8', accent: '#D4AF37', border: '#2D415E', buttonText: '#0F1A2B' }
+        : { bg: '#F7F4EE', bgAccent: '#EAE4D7', surface: '#FFFFFF', text: '#24231F', muted: '#6E695E', accent: '#59634A', border: '#DCD5C6', buttonText: '#FFFFFF' },
+      sectionOrder: ['hero', 'couple-bio', 'story', 'event-card', 'dress-code', 'gallery', 'countdown'],
+      groomName: names[0]?.trim() || 'Minh Quân',
+      brideName: names[1]?.trim() || 'Thảo Vy',
+      eventTitle: 'Lễ Thành Hôn & Tiệc Mừng Thân Mật',
+      ...(brief.location ? { venueName: brief.location } : {}),
+      dressCode: { title: 'Dress Code', note: 'Trang phục dự tiệc thanh lịch theo bảng màu chủ đạo', swatches: isNight ? ['#0F1A2B', '#D4AF37', '#F5EFE6'] : ['#59634A', '#EFE9DD', '#24231F'] },
+    }
+    const res = await deps.executor.execute('generate_bespoke_invitation', bespokeArgs, catalog, req.attachments)
+    if (res.action) actions.push(res.action)
+    traces.push({ id: 'fb-bespoke', tool: 'generate_bespoke_invitation', label: 'Thiết kế mẫu Thiệp Online độc bản', status: 'done', summary: res.summary, durationMs: 3, input: bespokeArgs, output: res.output })
+  } else if (wantsDigitalDraft) {
     const names = (brief.coupleNames ?? 'Quốc Bảo & Minh Anh').split(/\s*[&và-]\s*/i)
     const groomName = names[0]?.trim() || 'Quốc Bảo'
     const brideName = names[1]?.trim() || 'Minh Anh'

@@ -1,4 +1,5 @@
 import type {
+  BespokeDesignBlueprint,
   InvitationFamilies,
   InvitationPhotos,
   InvitationScheduleItem,
@@ -6,6 +7,7 @@ import type {
   InvitationTemplateId,
 } from '@mori/contracts'
 
+export type StandardTemplateId = 'editorial-vogue' | 'heritage-palace' | 'botanical-zen'
 export type DigitalTemplateId = InvitationTemplateId
 
 export interface PalettePreset {
@@ -26,7 +28,7 @@ export interface ChoiceOption {
 }
 
 export interface TemplateDefinition {
-  id: DigitalTemplateId
+  id: StandardTemplateId
   name: string
   tagline: string
   description: string
@@ -79,6 +81,7 @@ export interface DigitalInvitationModel {
     storyCaption: string
   }
   templateConfig: ResolvedTemplateConfig
+  customDesign?: BespokeDesignBlueprint | undefined
 }
 
 export interface InvitationSeedInput {
@@ -97,4 +100,5 @@ export interface InvitationSeedInput {
   scheduleItems?: InvitationScheduleItem[] | undefined
   photos?: InvitationPhotos | undefined
   templateConfig?: InvitationTemplateConfig | undefined
+  customDesign?: BespokeDesignBlueprint | undefined
 }

@@ -26,6 +26,7 @@ export function useAssistantChat() {
   const [activeTraces, setActiveTraces] = useState<AgentToolTraceItem[]>([])
   const [streamingText, setStreamingText] = useState('')
   const [attachment, setAttachment] = useState<AgentAttachment | null>(null)
+  const [quotaExceeded, setQuotaExceeded] = useState(false)
   const [escalated, setEscalated] = useState(false)
   const [escalating, setEscalating] = useState(false)
   const [escalateError, setEscalateError] = useState<string | null>(null)
@@ -119,9 +120,10 @@ export function useAssistantChat() {
     setStreamingText('')
 
     if (result.kind === 'quota') {
+      setQuotaExceeded(true)
       setMessages((prev) => [
         ...prev,
-        { id: `quota-${Date.now()}`, role: 'assistant', content: 'Bạn đã dùng hết hạn mức tư vấn hôm nay dành cho khách vãng lai. Hãy đăng nhập hoặc bấm “Gặp nhân viên tư vấn (Admin)” để được hỗ trợ trực tiếp nhé.' },
+        { id: `quota-${Date.now()}`, role: 'assistant', senderType: 'system', senderLabel: 'Giới hạn khách vãng lai', content: 'Bạn đã dùng hết 5 câu hỏi miễn phí dành cho khách chưa đăng nhập. Hãy đăng nhập tài khoản MORI để tiếp tục trò chuyện (30 lượt/ngày) hoặc bấm “Gặp nhân viên tư vấn” nhé!' },
       ])
       return
     }
@@ -186,8 +188,8 @@ export function useAssistantChat() {
 
   return {
     messages, brief, input, setInput, loading, activeStatus, activeTraces,
-    streamingText, attachment, setAttachment, attachMoodboardImage, escalated,
-    escalating, escalateError, quickOptions, scrollAnchorRef, sendMessage,
-    escalateToHuman, handleReset,
+    streamingText, attachment, setAttachment, attachMoodboardImage, quotaExceeded,
+    escalated, escalating, escalateError, quickOptions, scrollAnchorRef,
+    sendMessage, escalateToHuman, handleReset,
   }
 }

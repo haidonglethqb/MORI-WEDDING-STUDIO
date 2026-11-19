@@ -2,8 +2,8 @@
 
 import Link from 'next/link'
 import { DigitalTemplateRenderer } from '../../features/digital-templates/digital-template-renderer'
-import { TEMPLATE_DEFINITIONS } from '../../features/digital-templates/digital-template-presets'
-import type { DigitalInvitationModel, DigitalTemplateId } from '../../features/digital-templates/digital-template-types'
+import { TEMPLATE_DEFINITIONS, toStandardTemplateId } from '../../features/digital-templates/digital-template-presets'
+import type { DigitalInvitationModel, StandardTemplateId } from '../../features/digital-templates/digital-template-types'
 import { TemplateCustomizerPanel } from '../../features/digital-templates/template-customizer-panel'
 import { formatVnd } from '../../features/cart/cart-types'
 import '../../features/digital-templates/digital-templates.css'
@@ -24,14 +24,15 @@ interface Props {
   onAddMatchedToCart: () => void
 }
 
-const TEMPLATE_SLUG_LABEL: Record<DigitalTemplateId, string> = {
+const TEMPLATE_SLUG_LABEL: Record<StandardTemplateId, string> = {
   'editorial-vogue': 'Editorial Vogue Atelier',
   'heritage-palace': 'Song Hỷ Hoàng Gia',
   'botanical-zen': 'Botanical Wabi-Sabi',
 }
 
 export function OnlineLiveStudio({ model, onChange, matchedCard, onAddMatchedToCart }: Props) {
-  const def = TEMPLATE_DEFINITIONS[model.templateId]
+  const stdId = toStandardTemplateId(model.templateId)
+  const def = TEMPLATE_DEFINITIONS[stdId]
 
   return (
     <div id="studio-thiep-online" className="online-studio-wrap">
@@ -57,7 +58,7 @@ export function OnlineLiveStudio({ model, onChange, matchedCard, onAddMatchedToC
         <div className="online-studio-controls">
           <div className="online-studio-active-pill">
             <span>Đang xem layout:</span>
-            <strong>{TEMPLATE_SLUG_LABEL[model.templateId]}</strong>
+            <strong>{model.customDesign?.conceptName ?? TEMPLATE_SLUG_LABEL[stdId]}</strong>
             <small>— {def.description}</small>
           </div>
           <TemplateCustomizerPanel model={model} onChange={onChange} />

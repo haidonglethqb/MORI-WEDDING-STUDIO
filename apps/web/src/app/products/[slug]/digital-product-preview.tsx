@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { buildInitialInvitationModel, TEMPLATE_DEFINITIONS } from '../../../features/digital-templates/digital-template-presets'
+import { buildInitialInvitationModel, TEMPLATE_DEFINITIONS, toStandardTemplateId } from '../../../features/digital-templates/digital-template-presets'
 import { DigitalTemplateRenderer } from '../../../features/digital-templates/digital-template-renderer'
 import type { DigitalInvitationModel } from '../../../features/digital-templates/digital-template-types'
 import { TemplateCustomizerPanel } from '../../../features/digital-templates/template-customizer-panel'
@@ -26,7 +26,7 @@ export function DigitalProductPreview({ slug, title }: DigitalProductPreviewProp
   const [copied, setCopied] = useState(false)
 
   const sampleLink = `https://mori.vn/i/${slug}`
-  const templateMeta = TEMPLATE_DEFINITIONS[model.templateId]
+  const templateMeta = TEMPLATE_DEFINITIONS[toStandardTemplateId(model.templateId)]
 
   async function copyLink() {
     try {

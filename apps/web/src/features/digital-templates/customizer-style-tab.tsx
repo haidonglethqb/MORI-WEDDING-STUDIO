@@ -1,6 +1,6 @@
 'use client'
 
-import { buildDefaultConfig, TEMPLATE_DEFINITIONS } from './digital-template-presets'
+import { buildDefaultConfig, TEMPLATE_DEFINITIONS, toStandardTemplateId } from './digital-template-presets'
 import type { DigitalInvitationModel, DigitalTemplateId, ResolvedTemplateConfig } from './digital-template-types'
 
 interface Props {
@@ -19,7 +19,8 @@ const TOGGLE_LABELS: { key: keyof ResolvedTemplateConfig; label: string }[] = [
 ]
 
 export function CustomizerStyleTab({ model, onChange }: Props) {
-  const activeDef = TEMPLATE_DEFINITIONS[model.templateId]
+  const isCustomAi = model.templateId === 'custom-ai' && Boolean(model.customDesign)
+  const activeDef = TEMPLATE_DEFINITIONS[toStandardTemplateId(model.templateId)]
   const cfg = model.templateConfig
 
   function selectTemplate(templateId: DigitalTemplateId) {
@@ -45,6 +46,16 @@ export function CustomizerStyleTab({ model, onChange }: Props) {
 
   return (
     <div className="cfg-stack">
+      {isCustomAi && model.customDesign ? (
+        <div className="cfg-block" style={{ padding: '12px', borderRadius: '10px', border: '1px solid #d5cebe', background: '#f8f5ee' }}>
+          <span className="cfg-label">✦ Mẫu thiết kế độc bản bởi MORI AI</span>
+          <strong style={{ fontSize: '14px', color: '#24231f' }}>{model.customDesign.conceptName}</strong>
+          <small style={{ fontSize: '12px', color: '#6b6559' }}>
+            Bạn đang dùng thiết kế riêng do AI dựng. Mọi chỉnh sửa tên, ảnh, lịch trình ở các tab khác đều áp dụng trực tiếp vào mẫu này; hoặc bạn có thể chuyển sang 1 trong 3 template chuẩn bên dưới.
+          </small>
+        </div>
+      ) : null}
+
       <div className="cfg-block">
         <span className="cfg-label">1. Chọn bản thiết kế mẫu (3 Template chuẩn)</span>
         <div className="cfg-template-cards">

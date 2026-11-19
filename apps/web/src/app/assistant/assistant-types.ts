@@ -1,3 +1,9 @@
+import type {
+  BespokeDesignBlueprint,
+  InvitationFamilies,
+  InvitationScheduleItem,
+} from '@mori/contracts'
+
 export interface ConversationWeddingBrief {
   coupleNames: string | null
   weddingDate: string | null
@@ -51,6 +57,30 @@ export interface AgentToolTraceItem {
   durationMs?: number
 }
 
+export interface AgentBespokeDraftData {
+  displayNames: [string, string]
+  coupleRoles?: [string, string]
+  eventTitle: string
+  greeting?: string
+  eventLocalStart?: string
+  lunarDate?: string
+  venueName?: string
+  venueAddress?: string
+  families?: InvitationFamilies
+  scheduleItems?: InvitationScheduleItem[]
+  heroUrl?: string
+  storyCaption?: string
+}
+
+export interface AgentBespokeDesignActionPayload {
+  type: 'BESPOKE_DESIGN_PREVIEW'
+  title: string
+  subtitle: string
+  conceptName: string
+  customDesign: BespokeDesignBlueprint
+  draftData: AgentBespokeDraftData
+}
+
 export type AgentProposedAction =
   | {
       type: 'ADD_TO_CART'
@@ -81,6 +111,7 @@ export type AgentProposedAction =
       venueAddress?: string
       greeting?: string
     }
+  | AgentBespokeDesignActionPayload
   | {
       type: 'SUBMIT_CUSTOM_REQUEST'
       title: string

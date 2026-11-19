@@ -8,6 +8,7 @@ import { PasscodeForm } from './passcode-form'
 import { ReportInvitation } from './report-invitation'
 import '../../../features/digital-templates/digital-templates.css'
 import '../../../features/digital-templates/digital-templates-themes.css'
+import '../../../features/digital-templates/template-custom-ai.css'
 import './guest.css'
 
 export const dynamic = 'force-dynamic'

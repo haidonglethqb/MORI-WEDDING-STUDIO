@@ -139,5 +139,6 @@ export function toInvitationContentPayload(model: DigitalInvitationModel): Invit
       ...(cleanStory ? { storyCaption: cleanStory } : {}),
     },
     templateConfig: { ...model.templateConfig },
+    ...(model.customDesign ? { customDesign: model.customDesign } : {}),
   }
 }

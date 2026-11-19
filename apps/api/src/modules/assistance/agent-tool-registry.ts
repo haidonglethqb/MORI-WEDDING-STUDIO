@@ -1,3 +1,5 @@
+import { BESPOKE_INVITATION_TOOL } from './agent-bespoke-tool-schema.js'
+
 export const AGENT_TOOLS = [
   {
     type: 'function',
@@ -124,4 +126,5 @@ export const AGENT_TOOLS = [
       },
     },
   },
+  BESPOKE_INVITATION_TOOL,
 ]

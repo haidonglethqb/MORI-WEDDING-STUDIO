@@ -72,7 +72,8 @@ describe('AssistantController runtime validation and actor identification', () =
     expect(mockReserve).toHaveBeenCalled()
   })
 
-  it('binds quota to mori_assistant_session_id cookie when present', async () => {
+  it('binds quota to mori_assistant_session_id cookie with a strict limit of 5 messages for guests', async () => {
+    mockReserve.mockClear()
     const cookie = 'mori_assistant_session_id=sess-cookie-123'
     await controller.chat(
       cookie,
@@ -80,7 +81,7 @@ describe('AssistantController runtime validation and actor identification', () =
       { ip: '10.0.0.1' },
       { message: 'Tư vấn thiệp hoa' },
     )
-    expect(mockReserve).toHaveBeenCalled()
+    expect(mockReserve).toHaveBeenCalledWith(expect.stringMatching(/^anon:/), 5)
   })
 
   describe('escalate & session polling', () => {

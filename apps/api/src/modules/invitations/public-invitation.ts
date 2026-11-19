@@ -20,5 +20,6 @@ export function toPublicInvitation(slug: string, payload: unknown): PublicInvita
     ...(content.scheduleItems ? { scheduleItems: content.scheduleItems } : {}),
     ...(content.photos ? { photos: content.photos } : {}),
     ...(content.templateConfig ? { templateConfig: content.templateConfig } : {}),
+    ...(content.customDesign ? { customDesign: content.customDesign } : {}),
   }
 }

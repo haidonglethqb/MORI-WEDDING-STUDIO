@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { addToCart, openCartDrawer, readSelectedFont } from '../../features/cart/cart-store'
+import { AssistantBespokeCard } from './assistant-bespoke-card'
 import type { AgentProposedAction } from './assistant-types'
 
 interface Props {
@@ -10,6 +11,13 @@ interface Props {
 }
 
 export function AssistantActionCard({ action }: Props) {
+  if (action.type === 'BESPOKE_DESIGN_PREVIEW') {
+    return <AssistantBespokeCard action={action} />
+  }
+  return <StandardActionCard action={action} />
+}
+
+function StandardActionCard({ action }: { action: Exclude<AgentProposedAction, { type: 'BESPOKE_DESIGN_PREVIEW' }> }) {
   const [state, setState] = useState<'idle' | 'busy' | 'done' | 'auth' | 'error'>('idle')
   const [resultMsg, setResultMsg] = useState<string>('')
   const [createdHref, setCreatedHref] = useState<string>('')

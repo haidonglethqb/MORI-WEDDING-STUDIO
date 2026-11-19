@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useState } from 'react'
 import { AssistantChatBubble } from './assistant-chat-bubble'
 import { AssistantContextBar } from './assistant-context-bar'
@@ -7,29 +8,18 @@ import { AssistantEscalatePanel } from './assistant-escalate-panel'
 import { AssistantToolTrace } from './assistant-tool-trace'
 import { useAssistantChat } from './use-assistant-chat'
 
-export function AssistantForm() {
+export function AssistantForm({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
   const [showEscalate, setShowEscalate] = useState(false)
   const {
-    messages,
-    brief,
-    input,
-    setInput,
-    loading,
-    activeStatus,
-    activeTraces,
-    streamingText,
-    attachment,
-    setAttachment,
-    attachMoodboardImage,
-    escalated,
-    escalating,
-    escalateError,
-    quickOptions,
-    scrollAnchorRef,
-    sendMessage,
-    escalateToHuman,
-    handleReset,
+    messages, brief, input, setInput, loading, activeStatus, activeTraces,
+    streamingText, attachment, setAttachment, attachMoodboardImage, quotaExceeded,
+    escalated, escalating, escalateError, quickOptions, scrollAnchorRef,
+    sendMessage, escalateToHuman, handleReset,
   } = useAssistantChat()
+
+  const guestUsed = messages.filter((m) => m.role === 'user').length
+  const guestRemaining = Math.max(0, 5 - guestUsed)
+  const inputLocked = loading || (!isLoggedIn && quotaExceeded)
 
   return (
     <div className="assistant-container">
@@ -131,13 +121,25 @@ export function AssistantForm() {
               </div>
             ) : null}
 
+            {!isLoggedIn && quotaExceeded ? (
+              <div className="guest-quota-banner" role="alert">
+                <span>Bạn đã dùng hết 5/5 câu hỏi miễn phí hôm nay. Đăng nhập để tiếp tục nhắn tin với MORI Agent!</span>
+                <Link href="/login" className="guest-quota-login-btn">Đăng nhập ngay →</Link>
+              </div>
+            ) : !isLoggedIn ? (
+              <div className="guest-quota-strip">
+                <span>Chế độ khách chưa đăng nhập · Còn <strong>{guestRemaining}/5</strong> câu hỏi miễn phí hôm nay</span>
+                <Link href="/login">Đăng nhập để mở 30 lượt/ngày →</Link>
+              </div>
+            ) : null}
+
             <div className="quick-chips-row">
               {quickOptions.map((opt) => (
                 <button
                   key={opt}
                   type="button"
                   className="quick-chip-button"
-                  disabled={loading}
+                  disabled={inputLocked}
                   onClick={() => void sendMessage(opt)}
                 >
                   {opt}
@@ -149,7 +151,7 @@ export function AssistantForm() {
               className="chat-input-form radiant-prompt"
               onSubmit={(e) => {
                 e.preventDefault()
-                void sendMessage(input)
+                if (!inputLocked) void sendMessage(input)
               }}
             >
               <label className="agent-attach-btn" title="Gửi ảnh moodboard hoặc mẫu thiệp tham khảo">
@@ -158,7 +160,7 @@ export function AssistantForm() {
                   type="file"
                   accept="image/*"
                   hidden
-                  disabled={loading}
+                  disabled={inputLocked}
                   onChange={(e) => {
                     void attachMoodboardImage(e.target.files?.[0])
                     e.currentTarget.value = ''
@@ -170,15 +172,19 @@ export function AssistantForm() {
                 id="assistant-message"
                 type="text"
                 className="chat-input-field"
-                placeholder="Chia sẻ phong cách, số khách, mã đơn MORI-1001, hoặc nhờ Agent tạo thiệp online..."
+                placeholder={
+                  !isLoggedIn && quotaExceeded
+                    ? 'Bạn đã hết 5 câu hỏi miễn phí — vui lòng đăng nhập để tiếp tục...'
+                    : 'Chia sẻ phong cách, số khách, mã đơn MORI-1001, hoặc nhờ Agent tạo thiệp online...'
+                }
                 value={input}
-                disabled={loading}
+                disabled={inputLocked}
                 onChange={(e) => setInput(e.target.value)}
               />
               <button
                 type="submit"
                 className="chat-send-btn"
-                disabled={loading || !input.trim()}
+                disabled={inputLocked || !input.trim()}
                 aria-label="Gửi tin nhắn"
               >
                 {loading ? (

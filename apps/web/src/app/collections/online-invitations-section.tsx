@@ -9,8 +9,9 @@ import {
   resolvePalette,
   resolveTemplatePresetBySlug,
   TEMPLATE_DEFINITIONS,
+  toStandardTemplateId,
 } from '../../features/digital-templates/digital-template-presets'
-import type { DigitalInvitationModel, DigitalTemplateId } from '../../features/digital-templates/digital-template-types'
+import type { DigitalInvitationModel, StandardTemplateId } from '../../features/digital-templates/digital-template-types'
 import type { CollectionItem } from './collection-types'
 import { OnlineLiveStudio } from './online-live-studio'
 
@@ -18,7 +19,7 @@ interface OnlineInvitationsSectionProps {
   items: CollectionItem[]
 }
 
-const DEFAULT_SLUG_FOR_TEMPLATE: Record<DigitalTemplateId, string> = {
+const DEFAULT_SLUG_FOR_TEMPLATE: Record<StandardTemplateId, string> = {
   'editorial-vogue': 'editorial-digital-01',
   'heritage-palace': 'traditional-digital-01',
   'botanical-zen': 'floral-digital-01',
@@ -88,7 +89,7 @@ export function OnlineInvitationsSection({ items }: OnlineInvitationsSectionProp
 
   const activeCard =
     cards.find((c) => c.preset.templateId === studioModel.templateId && c.preset.paletteId === studioModel.templateConfig.paletteId) ??
-    cards.find((c) => c.slug === DEFAULT_SLUG_FOR_TEMPLATE[studioModel.templateId]) ??
+    cards.find((c) => c.slug === DEFAULT_SLUG_FOR_TEMPLATE[toStandardTemplateId(studioModel.templateId)]) ??
     cards[0]
 
   return (

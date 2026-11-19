@@ -5,6 +5,7 @@ import type {
   PalettePreset,
   PhotoPreset,
   ResolvedTemplateConfig,
+  StandardTemplateId,
   TemplateDefinition,
 } from './digital-template-types'
 
@@ -17,7 +18,11 @@ export const CURATED_PHOTO_PRESETS: PhotoPreset[] = [
   { id: 'classic-blossom', label: 'Sắc hoa cổ điển', url: '/images/blog/style-classic-blossom.jpg' },
 ]
 
-export const TEMPLATE_DEFINITIONS: Record<DigitalTemplateId, TemplateDefinition> = {
+export function toStandardTemplateId(templateId: DigitalTemplateId): StandardTemplateId {
+  return templateId === 'heritage-palace' || templateId === 'botanical-zen' ? templateId : 'editorial-vogue'
+}
+
+export const TEMPLATE_DEFINITIONS: Record<StandardTemplateId, TemplateDefinition> = {
   'editorial-vogue': {
     id: 'editorial-vogue',
     name: 'Editorial Vogue Atelier',
@@ -84,7 +89,7 @@ export const TEMPLATE_DEFINITIONS: Record<DigitalTemplateId, TemplateDefinition>
 }
 
 export function resolveTemplatePresetBySlug(slug: string): {
-  templateId: DigitalTemplateId
+  templateId: StandardTemplateId
   paletteId: string
   frameStyle: string
   motifStyle: string
@@ -105,12 +110,12 @@ export function resolveTemplatePresetBySlug(slug: string): {
 }
 
 export function resolvePalette(templateId: DigitalTemplateId, paletteId?: string): PalettePreset {
-  const def = TEMPLATE_DEFINITIONS[templateId]
+  const def = TEMPLATE_DEFINITIONS[toStandardTemplateId(templateId)]
   return def.palettes.find((p) => p.id === paletteId) ?? def.palettes[0]
 }
 
 export function buildDefaultConfig(templateId: DigitalTemplateId, partial?: InvitationSeedInput['templateConfig']): ResolvedTemplateConfig {
-  const def = TEMPLATE_DEFINITIONS[templateId]
+  const def = TEMPLATE_DEFINITIONS[toStandardTemplateId(templateId)]
   const paletteValid = def.palettes.some((p) => p.id === partial?.paletteId)
   const frameValid = def.frames.some((f) => f.id === partial?.frameStyle)
   const motifValid = def.motifs.some((m) => m.id === partial?.motifStyle)
@@ -167,5 +172,6 @@ export function buildInitialInvitationModel(seed?: InvitationSeedInput, fallback
       storyCaption: seed?.photos?.storyCaption ?? 'Từ ánh nhìn đầu tiên giữa buổi chiều thu, chúng mình đã đi cùng nhau qua bốn mùa nắng mưa để viết tiếp chương mới.',
     },
     templateConfig: baseConfig,
+    ...(seed?.customDesign ? { customDesign: seed.customDesign } : {}),
   }
 }

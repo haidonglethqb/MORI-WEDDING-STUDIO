@@ -1,9 +1,16 @@
+import type {
+  BespokeDesignBlueprint,
+  InvitationFamilies,
+  InvitationScheduleItem,
+} from '@mori/contracts'
+
 export type AgentToolName =
   | 'search_catalog'
   | 'calculate_quote'
   | 'track_order'
   | 'propose_add_to_cart'
   | 'propose_create_digital_invitation'
+  | 'generate_bespoke_invitation'
   | 'propose_custom_request'
   | 'update_wedding_brief'
 
@@ -67,9 +74,34 @@ export interface AgentNavigateActionPayload {
   href: string
 }
 
+export interface AgentBespokeDraftData {
+  displayNames: [string, string]
+  coupleRoles?: [string, string]
+  eventTitle: string
+  greeting?: string
+  eventLocalStart?: string
+  lunarDate?: string
+  venueName?: string
+  venueAddress?: string
+  families?: InvitationFamilies
+  scheduleItems?: InvitationScheduleItem[]
+  heroUrl?: string
+  storyCaption?: string
+}
+
+export interface AgentBespokeDesignActionPayload {
+  type: 'BESPOKE_DESIGN_PREVIEW'
+  title: string
+  subtitle: string
+  conceptName: string
+  customDesign: BespokeDesignBlueprint
+  draftData: AgentBespokeDraftData
+}
+
 export type AgentProposedAction =
   | AgentCartActionPayload
   | AgentDigitalDraftActionPayload
+  | AgentBespokeDesignActionPayload
   | AgentCustomRequestActionPayload
   | AgentNavigateActionPayload
 

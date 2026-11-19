@@ -52,7 +52,7 @@ export async function streamAssistantTurn(
       }),
     })
 
-    if (res.status === 409) return { kind: 'quota' }
+    if (res.status === 429 || res.status === 409) return { kind: 'quota' }
     if (!res.ok || !res.body) {
       return await postAssistantTurn(message, messages, brief, sessionId)
     }

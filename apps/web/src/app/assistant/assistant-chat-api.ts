@@ -108,7 +108,7 @@ export async function postAssistantTurn(
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ message, history, context: brief, sessionId }),
     })
-    if (res.status === 409) return { kind: 'quota' }
+    if (res.status === 429 || res.status === 409) return { kind: 'quota' }
     if (!res.ok) return { kind: 'error' }
     return { kind: 'ok', data: (await res.json()) as AssistantChatApiResponse }
   } catch {

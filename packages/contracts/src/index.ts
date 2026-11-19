@@ -44,6 +44,19 @@ export { CatalogueProductSchema, CatalogueQuerySchema } from './catalogue.js'
 export type { CatalogueProduct, CatalogueQuery } from './catalogue.js'
 
 export {
+  BespokeDesignBlueprintSchema,
+  BespokeMilestoneSchema,
+  BespokeSectionKeySchema,
+  BespokeThemeSchema,
+  HexColorSchema,
+} from './bespoke-invitation.js'
+export type {
+  BespokeDesignBlueprint,
+  BespokeSectionKey,
+  BespokeTheme,
+} from './bespoke-invitation.js'
+
+export {
   GuestLinkExchangeSchema,
   InvitationContentSchema,
   InvitationFamiliesSchema,

@@ -1,9 +1,11 @@
 import { z } from 'zod'
+import { BespokeDesignBlueprintSchema } from './bespoke-invitation.js'
 
 export const InvitationTemplateIdSchema = z.enum([
   'editorial-vogue',
   'heritage-palace',
   'botanical-zen',
+  'custom-ai',
 ])
 
 export type InvitationTemplateId = z.infer<typeof InvitationTemplateIdSchema>
@@ -86,6 +88,7 @@ const optionalContentFields = {
   scheduleItems: z.array(InvitationScheduleItemSchema).max(6).optional(),
   photos: InvitationPhotosSchema.optional(),
   templateConfig: InvitationTemplateConfigSchema.optional(),
+  customDesign: BespokeDesignBlueprintSchema.optional(),
 }
 
 export const InvitationContentSchema = z
