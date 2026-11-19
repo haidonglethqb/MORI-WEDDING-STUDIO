@@ -1,3 +1,4 @@
+import { buildSmartFollowUps } from './agent-followups.js'
 import type {
   AgentProposedAction,
   AgentStreamEvent,
@@ -73,8 +74,8 @@ export async function runAgentDeterministicFallback(
     const names = (brief.coupleNames ?? 'Minh Quân & Thảo Vy').split(/\s*[&và-]\s*/i)
     const isNight = /đêm|sao|xanh đen|navy|tối|star|midnight/i.test(text)
     const bespokeArgs = {
-      conceptName: isNight ? 'Đêm Sao Atelier' : 'Vườn Sương Mai Atelier',
-      eyebrowTag: 'MORI BESPOKE · SAVE THE DATE',
+      conceptName: isNight ? 'Đêm Ánh Nến' : 'Sương Mai Tối Giản',
+      eyebrowTag: 'TRÂN TRỌNG KÍNH MỜI',
       typography: isNight ? 'romantic-italic' : 'editorial-serif',
       frameStyle: isNight ? 'glass-card' : 'arch-dome',
       bgPattern: isNight ? 'starry-dots' : 'botanical-wash',
@@ -146,7 +147,14 @@ export async function runAgentDeterministicFallback(
     updatedBrief: brief,
     suggestedProducts: suggestedCards,
     estimatedBudget,
-    quickFollowUps: ['Tạo thiệp cưới online cho hai bạn', 'Gợi ý combo giấy & online giảm 50%', 'Tra cứu đơn hàng MORI'],
+    quickFollowUps: buildSmartFollowUps({
+      inlineFollowUps: [],
+      actions,
+      brief,
+      history: req.history ?? [],
+      lastUserMessage: req.message,
+      hasUserPhoto: Boolean(req.attachments?.length),
+    }),
     toolTraces: traces,
     proposedActions: actions,
     meta: { modelUsed: 'fallback/agent-offline', fallbackTier: 4, latencyMs, groundedProductCount: catalog.length },

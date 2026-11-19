@@ -105,11 +105,21 @@ export type AgentProposedAction =
   | AgentCustomRequestActionPayload
   | AgentNavigateActionPayload
 
+export interface AgentActiveBespokeContext {
+  conceptName: string
+  customHtml?: string
+  customCss?: string
+  theme?: Record<string, string | undefined>
+  displayNames?: [string, string]
+  hasUserPhoto?: boolean
+}
+
 export interface AgentLiveContext {
   currentPath?: string
   cartCount?: number
   cartTotalVnd?: number
   cartItemsSummary?: string[]
+  activeBespokeDesign?: AgentActiveBespokeContext
 }
 
 export interface AgentAttachment {

@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { executeGenerateBespokeInvitation } from './agent-bespoke-builder.js'
+import { buildSmartFollowUps, extractInlineFollowUps } from './agent-followups.js'
 import { AgentLoopService } from './agent-loop.service.js'
 import { AgentToolExecutorService } from './agent-tool-executor.service.js'
 import type { CatalogProductItem } from './assistant-types.js'
@@ -147,5 +148,48 @@ describe('generate_bespoke_invitation builder & agent loop', () => {
     expect(res.toolTraces?.[0]?.output?.['conceptName']).toBe('Biển Xanh Sunset')
     expect(res.proposedActions?.[0]?.type).toBe('BESPOKE_DESIGN_PREVIEW')
     expect(res.reply).toContain('Biển Xanh Sunset')
+  })
+
+  it('sanitizes customHtml and customCss while keeping SVG animations and HERO_PHOTO token', () => {
+    const outcome = executeGenerateBespokeInvitation({
+      conceptName: 'Long Phụng Sum Vầy',
+      groomName: 'Minh Quân',
+      brideName: 'Thảo Vy',
+      customHtml:
+        '<section class="card"><svg viewBox="0 0 100 100"><path d="M10 10" /></svg><img src="{{HERO_PHOTO}}" onclick="alert(1)" /><script>alert(1)</script></section>',
+      customCss:
+        '@import url("https://evil.test/x.css"); .card{animation:fly 6s infinite;background:url(https://evil.test/a.png)} @keyframes fly{to{transform:translateX(20px)}}',
+    })
+
+    expect(outcome.output['hasCustomCanvas']).toBe(true)
+    if (outcome.action?.type === 'BESPOKE_DESIGN_PREVIEW') {
+      const html = outcome.action.customDesign.customHtml ?? ''
+      const css = outcome.action.customDesign.customCss ?? ''
+      expect(html).toContain('<svg')
+      expect(html).toContain('{{HERO_PHOTO}}')
+      expect(html).not.toContain('<script')
+      expect(html).not.toContain('onclick')
+      expect(css).toContain('@keyframes fly')
+      expect(css).not.toContain('@import')
+      expect(css).not.toContain('evil.test')
+    }
+  })
+
+  it('extracts contextual inline follow-ups and deduplicates repeated user messages', () => {
+    const parsed = extractInlineFollowUps(
+      'MORI đã tạo xong mẫu! <!--FOLLOWUPS: Đổi màu xanh đậm | Tạo thiệp cưới online | Thêm lịch trình buổi lễ-->',
+    )
+    expect(parsed.reply).toBe('MORI đã tạo xong mẫu!')
+    expect(parsed.inlineFollowUps).toEqual(['Đổi màu xanh đậm', 'Tạo thiệp cưới online', 'Thêm lịch trình buổi lễ'])
+
+    const deduped = buildSmartFollowUps({
+      inlineFollowUps: parsed.inlineFollowUps,
+      actions: [],
+      brief: new ContextExtractor().createInitialBrief(),
+      history: [{ role: 'user', content: 'Tạo thiệp cưới online' }],
+      lastUserMessage: 'Tạo thiệp cưới online',
+    })
+    expect(deduped).not.toContain('Tạo thiệp cưới online')
+    expect(deduped).toContain('Đổi màu xanh đậm')
   })
 })

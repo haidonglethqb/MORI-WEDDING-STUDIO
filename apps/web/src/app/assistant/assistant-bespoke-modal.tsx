@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { DigitalTemplateRenderer } from '../../features/digital-templates/digital-template-renderer'
 import type { DigitalInvitationModel } from '../../features/digital-templates/digital-template-types'
 
@@ -33,14 +34,19 @@ export function AssistantBespokeModal({
 
   useEffect(() => {
     if (!open) return
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
     function onKey(e: KeyboardEvent) {
       if (e.key === 'Escape') onClose()
     }
     window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
+    return () => {
+      document.body.style.overflow = prevOverflow
+      window.removeEventListener('keydown', onKey)
+    }
   }, [open, onClose])
 
-  if (!open) return null
+  if (!open || typeof document === 'undefined') return null
 
   const mockRsvp = (
     <div className="bsp-modal-rsvp">
@@ -67,12 +73,20 @@ export function AssistantBespokeModal({
     </div>
   )
 
-  return (
-    <div className="bsp-modal-backdrop" role="dialog" aria-modal="true" aria-label={`Xem toàn màn hình ${conceptName}`}>
+  return createPortal(
+    <div
+      className="bsp-modal-backdrop"
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Xem toàn màn hình ${conceptName}`}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose()
+      }}
+    >
       <div className="bsp-modal-shell">
         <header className="bsp-modal-bar">
           <div className="bsp-modal-title">
-            <span className="bsp-ai-badge">MORI BESPOKE AI</span>
+            <span className="bsp-ai-badge">Xem trước Thiệp Online</span>
             <strong>{conceptName}</strong>
           </div>
 
@@ -129,6 +143,7 @@ export function AssistantBespokeModal({
           )}
         </footer>
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }

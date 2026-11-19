@@ -3,6 +3,7 @@ import { mkdtempSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { UnprocessableEntityException } from '@nestjs/common'
+import { AiConfigService } from './ai-config.service.js'
 import { AiLogService } from './ai-log.service.js'
 import { AssistantController } from './assistant.controller.js'
 import type { RecommendationService } from './recommendation.service.js'
@@ -82,6 +83,40 @@ describe('AssistantController runtime validation and actor identification', () =
       { message: 'Tư vấn thiệp hoa' },
     )
     expect(mockReserve).toHaveBeenCalledWith(expect.stringMatching(/^anon:/), 5)
+  })
+
+  it('allows unlimited turns by default for logged-in users and enforces per-user admin limits', async () => {
+    const reserveSpy = vi.fn().mockResolvedValue(undefined)
+    const pendingIdentity = {
+      currentUser: vi.fn().mockResolvedValue({
+        id: 'user-yen-nhi',
+        email: 'yennhi@mori.local',
+        displayName: 'Yến Nhi',
+        role: 'CUSTOMER',
+        status: 'PENDING_VERIFICATION',
+      }),
+    } as unknown as IdentityService
+    const cfg = new AiConfigService()
+    cfg.setDefaultUserDailyLimit(null)
+    cfg.setUserDailyLimit('user-yen-nhi', null)
+
+    const authCtrl = new AssistantController(
+      mockRecommendations,
+      { reserve: reserveSpy } as unknown as AssistantQuotaService,
+      mockTools,
+      pendingIdentity,
+      mockOrchestrator,
+      undefined,
+      cfg,
+    )
+    await authCtrl.chat('mori_session=valid-token', undefined, { ip: '10.0.0.1' }, { message: 'Tạo thiệp online' })
+    expect(reserveSpy).toHaveBeenCalledWith('user:user-yen-nhi', null)
+
+    reserveSpy.mockClear()
+    cfg.setUserDailyLimit('user-yen-nhi', 15)
+    await authCtrl.chat('mori_session=valid-token', undefined, { ip: '10.0.0.1' }, { message: 'Sửa màu thiệp' })
+    expect(reserveSpy).toHaveBeenCalledWith('user:user-yen-nhi', 15)
+    cfg.setUserDailyLimit('user-yen-nhi', null)
   })
 
   describe('escalate & session polling', () => {

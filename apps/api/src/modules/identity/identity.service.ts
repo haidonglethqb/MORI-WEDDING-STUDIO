@@ -48,6 +48,7 @@ export class IdentityService {
       data: {
         normalizedEmail: email,
         displayName: input.displayName.trim(),
+        status: 'ACTIVE',
         credential: { create: { passwordHash } },
         authTokens: {
           create: {

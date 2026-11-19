@@ -5,13 +5,29 @@ import { getPrismaClient } from '@mori/database'
 export class AssistantQuotaService {
   private readonly memoryBuckets = new Map<string, number>()
 
-  async reserve(subject: string, limit: number): Promise<void> {
+  async reserve(subject: string, limit: number | null): Promise<void> {
     const day = new Date().toISOString().slice(0, 10)
     const key = `${subject}:${day}`
+
+    if (limit !== null && limit <= 0) {
+      throw new HttpException(
+        { code: 'AI_QUOTA_EXCEEDED', message: 'The assistant quota for today is full' },
+        HttpStatus.TOO_MANY_REQUESTS,
+      )
+    }
 
     try {
       const prisma = getPrismaClient()
       await prisma.$transaction(async (tx) => {
+        if (limit === null) {
+          await tx.aiUsageBucket.upsert({
+            where: { subject_day: { subject, day } },
+            create: { subject, day, count: 1 },
+            update: { count: { increment: 1 } },
+          })
+          return
+        }
+
         const updated = await tx.$queryRaw<{ count: number }[]>`
           UPDATE ai_usage_buckets
           SET count = count + 1
@@ -32,6 +48,10 @@ export class AssistantQuotaService {
       })
     } catch (err) {
       if (err instanceof HttpException) throw err
+      if (limit === null) {
+        this.memoryBuckets.set(key, (this.memoryBuckets.get(key) ?? 0) + 1)
+        return
+      }
       if (process.env['NODE_ENV'] === 'production' || process.env['APP_ENV'] === 'production') {
         throw new HttpException(
           { code: 'ASSISTANT_UNAVAILABLE', message: 'Assistant quota verification temporarily unavailable' },
@@ -46,6 +66,28 @@ export class AssistantQuotaService {
         )
       }
       this.memoryBuckets.set(key, current + 1)
+    }
+  }
+
+  async getTodayUsageMap(): Promise<Record<string, number>> {
+    const day = new Date().toISOString().slice(0, 10)
+    const map: Record<string, number> = {}
+    try {
+      const rows = await getPrismaClient().aiUsageBucket.findMany({
+        where: { day, subject: { startsWith: 'user:' } },
+        select: { subject: true, count: true },
+      })
+      for (const row of rows) {
+        map[row.subject.slice(5)] = row.count
+      }
+      return map
+    } catch {
+      for (const [k, count] of this.memoryBuckets.entries()) {
+        if (k.startsWith('user:') && k.endsWith(`:${day}`)) {
+          map[k.slice(5, -(day.length + 1))] = count
+        }
+      }
+      return map
     }
   }
 }

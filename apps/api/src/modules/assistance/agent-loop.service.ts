@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { runAgentDeterministicFallback } from './agent-fallback.js'
+import { buildSmartFollowUps, extractInlineFollowUps } from './agent-followups.js'
 import { buildAgentInitialMessages } from './agent-prompts.js'
 import { AgentToolExecutorService } from './agent-tool-executor.service.js'
 import { AGENT_TOOLS } from './agent-tool-registry.js'
@@ -121,17 +122,26 @@ export class AgentLoopService {
         finalReply = closing.content.trim()
       }
 
-      const sanitized = this.guardrail.sanitizeArtisanReply(finalReply)
+      const { reply: replyNoTag, inlineFollowUps } = extractInlineFollowUps(finalReply)
+      const sanitized = this.guardrail.sanitizeArtisanReply(replyNoTag)
       this.emitProgressiveText(sanitized, onEvent)
       const uniqueSlugs = [...new Set(suggestedSlugs)]
       const matched = uniqueSlugs.length > 0 ? this.matcher.rankProducts(catalog, brief, uniqueSlugs) : []
+      const hasUserPhoto = Boolean(req.attachments?.length || req.liveContext?.activeBespokeDesign?.hasUserPhoto)
 
       return {
         reply: sanitized,
         updatedBrief: brief,
         suggestedProducts: this.guardrail.buildProductCards(matched),
         estimatedBudget,
-        quickFollowUps: this.buildFollowUps(actions, brief),
+        quickFollowUps: buildSmartFollowUps({
+          inlineFollowUps,
+          actions,
+          brief,
+          history: req.history ?? [],
+          lastUserMessage: req.message,
+          hasUserPhoto,
+        }),
         toolTraces: traces,
         proposedActions: actions,
         meta: { modelUsed, fallbackTier, latencyMs: Date.now() - start, groundedProductCount: catalog.length },
@@ -161,21 +171,5 @@ export class AgentLoopService {
       }
     }
     if (buf) onEvent({ type: 'delta', text: buf })
-  }
-
-  private buildFollowUps(actions: AgentProposedAction[], brief: ConversationWeddingBrief): string[] {
-    if (actions.some((a) => a.type === 'BESPOKE_DESIGN_PREVIEW')) {
-      return ['Đổi sang bảng màu tối hơn hoặc pastel nhẹ', 'Thêm dress code & câu chuyện tình yêu', 'Đặt in thiệp giấy đồng bộ mẫu này']
-    }
-    if (actions.some((a) => a.type === 'CREATE_DIGITAL_INVITATION')) {
-      return ['Tư vấn thêm thiệp giấy đi kèm', 'Tính giá combo giảm 50%', 'Gặp nhân viên tư vấn']
-    }
-    if (actions.some((a) => a.type === 'ADD_TO_CART')) {
-      return ['Tạo thiệp cưới online cho hai bạn', 'Kiểm tra tiến độ đơn hàng', 'Gặp nhân viên thiết kế riêng']
-    }
-    if (brief.guestCount && !brief.coupleNames) {
-      return ['Tên hai bạn để tạo thiệp mẫu', 'Tính báo giá combo giảm 50%', 'Xem mẫu thiệp tối giản']
-    }
-    return ['Thiết kế riêng mẫu thiệp online mới', 'Tính báo giá 100 bộ + combo online', 'Tra cứu đơn hàng MORI']
   }
 }

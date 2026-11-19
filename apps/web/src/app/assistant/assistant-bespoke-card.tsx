@@ -7,7 +7,13 @@ import { DigitalTemplateRenderer } from '../../features/digital-templates/digita
 import { AssistantBespokeModal } from './assistant-bespoke-modal'
 import type { AgentBespokeDesignActionPayload } from './assistant-types'
 
-export function AssistantBespokeCard({ action }: { action: AgentBespokeDesignActionPayload }) {
+export function AssistantBespokeCard({
+  action,
+  sessionPhotoUrl,
+}: {
+  action: AgentBespokeDesignActionPayload
+  sessionPhotoUrl?: string | undefined
+}) {
   const [modalOpen, setModalOpen] = useState(false)
   const [status, setStatus] = useState<'idle' | 'busy' | 'done' | 'auth' | 'error'>('idle')
   const [message, setMessage] = useState('')
@@ -20,6 +26,7 @@ export function AssistantBespokeCard({ action }: { action: AgentBespokeDesignAct
 
   const model = useMemo(() => {
     const d = action.draftData
+    const effectiveHero = d.heroUrl || sessionPhotoUrl
     return buildInitialInvitationModel({
       templateId: 'custom-ai',
       customDesign: action.customDesign,
@@ -33,9 +40,9 @@ export function AssistantBespokeCard({ action }: { action: AgentBespokeDesignAct
       ...(d.venueAddress ? { venueAddress: d.venueAddress } : {}),
       ...(d.families ? { families: d.families } : {}),
       ...(d.scheduleItems ? { scheduleItems: d.scheduleItems } : {}),
-      photos: { ...(d.heroUrl ? { heroUrl: d.heroUrl } : {}), ...(d.storyCaption ? { storyCaption: d.storyCaption } : {}) },
+      photos: { ...(effectiveHero ? { heroUrl: effectiveHero } : {}), ...(d.storyCaption ? { storyCaption: d.storyCaption } : {}) },
     })
-  }, [action])
+  }, [action, sessionPhotoUrl])
 
   async function persistInvitation(publishNow: boolean) {
     if (status === 'busy') return
@@ -113,21 +120,31 @@ export function AssistantBespokeCard({ action }: { action: AgentBespokeDesignAct
     <div className="bsp-chat-card">
       <div className="bsp-chat-head">
         <div>
-          <span className="bsp-ai-badge">✦ THIẾT KẾ ĐỘC BẢN BỞI MORI AI</span>
+          <span className="bsp-ai-badge">Bản phác thảo Thiệp Online</span>
           <strong className="bsp-chat-title">{action.conceptName}</strong>
-          <p className="bsp-chat-sub">{action.subtitle}</p>
+          <p className="bsp-chat-sub">
+            {model.photos.heroUrl
+              ? 'Đã ghép ảnh của hai bạn vào bìa thiệp · Bấm xem toàn màn hình'
+              : 'Dán ảnh cưới bằng Ctrl+V trong ô chat để ghép vào bìa thiệp'}
+          </p>
         </div>
         <div className="bsp-chat-swatches" aria-label="Bảng màu thiết kế">
           {swatches.map((hex, idx) => <span key={`${hex}-${idx}`} style={{ background: hex }} title={hex} />)}
         </div>
       </div>
 
-      <div className="bsp-preview-viewport" onClick={() => setModalOpen(true)} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && setModalOpen(true)}>
-        <div className="bsp-preview-inner">
+      {action.customDesign.customHtml ? (
+        <div className="bsp-preview-live-wrap">
           <DigitalTemplateRenderer model={model} partyName="Khách Mời Danh Dự" compact />
         </div>
-        <div className="bsp-preview-fade"><span>Bấm để xem toàn bộ trang Thiệp Online ↗</span></div>
-      </div>
+      ) : (
+        <div className="bsp-preview-viewport" onClick={() => setModalOpen(true)} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && setModalOpen(true)}>
+          <div className="bsp-preview-inner">
+            <DigitalTemplateRenderer model={model} partyName="Khách Mời Danh Dự" compact />
+          </div>
+          <div className="bsp-preview-fade"><span>Bấm để xem toàn bộ trang Thiệp Online ↗</span></div>
+        </div>
+      )}
 
       <div className="bsp-chat-actions">
         <button type="button" className="bsp-btn-primary" onClick={() => setModalOpen(true)}>Xem trang Thiệp Online đầy đủ</button>

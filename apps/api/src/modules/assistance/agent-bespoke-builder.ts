@@ -6,6 +6,7 @@ import {
   type InvitationScheduleItem,
 } from '@mori/contracts'
 import { readStr, type ProposalToolOutcome } from './agent-action-proposals.js'
+import { sanitizeBespokeCss, sanitizeBespokeHtml } from './agent-bespoke-sanitizer.js'
 import type { AgentAttachment, AgentBespokeDraftData } from './agent-types.js'
 
 const HEX_RE = /^#[0-9A-Fa-f]{6}$/
@@ -129,6 +130,9 @@ export function executeGenerateBespokeInvitation(
     gift: Boolean(giftNote),
   })
 
+  const customHtml = sanitizeBespokeHtml(args['customHtml'])
+  const customCss = sanitizeBespokeCss(args['customCss'])
+
   const customDesign = BespokeDesignBlueprintSchema.parse({
     conceptName,
     ...(eyebrowTag ? { eyebrowTag } : {}),
@@ -143,6 +147,8 @@ export function executeGenerateBespokeInvitation(
     ...(storyMilestones.length > 0 ? { storyMilestones } : {}),
     ...(dressCode ? { dressCode } : {}),
     ...(giftNote ? { giftNote } : {}),
+    ...(customHtml ? { customHtml } : {}),
+    ...(customCss ? { customCss } : {}),
   })
 
   const groomParents = readStr(args, 'groomParents').slice(0, 160)
@@ -153,7 +159,7 @@ export function executeGenerateBespokeInvitation(
 
   const rawDate = readStr(args, 'weddingDate')
   const scheduleItems = parseSchedule(args['scheduleItems'])
-  const uploadedImg = attachments?.find((a) => a.kind === 'image' && a.dataUrl.startsWith('data:image/') && a.dataUrl.length <= 28_000)
+  const uploadedImg = attachments?.find((a) => a.kind === 'image' && a.dataUrl.startsWith('data:image/') && a.dataUrl.length <= 58_000)
   const greeting = readStr(args, 'greeting').slice(0, 500)
   const lunarDate = readStr(args, 'lunarDate').slice(0, 100)
   const venueName = readStr(args, 'venueName').slice(0, 120)
@@ -180,7 +186,7 @@ export function executeGenerateBespokeInvitation(
     output: {
       ok: true, conceptName, typography: customDesign.typography, frameStyle: customDesign.frameStyle,
       heroLayout: customDesign.heroLayout, themeBg: customDesign.theme.bg, themeAccent: customDesign.theme.accent,
-      sections: customDesign.sectionOrder, attachedUserPhoto: Boolean(uploadedImg),
+      sections: customDesign.sectionOrder, attachedUserPhoto: Boolean(uploadedImg), hasCustomCanvas: Boolean(customHtml),
     },
   }
 }

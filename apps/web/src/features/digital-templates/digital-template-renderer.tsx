@@ -33,6 +33,7 @@ export function DigitalTemplateRenderer({
           design={model.customDesign}
           partyName={partyName}
           calendarHref={calendarHref}
+          compact={compact}
         />
       ) : null}
 

@@ -87,6 +87,8 @@ export const BespokeDesignBlueprintSchema = z
       })
       .strict()
       .optional(),
+    customHtml: z.string().max(28_000).optional(),
+    customCss: z.string().max(18_000).optional(),
   })
   .strict()
 

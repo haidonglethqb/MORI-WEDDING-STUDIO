@@ -136,40 +136,55 @@ export function buildDefaultConfig(templateId: DigitalTemplateId, partial?: Invi
 export function buildInitialInvitationModel(seed?: InvitationSeedInput, fallbackSlug = 'editorial-digital-01'): DigitalInvitationModel {
   const slugPreset = resolveTemplatePresetBySlug(fallbackSlug)
   const templateId = seed?.templateId ?? slugPreset.templateId
+  const isCustomAi = templateId === 'custom-ai'
   const baseConfig = buildDefaultConfig(templateId, {
     paletteId: seed?.templateConfig?.paletteId ?? (seed?.templateId ? undefined : slugPreset.paletteId),
     frameStyle: seed?.templateConfig?.frameStyle ?? (seed?.templateId ? undefined : slugPreset.frameStyle),
     motifStyle: seed?.templateConfig?.motifStyle ?? (seed?.templateId ? undefined : slugPreset.motifStyle),
     ...seed?.templateConfig,
   })
-  const defaultGallery = ['/images/blog/personalize-couple-table.jpg', '/images/blog/style-romantic-charm.jpg', '/images/blog/style-luxury-lily.jpg']
+  const defaultGallery = isCustomAi
+    ? []
+    : ['/images/blog/personalize-couple-table.jpg', '/images/blog/style-romantic-charm.jpg', '/images/blog/style-luxury-lily.jpg']
   return {
     templateId,
     displayNames: seed?.displayNames ?? ['Quốc Bảo', 'Minh Anh'],
-    coupleRoles: seed?.coupleRoles ?? ['Tân Lang · Trưởng Nam', 'Tân Nương · Ái Nữ'],
+    coupleRoles: seed?.coupleRoles ?? ['Tân Lang', 'Tân Nương'],
     eventTitle: seed?.eventTitle || 'Lễ Thành Hôn & Tiệc Mừng',
-    greeting: seed?.greeting ?? 'Sự hiện diện và lời chúc phúc của quý khách là niềm vinh hạnh lớn lao trong ngày chung đôi của chúng tôi.',
-    eventLocalStart: seed?.eventLocalStart ?? '20261220T180000',
+    greeting:
+      seed?.greeting ??
+      (isCustomAi
+        ? ''
+        : 'Sự hiện diện và lời chúc phúc của quý khách là niềm vinh hạnh lớn lao trong ngày chung đôi của chúng tôi.'),
+    eventLocalStart: seed?.eventLocalStart ?? (isCustomAi ? '' : '20261220T180000'),
     timeZone: seed?.timeZone ?? 'Asia/Ho_Chi_Minh',
-    lunarDate: seed?.lunarDate ?? 'Nhằm ngày 12 tháng 11 năm Bính Ngọ',
-    venueName: seed?.venueName ?? 'Grand Ballroom · Tầng 5 · White Palace',
-    venueAddress: seed?.venueAddress ?? '194 Hoàng Văn Thụ, Phú Nhuận, TP. Hồ Chí Minh',
+    lunarDate: seed?.lunarDate ?? (isCustomAi ? '' : 'Nhằm ngày 12 tháng 11 năm Bính Ngọ'),
+    venueName: seed?.venueName ?? (isCustomAi ? '' : 'Grand Ballroom · Tầng 5 · White Palace'),
+    venueAddress: seed?.venueAddress ?? (isCustomAi ? '' : '194 Hoàng Văn Thụ, Phú Nhuận, TP. Hồ Chí Minh'),
     mapUrl: seed?.mapUrl ?? '',
     families: {
-      groomParents: seed?.families?.groomParents ?? 'Ông Chu Đức Long · Bà Nguyễn Thị Mai',
-      groomOrigin: seed?.families?.groomOrigin ?? 'Quận 1, TP. Hồ Chí Minh',
-      brideParents: seed?.families?.brideParents ?? 'Ông Trần Hải Nam · Bà Lê Kim Phượng',
-      brideOrigin: seed?.families?.brideOrigin ?? 'Phú Nhuận, TP. Hồ Chí Minh',
+      groomParents: seed?.families?.groomParents ?? (isCustomAi ? '' : 'Ông Chu Đức Long · Bà Nguyễn Thị Mai'),
+      groomOrigin: seed?.families?.groomOrigin ?? (isCustomAi ? '' : 'Quận 1, TP. Hồ Chí Minh'),
+      brideParents: seed?.families?.brideParents ?? (isCustomAi ? '' : 'Ông Trần Hải Nam · Bà Lê Kim Phượng'),
+      brideOrigin: seed?.families?.brideOrigin ?? (isCustomAi ? '' : 'Phú Nhuận, TP. Hồ Chí Minh'),
     },
-    scheduleItems: seed?.scheduleItems?.length ? seed.scheduleItems : [
-      { time: '17:30', label: 'Đón khách & Chụp ảnh' },
-      { time: '18:30', label: 'Nghi lễ Thành Hôn' },
-      { time: '19:00', label: 'Khai tiệc Chung Vui' },
-    ],
+    scheduleItems: seed?.scheduleItems?.length
+      ? seed.scheduleItems
+      : isCustomAi
+        ? []
+        : [
+            { time: '17:30', label: 'Đón khách & Chụp ảnh' },
+            { time: '18:30', label: 'Nghi lễ Thành Hôn' },
+            { time: '19:00', label: 'Khai tiệc Chung Vui' },
+          ],
     photos: {
-      heroUrl: seed?.photos?.heroUrl ?? '/images/landing/hero-ivory-suite.jpg',
+      heroUrl: seed?.photos?.heroUrl ?? (isCustomAi ? '' : '/images/landing/hero-ivory-suite.jpg'),
       galleryUrls: seed?.photos?.galleryUrls?.length ? seed.photos.galleryUrls : defaultGallery,
-      storyCaption: seed?.photos?.storyCaption ?? 'Từ ánh nhìn đầu tiên giữa buổi chiều thu, chúng mình đã đi cùng nhau qua bốn mùa nắng mưa để viết tiếp chương mới.',
+      storyCaption:
+        seed?.photos?.storyCaption ??
+        (isCustomAi
+          ? ''
+          : 'Từ ánh nhìn đầu tiên giữa buổi chiều thu, chúng mình đã đi cùng nhau qua bốn mùa nắng mưa để viết tiếp chương mới.'),
     },
     templateConfig: baseConfig,
     ...(seed?.customDesign ? { customDesign: seed.customDesign } : {}),

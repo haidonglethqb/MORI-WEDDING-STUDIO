@@ -1,0 +1,25 @@
+.admin-quota-wrap { display: flex; flex-direction: column; gap: 16px; padding: 18px 20px 24px; }
+.admin-quota-default-card {
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px;
+  padding: 14px 16px; border-radius: 12px; border: 1px solid #d9dfd0; background: #f6f8f1;
+}
+.admin-quota-default-card strong { font-size: 14px; color: #20281e; }
+.admin-quota-default-card p { margin: 3px 0 0; font-size: 12.5px; color: #556051; }
+.admin-quota-default-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.admin-quota-default-controls input, .admin-quota-row-controls input {
+  width: 120px; padding: 7px 10px; border-radius: 8px; border: 1px solid #cfd6c6; font-size: 13px; background: #ffffff;
+}
+.admin-quota-toolbar { display: flex; gap: 10px; align-items: center; }
+.admin-quota-search { flex: 1; padding: 8px 12px; border-radius: 999px; border: 1px solid #d5dacd; font-size: 13px; background: #ffffff; }
+.admin-quota-empty { color: #636d5d; font-size: 13px; padding: 12px 0; }
+.admin-quota-table-wrap { overflow-x: auto; border: 1px solid #e2e5da; border-radius: 12px; }
+.admin-quota-table { width: 100%; border-collapse: collapse; font-size: 13px; background: #ffffff; }
+.admin-quota-table th { text-align: left; padding: 10px 12px; background: #f5f6f0; color: #434e3e; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 1px solid #e2e5da; }
+.admin-quota-table td { padding: 10px 12px; border-bottom: 1px solid #eff1e9; vertical-align: middle; }
+.admin-quota-sub { font-size: 12px; color: #687362; }
+.admin-quota-role { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: #edf0e6; color: #3d4b2d; }
+.admin-quota-badge { font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px; background: #fdf1df; color: #874c12; white-space: nowrap; }
+.admin-quota-badge.is-unlimited { background: #e8f1e2; color: #2f5421; }
+.admin-quota-row-controls { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.admin-quota-mini { padding: 6px 11px; border-radius: 8px; border: 1px solid #485930; background: #485930; color: #ffffff; font-size: 12px; font-weight: 600; cursor: pointer; }
+.admin-quota-mini.is-ghost { background: #ffffff; color: #546247; border-color: #cfd6c6; }

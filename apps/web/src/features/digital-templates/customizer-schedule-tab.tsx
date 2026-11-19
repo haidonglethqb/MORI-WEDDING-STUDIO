@@ -9,7 +9,7 @@ interface Props {
 
 function splitEventLocalStart(value: string): { date: string; time: string } {
   const m = /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})/.exec(value)
-  if (!m) return { date: '2026-12-20', time: '18:00' }
+  if (!m) return { date: '', time: '' }
   return { date: `${m[1]}-${m[2]}-${m[3]}`, time: `${m[4]}:${m[5]}` }
 }
 
@@ -17,7 +17,11 @@ export function CustomizerScheduleTab({ model, onChange }: Props) {
   const { date, time } = splitEventLocalStart(model.eventLocalStart)
 
   function updateDateTime(nextDate: string, nextTime: string) {
-    const cleanDate = (nextDate || '2026-12-20').replaceAll('-', '')
+    if (!nextDate) {
+      onChange({ ...model, eventLocalStart: '' })
+      return
+    }
+    const cleanDate = nextDate.replaceAll('-', '')
     const cleanTime = (nextTime || '18:00').replaceAll(':', '')
     if (/^\d{8}$/.test(cleanDate) && /^\d{4}$/.test(cleanTime)) {
       onChange({ ...model, eventLocalStart: `${cleanDate}T${cleanTime}00` })
@@ -29,6 +33,21 @@ export function CustomizerScheduleTab({ model, onChange }: Props) {
       i === index ? { ...item, [field]: value } : item,
     )
     onChange({ ...model, scheduleItems: next })
+  }
+
+  function addSlot() {
+    if (model.scheduleItems.length >= 6) return
+    onChange({
+      ...model,
+      scheduleItems: [...model.scheduleItems, { time: '18:00', label: 'Đón khách & Chụp ảnh' }],
+    })
+  }
+
+  function removeSlot(index: number) {
+    onChange({
+      ...model,
+      scheduleItems: model.scheduleItems.filter((_, i) => i !== index),
+    })
   }
 
   return (
@@ -49,7 +68,7 @@ export function CustomizerScheduleTab({ model, onChange }: Props) {
             type="time"
             className="cfg-input"
             value={time}
-            onChange={(e) => updateDateTime(date, e.target.value)}
+            onChange={(e) => updateDateTime(date || '2026-12-20', e.target.value)}
           />
         </div>
       </div>
@@ -68,6 +87,7 @@ export function CustomizerScheduleTab({ model, onChange }: Props) {
         <label className="cfg-label">Tên sảnh / Trung tâm tiệc cưới</label>
         <input
           className="cfg-input"
+          placeholder="VD: Grand Ballroom · White Palace"
           value={model.venueName}
           onChange={(e) => onChange({ ...model, venueName: e.target.value })}
         />
@@ -77,6 +97,7 @@ export function CustomizerScheduleTab({ model, onChange }: Props) {
         <label className="cfg-label">Địa chỉ chi tiết</label>
         <input
           className="cfg-input"
+          placeholder="Số nhà, đường, quận/huyện, thành phố"
           value={model.venueAddress}
           onChange={(e) => onChange({ ...model, venueAddress: e.target.value })}
         />
@@ -94,25 +115,44 @@ export function CustomizerScheduleTab({ model, onChange }: Props) {
       </div>
 
       <div className="cfg-block">
-        <span className="cfg-label">Lịch trình buổi lễ (3 mốc thời gian)</span>
-        <div className="cfg-schedule-rows">
-          {model.scheduleItems.slice(0, 3).map((slot, idx) => (
-            <div key={idx} className="cfg-schedule-row">
-              <input
-                className="cfg-input cfg-time-input"
-                value={slot.time}
-                placeholder="18:00"
-                onChange={(e) => updateSlot(idx, 'time', e.target.value)}
-              />
-              <input
-                className="cfg-input"
-                value={slot.label}
-                placeholder="Tên hoạt động"
-                onChange={(e) => updateSlot(idx, 'label', e.target.value)}
-              />
-            </div>
-          ))}
+        <div className="cfg-row-between">
+          <span className="cfg-label">Lịch trình buổi lễ ({model.scheduleItems.length}/6 mốc)</span>
+          {model.scheduleItems.length < 6 ? (
+            <button type="button" className="cfg-mini-btn" onClick={addSlot}>
+              + Thêm mốc
+            </button>
+          ) : null}
         </div>
+        {model.scheduleItems.length === 0 ? (
+          <small className="cfg-sub-label">Chưa có mốc lịch trình nào — bấm “+ Thêm mốc” để thêm.</small>
+        ) : (
+          <div className="cfg-schedule-rows">
+            {model.scheduleItems.map((slot, idx) => (
+              <div key={idx} className="cfg-schedule-row is-removable">
+                <input
+                  className="cfg-input cfg-time-input"
+                  value={slot.time}
+                  placeholder="18:00"
+                  onChange={(e) => updateSlot(idx, 'time', e.target.value)}
+                />
+                <input
+                  className="cfg-input"
+                  value={slot.label}
+                  placeholder="Tên hoạt động"
+                  onChange={(e) => updateSlot(idx, 'label', e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="cfg-remove-slot-btn"
+                  onClick={() => removeSlot(idx)}
+                  aria-label="Xóa mốc lịch trình"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )

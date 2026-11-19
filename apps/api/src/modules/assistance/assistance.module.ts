@@ -16,6 +16,7 @@ import { AssistantOrchestratorService } from './assistant-orchestrator.service.j
 import { AiConfigService } from './ai-config.service.js'
 import { AiLogService } from './ai-log.service.js'
 import { AdminAiConfigController } from './admin-ai-config.controller.js'
+import { AdminUserQuotaController } from './admin-user-quota.controller.js'
 import { AiProviderTesterService } from './ai-provider-tester.service.js'
 import { AiPricingTool } from './ai-pricing-tool.js'
 import { AiCatalogueTool } from './ai-catalogue-tool.js'
@@ -24,7 +25,7 @@ import { AgentLoopService } from './agent-loop.service.js'
 
 @Module({
   imports: [IdentityModule, PricingModule, OrdersModule],
-  controllers: [AssistantController, AdminAiConfigController],
+  controllers: [AssistantController, AdminAiConfigController, AdminUserQuotaController],
   providers: [
     AiConfigService,
     AiProviderTesterService,

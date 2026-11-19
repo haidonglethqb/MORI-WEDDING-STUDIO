@@ -1,5 +1,6 @@
 'use client'
 
+import { CustomizerAiControls } from './customizer-ai-controls'
 import { buildDefaultConfig, TEMPLATE_DEFINITIONS, toStandardTemplateId } from './digital-template-presets'
 import type { DigitalInvitationModel, DigitalTemplateId, ResolvedTemplateConfig } from './digital-template-types'
 
@@ -46,19 +47,22 @@ export function CustomizerStyleTab({ model, onChange }: Props) {
 
   return (
     <div className="cfg-stack">
-      {isCustomAi && model.customDesign ? (
-        <div className="cfg-block" style={{ padding: '12px', borderRadius: '10px', border: '1px solid #d5cebe', background: '#f8f5ee' }}>
-          <span className="cfg-label">✦ Mẫu thiết kế độc bản bởi MORI AI</span>
-          <strong style={{ fontSize: '14px', color: '#24231f' }}>{model.customDesign.conceptName}</strong>
-          <small style={{ fontSize: '12px', color: '#6b6559' }}>
-            Bạn đang dùng thiết kế riêng do AI dựng. Mọi chỉnh sửa tên, ảnh, lịch trình ở các tab khác đều áp dụng trực tiếp vào mẫu này; hoặc bạn có thể chuyển sang 1 trong 3 template chuẩn bên dưới.
-          </small>
-        </div>
-      ) : null}
-
       <div className="cfg-block">
-        <span className="cfg-label">1. Chọn bản thiết kế mẫu (3 Template chuẩn)</span>
+        <span className="cfg-label">
+          1. Chọn bản thiết kế mẫu{model.customDesign ? ' (gồm bản thiết kế riêng của bạn)' : ''}
+        </span>
         <div className="cfg-template-cards">
+          {model.customDesign ? (
+            <button
+              type="button"
+              className={`cfg-template-card ${isCustomAi ? 'is-active' : ''}`}
+              onClick={() => selectTemplate('custom-ai')}
+            >
+              <strong>✦ {model.customDesign.conceptName}</strong>
+              <small>Bản thiết kế riêng đã tạo qua trợ lý · Có thể chỉnh tiếp bằng AI</small>
+            </button>
+          ) : null}
+
           {Object.values(TEMPLATE_DEFINITIONS).map((def) => (
             <button
               key={def.id}
@@ -73,61 +77,67 @@ export function CustomizerStyleTab({ model, onChange }: Props) {
         </div>
       </div>
 
-      <div className="cfg-block">
-        <span className="cfg-label">2. Bảng màu riêng của {activeDef.name}</span>
-        <div className="cfg-swatch-row">
-          {activeDef.palettes.map((p) => (
-            <button
-              key={p.id}
-              type="button"
-              className={`cfg-swatch-btn ${cfg.paletteId === p.id ? 'is-active' : ''}`}
-              onClick={() => patchConfig({ paletteId: p.id })}
-            >
-              <span className="cfg-swatch-dot" style={{ background: p.bg, borderColor: p.accent }}>
-                <i style={{ background: p.accent }} />
-              </span>
-              <span>{p.name}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="cfg-two-col">
-        <div className="cfg-block">
-          <span className="cfg-label">3. Kiểu khung viền</span>
-          <div className="cfg-pill-group">
-            {activeDef.frames.map((frame) => (
-              <button
-                key={frame.id}
-                type="button"
-                className={`cfg-pill-btn ${cfg.frameStyle === frame.id ? 'is-active' : ''}`}
-                onClick={() => patchConfig({ frameStyle: frame.id })}
-              >
-                {frame.label}
-              </button>
-            ))}
+      {isCustomAi && model.customDesign ? (
+        <CustomizerAiControls model={model} design={model.customDesign} onChange={onChange} />
+      ) : (
+        <>
+          <div className="cfg-block">
+            <span className="cfg-label">2. Bảng màu riêng của {activeDef.name}</span>
+            <div className="cfg-swatch-row">
+              {activeDef.palettes.map((p) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  className={`cfg-swatch-btn ${cfg.paletteId === p.id ? 'is-active' : ''}`}
+                  onClick={() => patchConfig({ paletteId: p.id })}
+                >
+                  <span className="cfg-swatch-dot" style={{ background: p.bg, borderColor: p.accent }}>
+                    <i style={{ background: p.accent }} />
+                  </span>
+                  <span>{p.name}</span>
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
 
-        <div className="cfg-block">
-          <span className="cfg-label">4. Huy hiệu / Họa tiết</span>
-          <div className="cfg-pill-group">
-            {activeDef.motifs.map((motif) => (
-              <button
-                key={motif.id}
-                type="button"
-                className={`cfg-pill-btn ${cfg.motifStyle === motif.id ? 'is-active' : ''}`}
-                onClick={() => patchConfig({ motifStyle: motif.id })}
-              >
-                {motif.label}
-              </button>
-            ))}
+          <div className="cfg-two-col">
+            <div className="cfg-block">
+              <span className="cfg-label">3. Kiểu khung viền</span>
+              <div className="cfg-pill-group">
+                {activeDef.frames.map((frame) => (
+                  <button
+                    key={frame.id}
+                    type="button"
+                    className={`cfg-pill-btn ${cfg.frameStyle === frame.id ? 'is-active' : ''}`}
+                    onClick={() => patchConfig({ frameStyle: frame.id })}
+                  >
+                    {frame.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="cfg-block">
+              <span className="cfg-label">4. Huy hiệu / Họa tiết</span>
+              <div className="cfg-pill-group">
+                {activeDef.motifs.map((motif) => (
+                  <button
+                    key={motif.id}
+                    type="button"
+                    className={`cfg-pill-btn ${cfg.motifStyle === motif.id ? 'is-active' : ''}`}
+                    onClick={() => patchConfig({ motifStyle: motif.id })}
+                  >
+                    {motif.label}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        </>
+      )}
 
       <div className="cfg-block">
-        <span className="cfg-label">5. Bật / Tắt các khối nội dung trên thiệp</span>
+        <span className="cfg-label">Bật / Tắt các khối tiện ích &amp; nội dung</span>
         <div className="cfg-toggles-grid">
           {TOGGLE_LABELS.map((item) => (
             <label key={item.key} className="cfg-toggle-row">

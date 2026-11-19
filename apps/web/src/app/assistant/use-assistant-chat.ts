@@ -16,7 +16,7 @@ import { extractEscalatedFlag, extractStaffReplies, mergeSyncedStaffMessages } f
 import { streamAssistantTurn } from './assistant-stream-client'
 import type { AgentAttachment, AgentToolTraceItem, ChatMessageItem, ConversationWeddingBrief } from './assistant-types'
 
-export function useAssistantChat() {
+export function useAssistantChat(isLoggedIn = false) {
   const [messages, setMessages] = useState<ChatMessageItem[]>([INITIAL_GREETING])
   const [brief, setBrief] = useState<ConversationWeddingBrief>(DEFAULT_BRIEF)
   const [sessionId, setSessionId] = useState('')
@@ -74,20 +74,20 @@ export function useAssistantChat() {
     }
   }, [sessionId])
 
-  async function attachMoodboardImage(file: File | undefined) {
+  async function attachMoodboardImage(file: File | undefined, customLabel?: string) {
     if (!file) return
     try {
       const dataUrl = await compressImageFileToDataUrl(file)
-      setAttachment({ kind: 'image', dataUrl, label: file.name })
+      setAttachment({ kind: 'image', dataUrl, label: customLabel || file.name || 'Ảnh đính kèm' })
     } catch {
       setAttachment(null)
     }
   }
 
   async function sendMessage(textToSend: string) {
-    const text = textToSend.trim()
-    if (!text || loading) return
     const currentAttach = attachment
+    const text = textToSend.trim() || (currentAttach ? 'Ghép ảnh này vào mẫu thiệp online giúp mình' : '')
+    if (!text || loading) return
     const updated: ChatMessageItem[] = [
       ...messages,
       { id: `u-${Date.now()}`, role: 'user', content: text, ...(currentAttach ? { attachmentDataUrl: currentAttach.dataUrl } : {}) },
@@ -121,17 +121,20 @@ export function useAssistantChat() {
 
     if (result.kind === 'quota') {
       setQuotaExceeded(true)
-      setMessages((prev) => [
-        ...prev,
-        { id: `quota-${Date.now()}`, role: 'assistant', senderType: 'system', senderLabel: 'Giới hạn khách vãng lai', content: 'Bạn đã dùng hết 5 câu hỏi miễn phí dành cho khách chưa đăng nhập. Hãy đăng nhập tài khoản MORI để tiếp tục trò chuyện (30 lượt/ngày) hoặc bấm “Gặp nhân viên tư vấn” nhé!' },
-      ])
+      const notice: ChatMessageItem = isLoggedIn
+        ? {
+            id: `quota-${Date.now()}`, role: 'assistant', senderType: 'system', senderLabel: 'Giới hạn lượt trò chuyện hôm nay',
+            content: 'Bạn đã đạt hạn mức lượt trò chuyện AI hôm nay do quản trị viên thiết lập. Bạn có thể bấm “Gặp nhân viên tư vấn” để được hỗ trợ ngay hoặc quay lại vào ngày mai nhé!',
+          }
+        : {
+            id: `quota-${Date.now()}`, role: 'assistant', senderType: 'system', senderLabel: 'Giới hạn khách vãng lai',
+            content: 'Bạn đã dùng hết 5 câu hỏi miễn phí dành cho khách chưa đăng nhập. Hãy đăng nhập tài khoản MORI để tiếp tục trò chuyện không giới hạn nhé!',
+          }
+      setMessages((prev) => [...prev, notice])
       return
     }
     if (result.kind === 'error') {
-      setMessages((prev) => [
-        ...prev,
-        { id: `err-${Date.now()}`, role: 'assistant', content: 'MORI xin lỗi, kết nối tới trợ lý đang gián đoạn. Bạn có thể bấm “Gặp nhân viên tư vấn (Admin)” hoặc gửi yêu cầu thiết kế riêng trên trang Bộ sưu tập.' },
-      ])
+      setMessages((prev) => [...prev, { id: `err-${Date.now()}`, role: 'assistant', content: 'MORI xin lỗi, kết nối tới trợ lý đang gián đoạn. Bạn có thể bấm “Gặp nhân viên tư vấn” hoặc thử lại sau nhé.' }])
       return
     }
 
@@ -166,10 +169,7 @@ export function useAssistantChat() {
     setMessages((prev) => [
       ...prev,
       {
-        id: `esc-${Date.now()}`,
-        role: 'assistant',
-        senderType: 'system',
-        senderLabel: 'Hệ thống hỗ trợ MORI',
+        id: `esc-${Date.now()}`, role: 'assistant', senderType: 'system', senderLabel: 'Hệ thống hỗ trợ MORI',
         content: `Đã chuyển cuộc trò chuyện kèm thông tin liên hệ (${contact}) tới nhân viên tư vấn MORI.${note ? ` Ghi chú: "${note}".` : ''} Phản hồi từ nhân viên sẽ hiện trực tiếp tại khung chat này.`,
       },
     ])
@@ -186,9 +186,11 @@ export function useAssistantChat() {
     setQuickOptions(QUICK_STARTERS)
   }
 
+  const latestUserPhoto = [...messages].reverse().find((m) => m.role === 'user' && m.attachmentDataUrl)?.attachmentDataUrl
+
   return {
     messages, brief, input, setInput, loading, activeStatus, activeTraces,
-    streamingText, attachment, setAttachment, attachMoodboardImage, quotaExceeded,
+    streamingText, attachment, setAttachment, attachMoodboardImage, latestUserPhoto, quotaExceeded,
     escalated, escalating, escalateError, quickOptions, scrollAnchorRef,
     sendMessage, escalateToHuman, handleReset,
   }

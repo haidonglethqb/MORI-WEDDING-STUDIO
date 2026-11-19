@@ -5,8 +5,9 @@ import { AdminAiConfigTab } from './admin-ai-config-tab'
 import { AdminAiLogs } from './admin-ai-logs'
 import type { InitialConfigPayload } from './admin-ai-types'
 import { AdminStorefrontInbox } from './admin-storefront-inbox'
+import { AdminUserQuotasTab } from './admin-user-quotas-tab'
 
-export type AdminAiTabKey = 'logs' | 'storefront' | 'config'
+export type AdminAiTabKey = 'logs' | 'storefront' | 'quotas' | 'config'
 
 export function AdminAiManager({
   initial,
@@ -41,6 +42,15 @@ export function AdminAiManager({
         <button
           type="button"
           role="tab"
+          aria-selected={activeTab === 'quotas'}
+          className={`nav-tab-btn ${activeTab === 'quotas' ? 'active' : ''}`}
+          onClick={() => setActiveTab('quotas')}
+        >
+          ✦ Hạn mức AI từng User
+        </button>
+        <button
+          type="button"
+          role="tab"
           aria-selected={activeTab === 'config'}
           className={`nav-tab-btn ${activeTab === 'config' ? 'active' : ''}`}
           onClick={() => setActiveTab('config')}
@@ -53,6 +63,8 @@ export function AdminAiManager({
         <AdminAiLogs />
       ) : activeTab === 'storefront' ? (
         <AdminStorefrontInbox />
+      ) : activeTab === 'quotas' ? (
+        <AdminUserQuotasTab />
       ) : (
         <AdminAiConfigTab initial={initial} />
       )}

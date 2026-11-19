@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, type ClipboardEvent } from 'react'
 import { CURATED_PHOTO_PRESETS } from './digital-template-presets'
 import type { DigitalInvitationModel } from './digital-template-types'
 import { compressImageFileToDataUrl } from './photo-upload-helper'
@@ -11,9 +11,8 @@ interface Props {
 }
 
 export function TemplatePhotoControls({ model, onChange }: Props) {
-  const [heroUrlDraft, setHeroUrlDraft] = useState('')
-  const [galleryUrlDraft, setGalleryUrlDraft] = useState('')
   const [uploadError, setUploadError] = useState<string | null>(null)
+  const [pasteHint, setPasteHint] = useState<string>('')
 
   function updatePhotos(patch: Partial<DigitalInvitationModel['photos']>) {
     onChange({ ...model, photos: { ...model.photos, ...patch } })
@@ -26,28 +25,28 @@ export function TemplatePhotoControls({ model, onChange }: Props) {
       const dataUrl = await compressImageFileToDataUrl(file)
       if (target === 'hero') {
         updatePhotos({ heroUrl: dataUrl })
+        setPasteHint('Đã cập nhật ảnh bìa ✓')
       } else {
         const next = [...model.photos.galleryUrls, dataUrl].slice(-3)
         updatePhotos({ galleryUrls: next })
+        setPasteHint('Đã thêm ảnh vào album ✓')
       }
     } catch (err) {
       setUploadError(err instanceof Error ? err.message : 'Không thể xử lý ảnh tải lên.')
     }
   }
 
-  function applyHeroUrl() {
-    const clean = heroUrlDraft.trim()
-    if (!clean) return
-    updatePhotos({ heroUrl: clean })
-    setHeroUrlDraft('')
+  function handlePaste(e: ClipboardEvent<HTMLElement>, target: 'hero' | 'gallery') {
+    const imgItem = Array.from(e.clipboardData?.items ?? []).find((item) => item.type.startsWith('image/'))
+    const file = imgItem?.getAsFile()
+    if (!file) return
+    e.preventDefault()
+    void handleFileUpload(file, target)
   }
 
-  function addGalleryUrl(url: string) {
-    const clean = url.trim()
-    if (!clean) return
-    const next = [...model.photos.galleryUrls.filter((u) => u !== clean), clean].slice(0, 3)
+  function addPresetToGallery(url: string) {
+    const next = [...model.photos.galleryUrls.filter((u) => u !== url), url].slice(0, 3)
     updatePhotos({ galleryUrls: next })
-    setGalleryUrlDraft('')
   }
 
   function removeGalleryAt(index: number) {
@@ -55,8 +54,9 @@ export function TemplatePhotoControls({ model, onChange }: Props) {
   }
 
   return (
-    <div className="cfg-stack">
+    <div className="cfg-stack" onPaste={(e) => handlePaste(e, 'hero')}>
       {uploadError ? <div className="cfg-error-note">{uploadError}</div> : null}
+      {pasteHint ? <small className="cfg-ai-feedback">{pasteHint}</small> : null}
 
       <div className="cfg-block">
         <label className="cfg-label">Ảnh bìa cặp đôi (Hero Portrait)</label>
@@ -65,34 +65,36 @@ export function TemplatePhotoControls({ model, onChange }: Props) {
             <img src={model.photos.heroUrl} alt="Ảnh bìa hiện tại" className="cfg-hero-thumb" />
           ) : null}
           <div className="cfg-photo-actions">
-            <label className="cfg-upload-btn">
-              Tải ảnh từ máy
-              <input
-                type="file"
-                accept="image/*"
-                hidden
-                onChange={(e) => {
-                  void handleFileUpload(e.target.files?.[0], 'hero')
-                  e.currentTarget.value = ''
-                }}
-              />
-            </label>
-            <div className="cfg-url-row">
-              <input
-                type="url"
-                className="cfg-input"
-                placeholder="Hoặc dán URL ảnh (https://...)"
-                value={heroUrlDraft}
-                onChange={(e) => setHeroUrlDraft(e.target.value)}
-              />
-              <button type="button" className="cfg-mini-btn" onClick={applyHeroUrl}>
-                Áp dụng
-              </button>
+            <div className="cfg-photo-btn-row">
+              <label className="cfg-upload-btn">
+                Tải ảnh từ máy
+                <input
+                  type="file"
+                  accept="image/*"
+                  hidden
+                  onChange={(e) => {
+                    void handleFileUpload(e.target.files?.[0], 'hero')
+                    e.currentTarget.value = ''
+                  }}
+                />
+              </label>
+              {model.photos.heroUrl ? (
+                <button type="button" className="cfg-mini-btn" onClick={() => updatePhotos({ heroUrl: '' })}>
+                  Bỏ ảnh bìa
+                </button>
+              ) : null}
+            </div>
+            <div
+              className="cfg-paste-zone"
+              tabIndex={0}
+              onPaste={(e) => handlePaste(e, 'hero')}
+            >
+              Mẹo: Bấm vào đây rồi nhấn <strong>Ctrl+V</strong> để dán trực tiếp ảnh cưới từ máy tính
             </div>
           </div>
         </div>
 
-        <span className="cfg-sub-label">Chọn nhanh từ thư viện ảnh cưới mẫu:</span>
+        <span className="cfg-sub-label">Hoặc chọn nhanh từ thư viện ảnh cưới mẫu:</span>
         <div className="cfg-preset-grid">
           {CURATED_PHOTO_PRESETS.map((preset) => (
             <button
@@ -108,8 +110,8 @@ export function TemplatePhotoControls({ model, onChange }: Props) {
         </div>
       </div>
 
-      <div className="cfg-block">
-        <label className="cfg-label">Album ảnh cưới (tối đa 3 ảnh)</label>
+      <div className="cfg-block" onPaste={(e) => handlePaste(e, 'gallery')}>
+        <label className="cfg-label">Album ảnh cưới (tối đa 3 ảnh · hỗ trợ tải máy hoặc Ctrl+V)</label>
         <div className="cfg-gallery-list">
           {model.photos.galleryUrls.map((url, idx) => (
             <div key={`${idx}-${url.slice(0, 20)}`} className="cfg-gallery-chip">
@@ -134,25 +136,13 @@ export function TemplatePhotoControls({ model, onChange }: Props) {
             </label>
           ) : null}
         </div>
-        <div className="cfg-url-row" style={{ marginTop: 8 }}>
-          <input
-            type="url"
-            className="cfg-input"
-            placeholder="Thêm URL ảnh vào album..."
-            value={galleryUrlDraft}
-            onChange={(e) => setGalleryUrlDraft(e.target.value)}
-          />
-          <button type="button" className="cfg-mini-btn" onClick={() => addGalleryUrl(galleryUrlDraft)}>
-            Thêm
-          </button>
-        </div>
         <div className="cfg-preset-pills">
           {CURATED_PHOTO_PRESETS.slice(0, 4).map((p) => (
             <button
               key={p.id}
               type="button"
               className="cfg-pill-btn"
-              onClick={() => addGalleryUrl(p.url)}
+              onClick={() => addPresetToGallery(p.url)}
             >
               + {p.label}
             </button>

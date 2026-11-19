@@ -1,50 +1,19 @@
 'use client'
 
 import { useState } from 'react'
-import type {
-  BespokeDesignBlueprint,
-  InvitationFamilies,
-  InvitationPhotos,
-  InvitationScheduleItem,
-  InvitationTemplateConfig,
-  InvitationTemplateId,
-} from '@mori/contracts'
 import { buildInitialInvitationModel } from '../../../features/digital-templates/digital-template-presets'
 import { DigitalTemplateRenderer } from '../../../features/digital-templates/digital-template-renderer'
 import type { DigitalInvitationModel } from '../../../features/digital-templates/digital-template-types'
 import { TemplateCustomizerPanel } from '../../../features/digital-templates/template-customizer-panel'
 import { toInvitationContentPayload } from '../../../features/digital-templates/template-view-utils'
+import { EditorTopBar, type EditorDraft } from './editor-topbar'
 import { ReopenRsvp } from './reopen-rsvp'
 import { RetireEvent } from './retire-event'
 import { RevokeGuests } from './revoke-guests'
 import { RotateHandle } from './rotate-handle'
 import { SwitchRsvpMode } from './switch-rsvp-mode'
 
-export interface EditorDraft {
-  invitationId: string
-  version: number
-  slug: string
-  displayNames: [string, string]
-  eventTitle: string
-  greeting: string
-  published: boolean
-  rsvpMode: 'OFF' | 'OPEN' | 'GUEST_LIST'
-  moderationState?: 'ACTIVE' | 'SUSPENDED'
-  moderationReason?: string | null
-  eventLocalStart?: string
-  timeZone?: string
-  templateId?: InvitationTemplateId
-  coupleRoles?: [string, string]
-  families?: InvitationFamilies
-  lunarDate?: string
-  venueName?: string
-  venueAddress?: string
-  mapUrl?: string
-  scheduleItems?: InvitationScheduleItem[]
-  photos?: InvitationPhotos
-  templateConfig?: InvitationTemplateConfig
-  customDesign?: BespokeDesignBlueprint
-}
+export type { EditorDraft } from './editor-topbar'
 
 export function EditorForm({ draft }: { draft: EditorDraft }) {
   const [model, setModel] = useState<DigitalInvitationModel>(() => buildInitialInvitationModel(draft))
@@ -52,11 +21,20 @@ export function EditorForm({ draft }: { draft: EditorDraft }) {
   const [slug, setSlug] = useState(draft.slug)
   const [published, setPublished] = useState(draft.published)
   const [rsvpMode, setRsvpMode] = useState(draft.rsvpMode)
+  const [isDirty, setIsDirty] = useState(false)
+  const [busy, setBusy] = useState(false)
+  const [copied, setCopied] = useState(false)
+  const [previewMode, setPreviewMode] = useState<'mobile' | 'desktop'>('mobile')
   const [status, setStatus] = useState(
-    draft.published ? 'Trạng thái: Đã xuất bản trực tuyến' : 'Trạng thái: Bản nháp chưa xuất bản',
+    draft.published ? 'Đã xuất bản trực tuyến' : 'Bản nháp chưa xuất bản',
   )
 
-  async function save() {
+  function handleModelChange(next: DigitalInvitationModel) {
+    setModel(next)
+    setIsDirty(true)
+  }
+
+  async function persistDraft(): Promise<EditorDraft | null> {
     setStatus('Đang lưu bản nháp...')
     const content = toInvitationContentPayload(model)
     const response = await fetch(`/invitations/${draft.invitationId}/save`, {
@@ -66,48 +44,88 @@ export function EditorForm({ draft }: { draft: EditorDraft }) {
     })
     if (response.status === 409) {
       setStatus('Bản nháp đã thay đổi ở nơi khác. Vui lòng tải lại trang.')
-      return
+      return null
     }
     if (!response.ok) {
-      setStatus('Chưa lưu được thông tin. Vui lòng kiểm tra dữ liệu nhập.')
-      return
+      setStatus('Chưa lưu được thông tin. Vui lòng kiểm tra lại tên Dâu Rể & dữ liệu nhập.')
+      return null
     }
     const saved = (await response.json()) as EditorDraft
     setVersion(saved.version)
     setPublished(saved.published)
+    setIsDirty(false)
     setStatus(`Đã lưu thành công (Phiên bản ${saved.version})`)
+    return saved
+  }
+
+  async function save() {
+    if (busy) return
+    setBusy(true)
+    try {
+      await persistDraft()
+    } finally {
+      setBusy(false)
+    }
   }
 
   async function publish() {
-    setStatus('Đang xuất bản trực tuyến...')
-    const response = await fetch(`/invitations/${draft.invitationId}/publish`, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ expectedVersion: version }),
-    })
-    if (response.status === 409) {
-      setStatus('Bản nháp đã thay đổi. Vui lòng lưu lại trước khi xuất bản.')
-      return
+    if (busy) return
+    setBusy(true)
+    try {
+      let currentVersion = version
+      if (isDirty) {
+        const saved = await persistDraft()
+        if (!saved) return
+        currentVersion = saved.version
+      }
+      setStatus('Đang xuất bản trực tuyến...')
+      const response = await fetch(`/invitations/${draft.invitationId}/publish`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ expectedVersion: currentVersion }),
+      })
+      if (response.status === 409) {
+        setStatus('Bản nháp đã thay đổi. Vui lòng tải lại trang.')
+        return
+      }
+      if (!response.ok) {
+        setStatus('Chưa xuất bản được thiệp lúc này.')
+        return
+      }
+      const next = (await response.json()) as EditorDraft
+      setVersion(next.version)
+      setPublished(true)
+      setStatus('Đã xuất bản thiệp thành công!')
+    } finally {
+      setBusy(false)
     }
-    if (!response.ok) {
-      setStatus('Chưa xuất bản được thiệp.')
-      return
+  }
+
+  async function copyGuestLink() {
+    const fullUrl = `${window.location.origin}/i/${slug}`
+    try {
+      await navigator.clipboard.writeText(fullUrl)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      setStatus(`Link mời khách: ${fullUrl}`)
     }
-    const next = (await response.json()) as EditorDraft
-    setVersion(next.version)
-    setPublished(true)
-    setStatus('Đã xuất bản thiệp thành công!')
   }
 
   return (
     <section className="editor-studio-section">
       <div className="editor-card">
-        <div className="editor-card-header">
-          <h2 className="editor-card-title">Thiết kế &amp; Tùy chỉnh Thiệp Online</h2>
-          <p className="editor-card-desc">
-            Chọn mẫu thiết kế, điền thông tin hai họ, tải ảnh cưới và bật/tắt các khối hiển thị theo ý muốn.
-          </p>
-        </div>
+        <EditorTopBar
+          isDirty={isDirty}
+          status={status}
+          busy={busy}
+          published={published}
+          slug={slug}
+          copied={copied}
+          onSave={() => void save()}
+          onPublish={() => void publish()}
+          onCopyLink={() => void copyGuestLink()}
+        />
 
         {draft.moderationState === 'SUSPENDED' ? (
           <div className="editor-suspended-banner">
@@ -127,41 +145,38 @@ export function EditorForm({ draft }: { draft: EditorDraft }) {
 
         <div className="editor-studio-split">
           <div className="editor-studio-controls">
-            <TemplateCustomizerPanel model={model} onChange={setModel} />
+            <TemplateCustomizerPanel model={model} onChange={handleModelChange} />
 
-            <div className="editor-actions-bar">
-              <button type="button" className="editor-btn-primary" onClick={() => void save()}>
-                Lưu bản nháp ✦
-              </button>
-              <button type="button" className="editor-btn-secondary" onClick={() => void publish()}>
-                Xuất bản trực tuyến
-              </button>
-              {published ? (
-                <a href={`/i/${slug}`} target="_blank" rel="noreferrer" className="editor-btn-secondary">
-                  Xem trang khách mời ↗
-                </a>
-              ) : null}
-            </div>
-            <div className="editor-status-pill">{status}</div>
-
-            <div className="editor-security-wrap">
-              <h3>Cài đặt bảo mật &amp; Quản trị</h3>
-              <RevokeGuests invitationId={draft.invitationId} version={version} onRevoked={setVersion} />
-              <SwitchRsvpMode
-                invitationId={draft.invitationId}
-                mode={rsvpMode}
-                onSwitched={() => setRsvpMode('GUEST_LIST')}
-              />
-              <ReopenRsvp invitationId={draft.invitationId} />
-              <RetireEvent invitationId={draft.invitationId} />
-            </div>
+            <details className="editor-advanced-details">
+              <summary>Cài đặt nâng cao &amp; Bảo mật (Khách mời, RSVP, Kết thúc sự kiện)</summary>
+              <div className="editor-advanced-body">
+                <RevokeGuests invitationId={draft.invitationId} version={version} onRevoked={setVersion} />
+                <SwitchRsvpMode
+                  invitationId={draft.invitationId}
+                  mode={rsvpMode}
+                  onSwitched={() => setRsvpMode('GUEST_LIST')}
+                />
+                <ReopenRsvp invitationId={draft.invitationId} />
+                <RetireEvent invitationId={draft.invitationId} />
+              </div>
+            </details>
           </div>
 
           <div className="editor-studio-preview">
-            <div className="editor-preview-label">
-              <span>Xem trước trực tiếp trên thiệp khách mời</span>
+            <div className="editor-preview-bar">
+              <span>Xem trước trực tiếp</span>
+              <div className="editor-viewport-switch" role="group" aria-label="Chế độ màn hình">
+                <button type="button" className={previewMode === 'mobile' ? 'is-active' : ''} onClick={() => setPreviewMode('mobile')}>
+                  Di động
+                </button>
+                <button type="button" className={previewMode === 'desktop' ? 'is-active' : ''} onClick={() => setPreviewMode('desktop')}>
+                  Máy tính
+                </button>
+              </div>
             </div>
-            <DigitalTemplateRenderer model={model} compact />
+            <div className={`editor-preview-frame is-${previewMode}`}>
+              <DigitalTemplateRenderer model={model} compact />
+            </div>
           </div>
         </div>
       </div>

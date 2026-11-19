@@ -17,6 +17,7 @@ import type { Response } from 'express'
 import { SESSION_COOKIE } from '@mori/contracts'
 import { IdentityService } from '../identity/identity.service.js'
 import { readCookie } from '../identity/read-cookie.js'
+import { AiConfigService } from './ai-config.service.js'
 import { AiLogService } from './ai-log.service.js'
 import { AiToolBoundary } from './ai-tool-boundary.js'
 import { AssistantOrchestratorService } from './assistant-orchestrator.service.js'
@@ -34,6 +35,7 @@ const PRIVATE = 'private, no-store'
 @Controller('assistant')
 export class AssistantController {
   private readonly logService: AiLogService
+  private readonly configService: AiConfigService
 
   constructor(
     private readonly recommendations: RecommendationService,
@@ -42,8 +44,10 @@ export class AssistantController {
     private readonly identity: IdentityService,
     private readonly orchestrator: AssistantOrchestratorService,
     @Optional() logService?: AiLogService,
+    @Optional() configService?: AiConfigService,
   ) {
     this.logService = logService ?? new AiLogService()
+    this.configService = configService ?? new AiConfigService()
   }
 
   @Post('recommendations')
@@ -162,7 +166,9 @@ export class AssistantController {
   ) {
     try {
       const user = await this.identity.currentUser(readCookie(cookie, SESSION_COOKIE))
-      if (user.status === 'ACTIVE') return { subject: `user:${user.id}`, limit: 30 }
+      if (user.status !== 'DISABLED') {
+        return { subject: `user:${user.id}`, limit: this.configService.getUserDailyLimit(user.id) }
+      }
     } catch (error) {
       if (error instanceof ForbiddenException) throw error
     }

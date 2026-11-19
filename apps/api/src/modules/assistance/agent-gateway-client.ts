@@ -43,7 +43,8 @@ async function postChatCompletions(
   temperature: number,
 ): Promise<Omit<LlmToolStepResult, 'modelUsed' | 'fallbackTier'>> {
   const controller = new AbortController()
-  const timer = setTimeout(() => controller.abort(), candidate.timeoutMs)
+  const effectiveTimeout = Math.max(candidate.timeoutMs, 45_000)
+  const timer = setTimeout(() => controller.abort(), effectiveTimeout)
   const start = Date.now()
 
   try {

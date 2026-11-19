@@ -8,8 +8,8 @@ export const BESPOKE_INVITATION_TOOL = {
       type: 'object',
       required: ['conceptName', 'groomName', 'brideName', 'typography', 'frameStyle', 'bgPattern', 'ornament', 'heroLayout', 'theme', 'sectionOrder'],
       properties: {
-        conceptName: { type: 'string', description: 'Tên concept nghệ thuật bằng tiếng Việt/Anh (VD: "Đêm Sao Đà Lạt", "Biển Xanh Sunset", "Tạp Chí Cổ Điển")' },
-        eyebrowTag: { type: 'string', description: 'Dòng chữ nhỏ mở đầu phía trên tên cô dâu chú rể (VD: "SAVE THE DATE · ĐÀ LẠT 2026")' },
+        conceptName: { type: 'string', description: 'Tên phong cách tinh tế, trang nhã (VD: "Song Hỷ Cổ Điển", "Ánh Nến Mùa Thu", "Tối Giản Hiện Đại", "Hoàng Hôn Biển") — tránh ghép tên địa danh sáo rỗng, KHÔNG ghi chữ AI hay MORI' },
+        eyebrowTag: { type: 'string', description: 'Lời mở đầu trang trọng in trên đầu thiệp (VD: "TRÂN TRỌNG KÍNH MỜI", "THIỆP MỜI THÀNH HÔN", "SAVE THE DATE") — tuyệt đối KHÔNG ghi tên thương hiệu hay chữ AI' },
         typography: { type: 'string', enum: ['editorial-serif', 'modern-sans', 'romantic-italic', 'heritage-classic'] },
         frameStyle: { type: 'string', enum: ['arch-dome', 'sharp-magazine', 'glass-card', 'imperial-corner', 'polaroid-mat', 'soft-organic'] },
         bgPattern: { type: 'string', enum: ['none', 'linen-grain', 'starry-dots', 'botanical-wash', 'gold-aura'] },
@@ -83,6 +83,16 @@ export const BESPOKE_INVITATION_TOOL = {
             heading: { type: 'string' },
             message: { type: 'string' },
           },
+        },
+        customHtml: {
+          type: 'string',
+          description:
+            'Mã HTML + inline <svg> ĐỘC BẢN để render toàn bộ trang Thiệp Cưới Online với họa tiết & hiệu ứng theo đúng yêu cầu khách (VD: SVG rồng vàng bay, phượng hoàng múa, mây ngũ sắc, cánh hoa anh đào rơi, đèn lồng bay, sao băng, sóng biển, dấu sáp, khung vòm). Dùng token <img src="{{HERO_PHOTO}}" class="hero-img" alt="Ảnh cưới" /> tại vị trí ảnh cưới nếu có ảnh. KHÔNG dùng <script>, KHÔNG nhúng URL ngoài, KHÔNG ghi watermark MORI hay AI.',
+        },
+        customCss: {
+          type: 'string',
+          description:
+            'Mã CSS thuần (có @keyframes animation mượt mà, gradient sang trọng, layout responsive, typography tiếng Việt đẹp với Georgia/Lora/serif) khớp với customHtml. Hỗ trợ mọi hiệu ứng động (rồng bay lượn, phượng sải cánh, hạt vàng lấp lánh, hoa rơi, hiệu ứng ánh sáng, hover 3D). KHÔNG dùng @import hay url(http...).',
         },
       },
     },

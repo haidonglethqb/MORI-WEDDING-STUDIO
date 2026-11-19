@@ -80,7 +80,7 @@
   backdrop-filter: blur(12px);
   border-top: 1px solid #E3E1D4;
   flex-shrink: 0;
-  padding: 12px 20px max(16px, env(safe-area-inset-bottom));
+  padding: 9px 20px max(12px, env(safe-area-inset-bottom));
   box-sizing: border-box;
 }
 
@@ -89,7 +89,13 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 7px;
+}
+
+.assistant-container.is-photo-drag .chat-window-pane {
+  outline: 2px dashed #657344;
+  outline-offset: -8px;
+  background: rgba(233, 238, 223, 0.35);
 }
 
 .assistant-page .quick-chips-row {

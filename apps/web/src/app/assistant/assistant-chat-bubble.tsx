@@ -8,6 +8,7 @@ import type { ChatMessageItem } from './assistant-types'
 
 interface ChatBubbleProps {
   message: ChatMessageItem
+  sessionPhotoUrl?: string | undefined
 }
 
 function formatVnd(val: string): string {
@@ -45,7 +46,7 @@ function renderFormattedMessage(content: string): ReactNode {
   })
 }
 
-export function AssistantChatBubble({ message }: ChatBubbleProps) {
+export function AssistantChatBubble({ message, sessionPhotoUrl }: ChatBubbleProps) {
   if (message.role === 'user') {
     return (
       <div className="chat-row user-row">
@@ -79,7 +80,13 @@ export function AssistantChatBubble({ message }: ChatBubbleProps) {
                 : 'MORI Atelier Agent'}
           </span>
           <span className={`atelier-role ${isStaff ? 'is-staff-badge' : ''}`}>
-            {isStaff ? 'Hỗ trợ trực tiếp' : isSystem ? 'Đã chuyển tiếp' : 'AI Agent'}
+            {isStaff
+              ? 'Hỗ trợ trực tiếp'
+              : isSystem
+                ? message.senderLabel?.includes('hỗ trợ')
+                  ? 'Đã chuyển tiếp'
+                  : 'Thông báo'
+                : 'AI Agent'}
           </span>
         </div>
 
@@ -140,7 +147,7 @@ export function AssistantChatBubble({ message }: ChatBubbleProps) {
         {message.proposedActions && message.proposedActions.length > 0 ? (
           <div className="agent-actions-stack">
             {message.proposedActions.map((act, idx) => (
-              <AssistantActionCard key={`${act.type}-${idx}`} action={act} />
+              <AssistantActionCard key={`${act.type}-${idx}`} action={act} sessionPhotoUrl={sessionPhotoUrl} />
             ))}
           </div>
         ) : null}

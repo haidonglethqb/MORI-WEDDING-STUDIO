@@ -125,7 +125,23 @@
 
 .cfg-schedule-rows { display: flex; flex-direction: column; gap: 8px; }
 .cfg-schedule-row { display: grid; grid-template-columns: 92px 1fr; gap: 8px; }
+.cfg-schedule-row.is-removable { grid-template-columns: 88px 1fr 34px; }
+.cfg-remove-slot-btn { border: 1px solid #d9d4c7; border-radius: 8px; background: #ffffff; color: #6e5959; cursor: pointer; font-weight: 700; }
+.cfg-row-between { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 .cfg-time-input { text-align: center; font-weight: 600; }
+
+.cfg-ai-box { padding: 14px; border-radius: 12px; border: 1px solid #d7d0be; background: #f8f5ee; display: flex; flex-direction: column; gap: 11px; }
+.cfg-ai-head strong { display: block; font-size: 13.5px; color: #222920; }
+.cfg-ai-head small { display: block; font-size: 12px; color: #5e6659; margin-top: 2px; }
+.cfg-ai-colors { display: flex; flex-wrap: wrap; gap: 8px; }
+.cfg-color-chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px; border: 1px solid #d9d4c7; background: #ffffff; font-size: 12px; font-weight: 600; cursor: pointer; }
+.cfg-color-chip input { width: 20px; height: 20px; border: 0; padding: 0; background: transparent; cursor: pointer; }
+.cfg-ai-prompt-row { display: flex; gap: 8px; }
+@media (max-width: 560px) { .cfg-ai-prompt-row { flex-direction: column; } }
+.cfg-ai-feedback { font-size: 12px; font-weight: 600; color: #3e4e2a; }
+.cfg-photo-btn-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.cfg-paste-zone { padding: 9px 12px; border-radius: 8px; border: 1px dashed #bfb7a4; background: #faf8f2; font-size: 12px; color: #515a4c; cursor: pointer; }
+.cfg-paste-zone:focus { outline: none; border-color: #3e4a39; background: #f2f5ec; }
 
 .cfg-photo-current { display: flex; gap: 12px; align-items: center; }
 .cfg-hero-thumb { width: 66px; height: 84px; object-fit: cover; border-radius: 8px; border: 1px solid #d9d4c7; }

@@ -7,7 +7,6 @@ import {
   type SaveInvitationDraft,
 } from '@mori/contracts'
 import { ZodValidationPipe } from '../../common/zod-validation.pipe.js'
-import { assertActiveUser } from '../identity/assert-active-user.js'
 import { IdentityService } from '../identity/identity.service.js'
 import { readCookie } from '../identity/read-cookie.js'
 import { InvitationEditorService } from './invitation-editor.service.js'
@@ -25,7 +24,6 @@ export class InvitationEditorController {
   @Header('Cache-Control', PRIVATE)
   async read(@Headers('cookie') cookie: string | undefined, @Param('id') id: string) {
     const user = await this.identity.currentUser(readCookie(cookie, SESSION_COOKIE))
-    assertActiveUser(user)
     return this.editor.read(user.id, id)
   }
 
@@ -37,7 +35,6 @@ export class InvitationEditorController {
     @Body(new ZodValidationPipe(SaveInvitationDraftSchema)) body: SaveInvitationDraft,
   ) {
     const user = await this.identity.currentUser(readCookie(cookie, SESSION_COOKIE))
-    assertActiveUser(user)
     return this.editor.save(user.id, id, body)
   }
 
@@ -49,7 +46,6 @@ export class InvitationEditorController {
     @Body(new ZodValidationPipe(PublishInvitationSchema)) body: PublishInvitation,
   ) {
     const user = await this.identity.currentUser(readCookie(cookie, SESSION_COOKIE))
-    assertActiveUser(user)
     return this.editor.publish(user.id, id, body.expectedVersion)
   }
 }

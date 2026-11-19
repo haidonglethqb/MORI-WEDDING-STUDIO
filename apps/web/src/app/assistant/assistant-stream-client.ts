@@ -1,6 +1,7 @@
 import { calculateCartTotals, getCartItems } from '../../features/cart/cart-store'
 import { postAssistantTurn, type TurnFetchResult } from './assistant-chat-api'
 import type {
+  AgentActiveBespokeContext,
   AgentAttachment,
   AgentLiveContext,
   AgentToolTraceItem,
@@ -9,14 +10,43 @@ import type {
   ConversationWeddingBrief,
 } from './assistant-types'
 
-export function collectLiveContext(): AgentLiveContext {
+function extractActiveBespokeDesign(
+  messages: ChatMessageItem[],
+  hasNewAttachment: boolean,
+): AgentActiveBespokeContext | undefined {
+  const hasUserPhoto = hasNewAttachment || messages.some((m) => m.role === 'user' && Boolean(m.attachmentDataUrl))
+  for (let i = messages.length - 1; i >= 0; i--) {
+    const actions = messages[i]?.proposedActions ?? []
+    for (let j = actions.length - 1; j >= 0; j--) {
+      const act = actions[j]
+      if (act?.type === 'BESPOKE_DESIGN_PREVIEW') {
+        return {
+          conceptName: act.conceptName,
+          ...(act.customDesign.customHtml ? { customHtml: act.customDesign.customHtml } : {}),
+          ...(act.customDesign.customCss ? { customCss: act.customDesign.customCss } : {}),
+          theme: { ...act.customDesign.theme },
+          displayNames: act.draftData.displayNames,
+          hasUserPhoto,
+        }
+      }
+    }
+  }
+  return undefined
+}
+
+export function collectLiveContext(
+  messages: ChatMessageItem[] = [],
+  hasNewAttachment = false,
+): AgentLiveContext {
   const items = getCartItems()
   const totals = calculateCartTotals(items)
+  const activeBespokeDesign = extractActiveBespokeDesign(messages, hasNewAttachment)
   return {
     currentPath: typeof window !== 'undefined' ? window.location.pathname : '/assistant',
     cartCount: totals.totalCount,
     cartTotalVnd: totals.totalVnd,
     cartItemsSummary: items.slice(0, 6).map((i) => `${i.name} (${i.productType}, SL: ${i.quantity})`),
+    ...(activeBespokeDesign ? { activeBespokeDesign } : {}),
   }
 }
 
@@ -36,7 +66,7 @@ export async function streamAssistantTurn(
   callbacks: StreamCallbacks,
 ): Promise<TurnFetchResult> {
   const history = messages.map((m) => ({ role: m.role, content: m.content }))
-  const liveContext = collectLiveContext()
+  const liveContext = collectLiveContext(messages, attachments.length > 0)
 
   try {
     const res = await fetch('/assistant/stream', {

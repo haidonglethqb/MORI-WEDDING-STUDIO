@@ -2,6 +2,7 @@
 import 'reflect-metadata'
 
 import { NestFactory } from '@nestjs/core'
+import type { NestExpressApplication } from '@nestjs/platform-express'
 import { AppModule } from './app.module.js'
 import { securityHeadersMiddleware } from './common/security-headers.js'
 import { loadEnv } from '@mori/config'
@@ -10,10 +11,11 @@ async function bootstrap(): Promise<void> {
   const env = loadEnv()
   const port = env.PORT
 
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     logger: ['error', 'warn', 'log'],
   })
 
+  app.useBodyParser('json', { limit: '512kb' })
   // All routes prefixed with /api/v1
   app.setGlobalPrefix('api/v1')
   app.use(securityHeadersMiddleware)

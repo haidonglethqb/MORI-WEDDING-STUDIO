@@ -32,10 +32,9 @@ export const INITIAL_GREETING: ChatMessageItem = {
 }
 
 export const QUICK_STARTERS = [
-  'Thiết kế riêng mẫu thiệp online Đêm Sao Đà Lạt cho Minh Quân (28t) & Thảo Vy (26t)',
-  'Tiệc sân vườn ngoài trời Đà Lạt 120 khách',
-  'Gợi ý combo thiệp giấy & thiệp online giảm 50%',
-  'Tra cứu đơn hàng MORI',
+  'Thiết kế mẫu thiệp cưới online có animation riêng cho hai bạn',
+  'Tư vấn combo thiệp giấy & thiệp online giảm 50%',
+  'Gợi ý phong cách thiệp cưới cho tiệc 120 khách',
 ]
 
 export function createAssistantSessionId(): string {
