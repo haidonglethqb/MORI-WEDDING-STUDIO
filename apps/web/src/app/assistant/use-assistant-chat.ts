@@ -42,7 +42,7 @@ export function useAssistantChat() {
 
   useEffect(() => {
     persistChatStorage(messages, brief, escalated)
-    const pane = scrollAnchorRef.current?.parentElement
+    const pane = scrollAnchorRef.current?.closest('.chat-messages-flow')
     if (pane) {
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
       pane.scrollTo({ top: pane.scrollHeight, behavior: reduce ? 'auto' : 'smooth' })

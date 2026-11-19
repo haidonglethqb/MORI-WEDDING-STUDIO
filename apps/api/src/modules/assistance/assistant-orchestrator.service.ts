@@ -187,6 +187,8 @@ export class AssistantOrchestratorService {
         latencyMs: res.meta.latencyMs,
         assistantReply: res.reply,
         suggestedProducts: res.suggestedProducts.map((p) => ({ slug: p.slug, name: p.name, startingPriceVnd: p.startingPriceVnd })),
+        ...(res.toolTraces?.length ? { toolTraces: res.toolTraces } : {}),
+        ...(res.proposedActions?.length ? { proposedActions: res.proposedActions } : {}),
       },
       {
         coupleNames: res.updatedBrief.coupleNames,

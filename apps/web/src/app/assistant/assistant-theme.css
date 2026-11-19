@@ -1,66 +1,34 @@
 @import '../guides/guides-footer.css';
 
-html body:has(.assistant-shell) {
-  background: #FFFCF7;
-  color: #252A24;
+html body:has(.assistant-shell.is-fullpage) {
+  background: #FAF8F2;
+  color: #222821;
   font-family: 'Be Vietnam Pro', system-ui, sans-serif;
+  margin: 0;
+  overflow: hidden;
 }
 
-.assistant-shell {
-  min-height: 100vh;
-  background: #FFFCF7;
-  color: #252A24;
+.assistant-shell.is-fullpage {
+  height: 100dvh;
+  max-height: 100dvh;
+  background: #FAF8F2;
+  color: #222821;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
-html body .assistant-page {
+html body .assistant-page.is-fullpage {
   flex: 1;
+  min-height: 0;
   width: 100%;
-  max-width: 1040px;
-  margin: 0 auto;
-  padding: 28px 24px 64px;
-  background: #FFFCF7;
-  color: #252A24;
-  box-sizing: border-box;
-}
-
-html body .assistant-header {
-  background: #E8EBDD;
-  border: 1px solid #D3D8C5;
-  border-radius: 18px;
-  padding: 28px 24px;
-  text-align: center;
-  margin-bottom: 24px;
-}
-
-html body .assistant-badge {
-  display: inline-block;
-  padding: 5px 14px;
-  border-radius: 999px;
-  background: #FFFCF7;
-  color: #657344;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-}
-
-html body .assistant-header h1 {
-  font-family: 'Lora', Georgia, serif;
-  font-size: clamp(24px, 3.2vw, 34px);
-  font-weight: 600;
-  color: #252A24;
-  margin: 0 0 8px;
-}
-
-html body .assistant-header p {
-  margin: 0 auto;
-  max-width: 640px;
-  font-size: 14.5px;
-  line-height: 1.65;
-  color: #464E42;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  background: radial-gradient(circle at 50% 0%, #FFFFFF 0%, #FAF8F2 62%);
+  overflow: hidden;
 }
 
 .assistant-staff-banner-actions {

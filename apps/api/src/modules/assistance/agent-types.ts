@@ -14,6 +14,8 @@ export interface AgentToolTraceItem {
   status: 'running' | 'done' | 'error'
   summary?: string
   durationMs?: number
+  input?: Record<string, unknown>
+  output?: Record<string, unknown>
 }
 
 export interface AgentCartActionPayload {

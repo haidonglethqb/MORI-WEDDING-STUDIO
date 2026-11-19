@@ -84,7 +84,10 @@ export function AdminAiLogs() {
       Boolean(s.customerContact?.toLowerCase().includes(q)) ||
       Boolean(s.contactInfo?.toLowerCase().includes(q)) ||
       s.turns.some(
-        (t) => t.userMessage.toLowerCase().includes(q) || t.assistantReply.toLowerCase().includes(q),
+        (t) =>
+          t.userMessage.toLowerCase().includes(q) ||
+          t.assistantReply.toLowerCase().includes(q) ||
+          Boolean(t.toolTraces?.some((tr) => tr.tool.toLowerCase().includes(q))),
       )
     )
   })

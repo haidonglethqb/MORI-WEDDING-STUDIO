@@ -82,6 +82,8 @@ describe('AgentLoopService & AgentToolExecutorService', () => {
     )
 
     expect(res.toolTraces).toHaveLength(3)
+    expect(res.toolTraces?.[0]?.input).toEqual({ style: 'editorial' })
+    expect(res.toolTraces?.[1]?.output?.['comboDiscountApplied']).toBe(true)
     expect(res.estimatedBudget?.totalAmountVnd).toBe('1.799.500 ₫')
     expect(res.proposedActions?.[0]).toMatchObject({ type: 'ADD_TO_CART', productType: 'COMBO', slug: 'editorial-bifold-01', linkedDigitalSlug: 'editorial-digital-01' })
     expect(res.suggestedProducts[0]?.slug).toBe('editorial-bifold-01')

@@ -1,5 +1,6 @@
 @import './assistant-theme.css';
 @import './assistant-chat.css';
+@import './assistant-context.css';
 @import './assistant-bubbles.css';
 @import './assistant-cards.css';
 @import './assistant-escalate.css';

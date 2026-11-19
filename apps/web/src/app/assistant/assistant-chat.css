@@ -1,34 +1,45 @@
 html body .assistant-page .assistant-container {
+  flex: 1;
+  min-height: 0;
   width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 html body .assistant-page .chat-window-pane {
-  background: #FFFCF7;
-  border: 1px solid #D6DBC8;
-  border-radius: 20px;
-  box-shadow: 0 12px 32px rgba(37, 42, 36, 0.06);
+  flex: 1;
+  min-height: 0;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  min-height: 620px;
-  max-height: 78vh;
+  background: transparent;
   overflow: hidden;
 }
 
 html body .assistant-page .chat-pane-header {
+  width: 100%;
+  background: rgba(255, 253, 248, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid #E5E1D4;
+  flex-shrink: 0;
+}
+
+.assistant-page .chat-pane-header-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 12px 24px;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 16px 20px;
-  background: #E8EBDD;
-  border-bottom: 1px solid #D3D8C5;
 }
 
 .assistant-page .chat-header-identity {
   display: flex;
   align-items: center;
   gap: 12px;
+  min-width: 0;
 }
 
 .assistant-page .atelier-avatar-small,
@@ -36,13 +47,15 @@ html body .assistant-page .chat-pane-header {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: #657344;
+  background: linear-gradient(135deg, #566537 0%, #3E4A27 100%);
   color: #FFFCF7;
   display: grid;
   place-items: center;
-  font-weight: 700;
-  font-size: 13px;
+  font-family: 'Lora', Georgia, serif;
+  font-weight: 600;
+  font-size: 14px;
   flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(62, 74, 39, 0.18);
 }
 
 .assistant-page .atelier-avatar.is-staff-avatar {
@@ -54,32 +67,55 @@ html body .assistant-page .chat-pane-header {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  min-width: 0;
 }
 
 .assistant-page .chat-header-title {
-  font-size: 14.5px;
+  font-family: 'Lora', Georgia, serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1F241D;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.assistant-page .chat-agent-chip {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 10px;
   font-weight: 700;
-  color: #252A24;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #E9EEDF;
+  color: #485729;
+  border: 1px solid #D3DEC0;
 }
 
 .assistant-page .chat-header-status {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 12.5px;
-  color: #4D5549;
+  font-size: 12px;
+  color: #5B6456;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .assistant-page .status-indicator-dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: #657344;
+  background: #5C7436;
+  box-shadow: 0 0 0 3px rgba(92, 116, 54, 0.18);
+  flex-shrink: 0;
 }
 
 .assistant-page .chat-header-actions {
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
   gap: 8px;
 }
 
@@ -87,6 +123,7 @@ html body .assistant-page .chat-pane-header {
 .assistant-page .chat-header-reset-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   min-height: 36px;
   padding: 0 14px;
@@ -94,22 +131,44 @@ html body .assistant-page .chat-pane-header {
   font-size: 12.5px;
   font-weight: 600;
   cursor: pointer;
+  transition: all 0.18s ease;
 }
 
 .assistant-page .chat-escalate-btn {
-  background: #657344;
+  background: #4F5D32;
   color: #FFFCF7;
-  border: 1px solid #657344;
+  border: 1px solid #4F5D32;
 }
 
 .assistant-page .chat-escalate-btn:hover,
 .assistant-page .chat-escalate-btn.is-active {
-  background: #4F5B34;
-  border-color: #4F5B34;
+  background: #3C4724;
+  border-color: #3C4724;
 }
 
 .assistant-page .chat-header-reset-btn {
-  background: #FFFCF7;
-  color: #252A24;
-  border: 1px solid #C8CEBA;
+  background: #FFFFFF;
+  color: #353D32;
+  border: 1px solid #D5D9C8;
+}
+
+.assistant-page .chat-header-reset-btn:hover {
+  background: #F2F4EA;
+  border-color: #A6B28D;
+}
+
+@media (max-width: 680px) {
+  .assistant-page .chat-pane-header-inner {
+    padding: 10px 14px;
+    gap: 8px;
+  }
+  .assistant-page .chat-header-status {
+    display: none;
+  }
+  .assistant-page .chat-escalate-btn,
+  .assistant-page .chat-header-reset-btn {
+    min-height: 32px;
+    padding: 0 11px;
+    font-size: 11.5px;
+  }
 }

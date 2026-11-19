@@ -103,6 +103,8 @@ export interface AiSessionTurn {
   latencyMs: number
   assistantReply: string
   suggestedProducts: Array<{ slug: string; name: string; startingPriceVnd: string }>
+  toolTraces?: AgentToolTraceItem[]
+  proposedActions?: AgentProposedAction[]
 }
 
 export interface AdminReplyItem {

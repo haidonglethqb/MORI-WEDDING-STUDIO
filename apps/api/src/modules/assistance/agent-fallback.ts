@@ -37,8 +37,16 @@ export async function runAgentDeterministicFallback(
     const tStart = Date.now()
     const trace: AgentToolTraceItem = { id: 'fb-track', tool: 'track_order', label: 'Tra cứu tiến độ đơn hàng', status: 'running' }
     onEvent?.({ type: 'tool_start', trace })
-    const res = await deps.executor.execute('track_order', { code: orderMatch[0], contact: phoneOrEmailMatch[1] }, catalog)
-    const done: AgentToolTraceItem = { ...trace, status: 'done', summary: res.summary, durationMs: Date.now() - tStart }
+    const trackArgs = { code: orderMatch[0], contact: phoneOrEmailMatch[1] }
+    const res = await deps.executor.execute('track_order', trackArgs, catalog)
+    const done: AgentToolTraceItem = {
+      ...trace,
+      status: 'done',
+      summary: res.summary,
+      durationMs: Date.now() - tStart,
+      input: trackArgs,
+      output: res.output,
+    }
     traces.push(done)
     onEvent?.({ type: 'tool_done', trace: done })
 
@@ -69,9 +77,19 @@ export async function runAgentDeterministicFallback(
       : /thảo mộc|hoa|tối giản|wabi|zen/i.test(text)
         ? 'botanical-zen'
         : 'editorial-vogue'
-    const res = await deps.executor.execute('propose_create_digital_invitation', { templateId, groomName, brideName, venueName: brief.location ?? undefined }, catalog)
+    const draftArgs = { templateId, groomName, brideName, venueName: brief.location ?? undefined }
+    const res = await deps.executor.execute('propose_create_digital_invitation', draftArgs, catalog)
     if (res.action) actions.push(res.action)
-    traces.push({ id: 'fb-draft', tool: 'propose_create_digital_invitation', label: 'Chuẩn bị bản nháp Thiệp Online', status: 'done', summary: res.summary, durationMs: 2 })
+    traces.push({
+      id: 'fb-draft',
+      tool: 'propose_create_digital_invitation',
+      label: 'Chuẩn bị bản nháp Thiệp Online',
+      status: 'done',
+      summary: res.summary,
+      durationMs: 2,
+      input: draftArgs,
+      output: res.output,
+    })
   }
 
   const matched = deps.matcher.rankProducts(catalog, brief)

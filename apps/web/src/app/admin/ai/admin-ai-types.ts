@@ -19,6 +19,23 @@ export interface TestResultData {
   message: string
 }
 
+export interface AdminToolTraceItem {
+  id: string
+  tool: string
+  label: string
+  status: 'running' | 'done' | 'error'
+  summary?: string
+  durationMs?: number
+  input?: Record<string, unknown>
+  output?: Record<string, unknown>
+}
+
+export interface AdminProposedActionItem {
+  type: string
+  title: string
+  subtitle?: string
+}
+
 export interface AiSessionTurn {
   id: string
   turnIndex: number
@@ -33,6 +50,8 @@ export interface AiSessionTurn {
     name: string
     startingPriceVnd: string
   }>
+  toolTraces?: AdminToolTraceItem[]
+  proposedActions?: AdminProposedActionItem[]
 }
 
 export interface AdminReplyMessage {

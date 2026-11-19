@@ -41,10 +41,10 @@ export default async function AssistantPage() {
   const role = await fetchViewerRole()
   const isStaff = role === 'ADMIN' || role === 'STUDIO'
 
-  return (
-    <div className={isStaff ? 'admin-ai-shell' : 'assistant-shell'}>
-      <HomeNav />
-      {isStaff ? (
+  if (isStaff) {
+    return (
+      <div className="admin-ai-shell">
+        <HomeNav />
         <main className="admin-ai-page">
           <div className="admin-ai-container">
             <div className="admin-ai-header">
@@ -55,8 +55,7 @@ export default async function AssistantPage() {
               </div>
               <h1 className="admin-page-title">Theo Dõi &amp; Trả Lời Hội Thoại Khách Hàng</h1>
               <p className="admin-page-desc">
-                Tài khoản Admin / Xưởng sẽ xem toàn bộ cuộc trò chuyện của khách với chatbot và
-                trả lời trực tiếp các phiên cần nhân viên hỗ trợ.
+                Xem chi tiết các tool Agent đã gọi, Input/Output JSON và trả lời trực tiếp các phiên cần hỗ trợ.
               </p>
               <div className="assistant-staff-banner-actions">
                 <Link href="/admin/ai" className="assistant-staff-primary-link">
@@ -73,22 +72,18 @@ export default async function AssistantPage() {
             </div>
           </div>
         </main>
-      ) : (
-        <main className="assistant-page">
-          <header className="assistant-header">
-            <span className="assistant-badge">MORI WEDDING STUDIO · AI AGENT</span>
-            <h1>MORI Atelier AI Agent</h1>
-            <p>
-              Tư vấn mẫu thiệp theo không gian tiệc &amp; moodboard, tính combo giảm 50%, tra cứu
-              đơn hàng và khởi tạo bản nháp Thiệp Online chỉ với một chạm.
-            </p>
-          </header>
+        <HomeFooter />
+      </div>
+    )
+  }
 
-          <AssistantForm />
-        </main>
-      )}
+  return (
+    <div className="assistant-shell is-fullpage">
+      <HomeNav />
+      <main className="assistant-page is-fullpage">
+        <AssistantForm />
+      </main>
       <CartDrawerFallback />
-      <HomeFooter />
     </div>
   )
 }

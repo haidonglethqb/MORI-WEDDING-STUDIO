@@ -113,12 +113,15 @@ export class AgentLoopService {
           onEvent?.({ type: 'tool_start', trace: runningTrace })
 
           const t0 = Date.now()
-          const outcome = await this.executor.execute(toolName, parseToolArgs(call.function.arguments), catalog)
+          const parsedArgs = parseToolArgs(call.function.arguments)
+          const outcome = await this.executor.execute(toolName, parsedArgs, catalog)
           const doneTrace: AgentToolTraceItem = {
             ...runningTrace,
             status: 'done',
             summary: outcome.summary,
             durationMs: Date.now() - t0,
+            input: parsedArgs,
+            output: outcome.output,
           }
           traces.push(doneTrace)
           onEvent?.({ type: 'tool_done', trace: doneTrace })

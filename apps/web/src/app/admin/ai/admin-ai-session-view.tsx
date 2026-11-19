@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import type { AiConversationSession } from './admin-ai-types'
 import { AdminSessionBrief } from './admin-session-brief'
+import { AdminTurnToolInspector } from './admin-turn-tool-inspector'
 
 interface SessionViewProps {
   session: AiConversationSession
@@ -20,6 +21,7 @@ export function AdminAiSessionView({
   const [replyFeedback, setReplyFeedback] = useState<string | null>(null)
 
   const staffReplies = session.adminReplies ?? []
+  const totalToolCalls = session.turns.reduce((sum, t) => sum + (t.toolTraces?.length ?? 0), 0)
   const contactText = session.customerContact || session.contactInfo
   const escalationDetail = session.escalationReason || session.escalationNote
   const isEscalated = Boolean(
@@ -57,6 +59,9 @@ export function AdminAiSessionView({
             <span className="session-id-badge">{session.sessionId}</span>
             {isEscalated && <span className="needs-support-pill">CẦN NHÂN VIÊN HỖ TRỢ</span>}
             <span className="session-meta-pill">{session.turnsCount} lượt hỏi đáp</span>
+            {totalToolCalls > 0 ? (
+              <span className="session-meta-pill">⚙ {totalToolCalls} tool calls</span>
+            ) : null}
             <span className="session-meta-pill model-pill">{session.lastModelUsed}</span>
           </div>
           <span className="session-timestamp-text">
@@ -114,9 +119,15 @@ export function AdminAiSessionView({
 
             <div className="turn-assistant-box">
               <div className="turn-box-header">
-                <span className="turn-badge assistant-turn-badge">Chatbot MORI trả lời</span>
-                <span className="log-model-badge">{turn.modelUsed}</span>
+                <span className="turn-badge assistant-turn-badge">MORI Agent trả lời</span>
+                <span className="log-model-badge">
+                  {turn.modelUsed} · {turn.latencyMs}ms
+                </span>
               </div>
+              <AdminTurnToolInspector
+                toolTraces={turn.toolTraces}
+                proposedActions={turn.proposedActions}
+              />
               <div className="turn-reply-content">{turn.assistantReply}</div>
             </div>
           </div>

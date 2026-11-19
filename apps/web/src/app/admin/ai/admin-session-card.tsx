@@ -22,6 +22,7 @@ export function AdminSessionCard({
     session.escalationNote ||
     'Chưa có tin nhắn'
   const contact = session.customerContact || session.contactInfo
+  const totalTools = session.turns.reduce((sum, t) => sum + (t.toolTraces?.length ?? 0), 0)
 
   return (
     <div
@@ -37,7 +38,9 @@ export function AdminSessionCard({
     >
       <div className="summary-card-top">
         <span className="summary-session-id">{session.sessionId}</span>
-        <span className="summary-turn-count">{session.turnsCount} lượt</span>
+        <span className="summary-turn-count">
+          {session.turnsCount} lượt{totalTools > 0 ? ` · ⚙ ${totalTools} tool` : ''}
+        </span>
       </div>
 
       {isEscalated && (
