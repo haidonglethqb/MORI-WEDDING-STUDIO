@@ -3,6 +3,7 @@
 import type {
   BespokeDesignBlueprint,
   InvitationFamilies,
+  InvitationDemoPaymentDetails,
   InvitationPhotos,
   InvitationScheduleItem,
   InvitationTemplateConfig,
@@ -17,6 +18,7 @@ export interface EditorDraft {
   eventTitle: string
   greeting: string
   published: boolean
+  demoPayment: InvitationDemoPaymentDetails | null
   rsvpMode: 'OFF' | 'OPEN' | 'GUEST_LIST'
   moderationState?: 'ACTIVE' | 'SUSPENDED'
   moderationReason?: string | null
@@ -40,6 +42,7 @@ interface TopBarProps {
   status: string
   busy: boolean
   published: boolean
+  paymentRequired: boolean
   slug: string
   copied: boolean
   onSave: () => void
@@ -48,7 +51,7 @@ interface TopBarProps {
 }
 
 export function EditorTopBar({
-  isDirty, status, busy, published, slug, copied, onSave, onPublish, onCopyLink,
+  isDirty, status, busy, published, paymentRequired, slug, copied, onSave, onPublish, onCopyLink,
 }: TopBarProps) {
   return (
     <div className="editor-sticky-topbar">
@@ -66,9 +69,9 @@ export function EditorTopBar({
           {busy ? 'Đang xử lý...' : 'Lưu bản nháp'}
         </button>
         <button type="button" className="editor-btn-accent" disabled={busy} onClick={onPublish}>
-          {published ? 'Cập nhật bản trực tuyến ✦' : 'Xuất bản trực tuyến ✦'}
+          {paymentRequired ? 'Thanh toán demo để lấy link' : published ? 'Cập nhật bản trực tuyến ✦' : 'Xuất bản trực tuyến ✦'}
         </button>
-        {slug ? (
+        {published && slug ? (
           <button type="button" className="editor-btn-secondary" onClick={onCopyLink}>
             {copied ? 'Đã sao chép ✓' : 'Sao chép link'}
           </button>

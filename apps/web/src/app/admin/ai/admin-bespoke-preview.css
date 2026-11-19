@@ -1,0 +1,19 @@
+.admin-bespoke-preview {
+  margin-top: 10px;
+}
+
+.admin-bespoke-preview > summary {
+  width: fit-content;
+  color: #36472c;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.admin-bespoke-preview-frame {
+  max-height: 70vh;
+  margin-top: 10px;
+  border: 1px solid #dde2d1;
+  border-radius: 8px;
+  overflow: auto;
+}

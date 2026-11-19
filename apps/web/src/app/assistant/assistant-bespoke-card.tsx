@@ -1,77 +1,56 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
-import { buildInitialInvitationModel } from '../../features/digital-templates/digital-template-presets'
+import { buildBespokePreviewModel } from '../../features/digital-templates/bespoke-preview-model'
 import { DigitalTemplateRenderer } from '../../features/digital-templates/digital-template-renderer'
+import { toInvitationContentPayload } from '../../features/digital-templates/template-view-utils'
 import { AssistantBespokeModal } from './assistant-bespoke-modal'
 import type { AgentBespokeDesignActionPayload } from './assistant-types'
 
 export function AssistantBespokeCard({
   action,
+  draftKey,
   sessionPhotoUrl,
 }: {
   action: AgentBespokeDesignActionPayload
+  draftKey: string
   sessionPhotoUrl?: string | undefined
 }) {
+  const router = useRouter()
   const [modalOpen, setModalOpen] = useState(false)
   const [status, setStatus] = useState<'idle' | 'busy' | 'done' | 'auth' | 'error'>('idle')
   const [message, setMessage] = useState('')
-  const [liveUrl, setLiveUrl] = useState('')
-  const [editorUrl, setEditorUrl] = useState('')
+  const [invitationId, setInvitationId] = useState('')
+  const editorUrl = invitationId ? `/invitations/${invitationId}` : ''
   const [showPrintForm, setShowPrintForm] = useState(false)
   const [customerName, setCustomerName] = useState('')
   const [customerPhone, setCustomerPhone] = useState('')
   const [printDone, setPrintDone] = useState('')
 
-  const model = useMemo(() => {
-    const d = action.draftData
-    const effectiveHero = d.heroUrl || sessionPhotoUrl
-    return buildInitialInvitationModel({
-      templateId: 'custom-ai',
-      customDesign: action.customDesign,
-      displayNames: d.displayNames,
-      ...(d.coupleRoles ? { coupleRoles: d.coupleRoles } : {}),
-      eventTitle: d.eventTitle,
-      ...(d.greeting ? { greeting: d.greeting } : {}),
-      ...(d.eventLocalStart ? { eventLocalStart: d.eventLocalStart } : {}),
-      ...(d.lunarDate ? { lunarDate: d.lunarDate } : {}),
-      ...(d.venueName ? { venueName: d.venueName } : {}),
-      ...(d.venueAddress ? { venueAddress: d.venueAddress } : {}),
-      ...(d.families ? { families: d.families } : {}),
-      ...(d.scheduleItems ? { scheduleItems: d.scheduleItems } : {}),
-      photos: { ...(effectiveHero ? { heroUrl: effectiveHero } : {}), ...(d.storyCaption ? { storyCaption: d.storyCaption } : {}) },
-    })
-  }, [action, sessionPhotoUrl])
+  const model = useMemo(
+    () => buildBespokePreviewModel(action.customDesign, action.draftData, sessionPhotoUrl),
+    [action, sessionPhotoUrl],
+  )
 
-  async function persistInvitation(publishNow: boolean) {
+  async function persistInvitation(goToCheckout: boolean) {
     if (status === 'busy') return
+    if (invitationId) {
+      if (goToCheckout) router.push(`/checkout/invitations/${invitationId}`)
+      return
+    }
     setStatus('busy')
     setMessage('')
     try {
       const res = await fetch('/assistant/create-draft', {
         method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({
-          templateId: 'custom-ai',
-          customDesign: action.customDesign,
-          displayNames: model.displayNames,
-          coupleRoles: model.coupleRoles,
-          eventTitle: model.eventTitle,
-          greeting: model.greeting,
-          eventLocalStart: model.eventLocalStart,
-          lunarDate: model.lunarDate,
-          venueName: model.venueName,
-          venueAddress: model.venueAddress,
-          families: model.families,
-          scheduleItems: model.scheduleItems,
-          photos: model.photos,
-          publishNow,
-        }),
+        headers: { 'content-type': 'application/json', 'idempotency-key': draftKey },
+        body: JSON.stringify(toInvitationContentPayload(model)),
       })
       if (res.status === 401) {
         setStatus('auth')
-        setMessage('Đăng nhập để xuất bản thành link /i/... gửi khách hoặc lưu vào Không gian của bạn.')
+        setMessage('Đăng nhập để lưu bản nháp hoặc thanh toán demo cho thiệp này.')
         return
       }
       if (!res.ok) {
@@ -79,15 +58,11 @@ export function AssistantBespokeCard({
         setMessage('Chưa lưu được thiết kế lúc này. Bạn thử lại sau vài giây nhé.')
         return
       }
-      const data = (await res.json()) as { editorUrl?: string; liveUrl?: string; published?: boolean }
-      if (data.editorUrl) setEditorUrl(data.editorUrl)
-      if (data.liveUrl) setLiveUrl(data.liveUrl)
+      const data = (await res.json()) as { invitationId: string }
+      setInvitationId(data.invitationId)
       setStatus('done')
-      setMessage(
-        data.published && data.liveUrl
-          ? 'Đã xuất bản Thiệp Online độc bản thành công! Bạn có thể mở link gửi khách ngay.'
-          : 'Đã lưu bản nháp vào Không gian chỉnh sửa của bạn!',
-      )
+      setMessage('Đã lưu bản nháp vào Không gian chỉnh sửa của bạn.')
+      if (goToCheckout) router.push(`/checkout/invitations/${data.invitationId}`)
     } catch {
       setStatus('error')
       setMessage('Lỗi kết nối khi lưu thiết kế thiệp.')
@@ -148,13 +123,9 @@ export function AssistantBespokeCard({
 
       <div className="bsp-chat-actions">
         <button type="button" className="bsp-btn-primary" onClick={() => setModalOpen(true)}>Xem trang Thiệp Online đầy đủ</button>
-        {liveUrl ? (
-          <a href={liveUrl} target="_blank" rel="noreferrer" className="bsp-btn-accent">Mở link thiệp sống ({liveUrl}) ↗</a>
-        ) : (
-          <button type="button" className="bsp-btn-accent" disabled={status === 'busy'} onClick={() => void persistInvitation(true)}>
-            {status === 'busy' ? 'Đang xuất bản...' : 'Xuất bản & Mở link /i/... ngay ✦'}
-          </button>
-        )}
+        <button type="button" className="bsp-btn-accent" disabled={status === 'busy'} onClick={() => void persistInvitation(true)}>
+          {status === 'busy' ? 'Đang lưu bản nháp...' : 'Thanh toán demo để lấy link'}
+        </button>
         {editorUrl ? (
           <Link href={editorUrl} className="bsp-btn-secondary">Chỉnh sửa chi tiết →</Link>
         ) : (
@@ -186,10 +157,12 @@ export function AssistantBespokeCard({
         conceptName={action.conceptName}
         model={model}
         onClose={() => setModalOpen(false)}
-        onPublish={() => void persistInvitation(true)}
+        onCheckout={() => {
+          setModalOpen(false)
+          void persistInvitation(true)
+        }}
         onSaveDraft={() => void persistInvitation(false)}
         busy={status === 'busy'}
-        liveUrl={liveUrl}
         editorUrl={editorUrl}
       />
     </div>

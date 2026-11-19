@@ -1,12 +1,13 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { buildInitialInvitationModel } from '../../../features/digital-templates/digital-template-presets'
-import { DigitalTemplateRenderer } from '../../../features/digital-templates/digital-template-renderer'
 import type { DigitalInvitationModel } from '../../../features/digital-templates/digital-template-types'
 import { TemplateCustomizerPanel } from '../../../features/digital-templates/template-customizer-panel'
 import { toInvitationContentPayload } from '../../../features/digital-templates/template-view-utils'
 import { EditorTopBar, type EditorDraft } from './editor-topbar'
+import { EditorPreview } from './editor-preview'
 import { ReopenRsvp } from './reopen-rsvp'
 import { RetireEvent } from './retire-event'
 import { RevokeGuests } from './revoke-guests'
@@ -15,18 +16,28 @@ import { SwitchRsvpMode } from './switch-rsvp-mode'
 
 export type { EditorDraft } from './editor-topbar'
 
+const publishConflictMessages: Record<string, string> = {
+  'This invitation has changed': 'Bản nháp đã thay đổi. Vui lòng tải lại trang.',
+  'Invitation quota is full': 'Đã đạt giới hạn thiệp đang phát hành. Hãy liên hệ Xưởng MORI để được hỗ trợ.',
+  'This invitation is suspended': 'Thiệp đang tạm ngưng. Hãy liên hệ Xưởng MORI để được hỗ trợ.',
+  'Set a future expiry before publishing': 'Thiệp đã hết hạn. Hãy cập nhật ngày hết hạn trước khi xuất bản.',
+}
+
 export function EditorForm({ draft }: { draft: EditorDraft }) {
+  const router = useRouter()
   const [model, setModel] = useState<DigitalInvitationModel>(() => buildInitialInvitationModel(draft))
   const [version, setVersion] = useState(draft.version)
   const [slug, setSlug] = useState(draft.slug)
   const [published, setPublished] = useState(draft.published)
+  const [payment, setPayment] = useState(draft.demoPayment)
+  const checkoutUrl = `/checkout/invitations/${draft.invitationId}`
   const [rsvpMode, setRsvpMode] = useState(draft.rsvpMode)
   const [isDirty, setIsDirty] = useState(false)
   const [busy, setBusy] = useState(false)
   const [copied, setCopied] = useState(false)
-  const [previewMode, setPreviewMode] = useState<'mobile' | 'desktop'>('mobile')
   const [status, setStatus] = useState(
-    draft.published ? 'Đã xuất bản trực tuyến' : 'Bản nháp chưa xuất bản',
+    draft.published ? 'Đã xuất bản trực tuyến' : draft.demoPayment?.method
+      ? 'Đã xác nhận thanh toán demo' : 'Bản nháp chưa xuất bản',
   )
 
   function handleModelChange(next: DigitalInvitationModel) {
@@ -53,6 +64,7 @@ export function EditorForm({ draft }: { draft: EditorDraft }) {
     const saved = (await response.json()) as EditorDraft
     setVersion(saved.version)
     setPublished(saved.published)
+    setPayment(saved.demoPayment)
     setIsDirty(false)
     setStatus(`Đã lưu thành công (Phiên bản ${saved.version})`)
     return saved
@@ -73,10 +85,16 @@ export function EditorForm({ draft }: { draft: EditorDraft }) {
     setBusy(true)
     try {
       let currentVersion = version
+      let currentPayment = payment
       if (isDirty) {
         const saved = await persistDraft()
         if (!saved) return
         currentVersion = saved.version
+        currentPayment = saved.demoPayment
+      }
+      if (currentPayment?.method === null) {
+        router.push(checkoutUrl)
+        return
       }
       setStatus('Đang xuất bản trực tuyến...')
       const response = await fetch(`/invitations/${draft.invitationId}/publish`, {
@@ -84,8 +102,13 @@ export function EditorForm({ draft }: { draft: EditorDraft }) {
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ expectedVersion: currentVersion }),
       })
+      if (response.status === 402) {
+        router.push(checkoutUrl)
+        return
+      }
       if (response.status === 409) {
-        setStatus('Bản nháp đã thay đổi. Vui lòng tải lại trang.')
+        const { title } = (await response.json().catch(() => ({}))) as { title?: string }
+        setStatus(publishConflictMessages[title ?? ''] ?? 'Chưa xuất bản được thiệp. Hãy kiểm tra cài đặt thiệp.')
         return
       }
       if (!response.ok) {
@@ -120,6 +143,7 @@ export function EditorForm({ draft }: { draft: EditorDraft }) {
           status={status}
           busy={busy}
           published={published}
+          paymentRequired={payment?.method === null}
           slug={slug}
           copied={copied}
           onSave={() => void save()}
@@ -133,7 +157,7 @@ export function EditorForm({ draft }: { draft: EditorDraft }) {
           </div>
         ) : null}
 
-        <RotateHandle
+        {published ? <RotateHandle
           invitationId={draft.invitationId}
           slug={slug}
           version={version}
@@ -141,7 +165,7 @@ export function EditorForm({ draft }: { draft: EditorDraft }) {
             setSlug(next.slug)
             setVersion(next.version)
           }}
-        />
+        /> : null}
 
         <div className="editor-studio-split">
           <div className="editor-studio-controls">
@@ -162,22 +186,7 @@ export function EditorForm({ draft }: { draft: EditorDraft }) {
             </details>
           </div>
 
-          <div className="editor-studio-preview">
-            <div className="editor-preview-bar">
-              <span>Xem trước trực tiếp</span>
-              <div className="editor-viewport-switch" role="group" aria-label="Chế độ màn hình">
-                <button type="button" className={previewMode === 'mobile' ? 'is-active' : ''} onClick={() => setPreviewMode('mobile')}>
-                  Di động
-                </button>
-                <button type="button" className={previewMode === 'desktop' ? 'is-active' : ''} onClick={() => setPreviewMode('desktop')}>
-                  Máy tính
-                </button>
-              </div>
-            </div>
-            <div className={`editor-preview-frame is-${previewMode}`}>
-              <DigitalTemplateRenderer model={model} compact />
-            </div>
-          </div>
+          <EditorPreview model={model} />
         </div>
       </div>
     </section>

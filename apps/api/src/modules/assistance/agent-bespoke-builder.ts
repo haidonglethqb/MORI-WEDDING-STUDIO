@@ -180,7 +180,7 @@ export function executeGenerateBespokeInvitation(
     action: {
       type: 'BESPOKE_DESIGN_PREVIEW',
       title: `Thiệp Online Độc Bản · ${conceptName}`,
-      subtitle: `${groomName} & ${brideName} — xem trực tiếp toàn màn hình hoặc xuất bản link mời khách ngay`,
+      subtitle: `${groomName} & ${brideName} — xem trước hoặc thanh toán demo để lấy link chia sẻ`,
       conceptName,
       customDesign,
       draftData,

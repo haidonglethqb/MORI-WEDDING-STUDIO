@@ -81,6 +81,12 @@ export type {
   SaveInvitationDraft,
 } from './invitation.js'
 
+export { ConfirmInvitationDemoPaymentSchema } from './invitation-demo-payment.js'
+export type {
+  ConfirmInvitationDemoPayment,
+  InvitationDemoPaymentDetails,
+} from './invitation-demo-payment.js'
+
 export {
   CreateCustomRequestSchema,
   CreateStorefrontOrderSchema,

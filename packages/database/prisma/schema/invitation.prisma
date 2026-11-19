@@ -67,9 +67,26 @@ model Invitation {
   exportAudits         RsvpExportAudit[]
   moderationReports    ModerationReport[]
   moderationDecisions  ModerationDecision[]
+  demoPayment          InvitationDemoPayment?
 
   @@index([projectId])
   @@map("invitations")
+}
+
+enum InvitationDemoPaymentMethod {
+  MOMO
+  VNPAY
+  BANK_QR
+}
+
+model InvitationDemoPayment {
+  invitationId String                      @id @db.Uuid
+  method       InvitationDemoPaymentMethod
+  amountVnd    BigInt
+  confirmedAt  DateTime                    @default(now()) @db.Timestamptz
+  invitation   Invitation                  @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+
+  @@map("invitation_demo_payments")
 }
 
 model InvitationHandle {

@@ -10,7 +10,7 @@
 
 **None implies money has been collected.**
 
-## Terminology Rules
+## Studio Quote and Order Terminology
 
 **Use:** Request a design, Review your quote, Approve this proof, Place order request.
 
@@ -42,6 +42,12 @@ Unknown component → `null` with visible explanation, never zero.
 
 Taxes, shipping, unit prices, production times, and minimum quantities require actual studio data before commercial launch. Never use test fixtures as real offers. Mark fixtures with `isFixture` flag. [Hard rule #12]
 
+## Demo Checkout for AI Invitations
+
+The owner of a bespoke AI invitation can select MoMo, VNPAY, or Bank QR as the simulated payment method. The API sets the fixture amount to 599.000 ₫ and records one confirmation per invitation. The receipt response includes `isFixture: true`. The simulation collects zero money. [Storefront demo policy](../../../AGENTS.md#hard-rules-in-every-pr)
+
+The owner returns to the editor to publish and get the guest link. [AI invitation publication flow](../data-flows/invitation-publication.md#ai-invitation-demo-checkout)
+
 ## Related
 
 - [Operational defaults](./operational-defaults.md) — Quote lifetime, defaults
@@ -50,4 +56,4 @@ Taxes, shipping, unit prices, production times, and minimum quantities require a
 
 ---
 
-**Principle:** No payment state exists. Order flow works without payment infrastructure.
+**Principle:** Studio orders follow quote acceptance and fulfillment without payment collection.

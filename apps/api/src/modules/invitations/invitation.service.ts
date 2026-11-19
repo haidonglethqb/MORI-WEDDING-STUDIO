@@ -1,11 +1,8 @@
 import { randomBytes } from 'node:crypto'
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common'
 import { getPrismaClient } from '@mori/database'
-import {
-  InvitationContentSchema,
-  type PublicInvitation,
-  type SaveInvitationDraft,
-} from '@mori/contracts'
+import { InvitationContentSchema, type PublicInvitation, type SaveInvitationDraft } from '@mori/contracts'
+import { assertInvitationPaymentAllowsPublish } from './invitation-demo-payment.js'
 import { assertInvitationQuota } from './invitation-quota.js'
 import { markScheduleReconfirmation } from './mark-reconfirmation.js'
 import { assertDeadlineBeforeEvent } from './rsvp-deadline-guard.js'
@@ -74,7 +71,7 @@ export class InvitationService {
       await assertInvitationQuota(tx, ownerUserId, invitationId)
       const invitation = await tx.invitation.findFirst({
         where: { id: invitationId, project: { ownerUserId } },
-        include: { draft: true },
+        include: { draft: true, publishedRevision: { select: { payload: true } }, demoPayment: true },
       })
       if (!invitation?.draft) throw new NotFoundException()
       if (invitation.moderationState === 'SUSPENDED') {
@@ -83,6 +80,7 @@ export class InvitationService {
       await assertExpiryAllowsPublish(tx, invitationId)
       if (invitation.draft.version !== expectedVersion) throw versionConflict()
       const content = InvitationContentSchema.parse(invitation.draft.payload)
+      assertInvitationPaymentAllowsPublish(content, invitation.publishedRevision?.payload, Boolean(invitation.demoPayment))
       await assertDeadlineBeforeEvent(
         tx,
         invitationId,

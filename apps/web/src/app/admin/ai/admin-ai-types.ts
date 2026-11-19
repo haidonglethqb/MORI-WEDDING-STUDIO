@@ -34,6 +34,8 @@ export interface AdminProposedActionItem {
   type: string
   title: string
   subtitle?: string
+  customDesign?: unknown
+  draftData?: { heroUrl?: unknown }
 }
 
 export interface AiSessionTurn {

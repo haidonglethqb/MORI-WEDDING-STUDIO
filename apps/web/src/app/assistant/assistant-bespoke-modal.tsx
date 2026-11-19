@@ -10,10 +10,9 @@ interface Props {
   conceptName: string
   model: DigitalInvitationModel
   onClose: () => void
-  onPublish: () => void
+  onCheckout: () => void
   onSaveDraft: () => void
   busy: boolean
-  liveUrl?: string
   editorUrl?: string
 }
 
@@ -22,10 +21,9 @@ export function AssistantBespokeModal({
   conceptName,
   model,
   onClose,
-  onPublish,
+  onCheckout,
   onSaveDraft,
   busy,
-  liveUrl,
   editorUrl,
 }: Props) {
   const [viewport, setViewport] = useState<'mobile' | 'desktop'>('mobile')
@@ -123,15 +121,9 @@ export function AssistantBespokeModal({
         </div>
 
         <footer className="bsp-modal-footer">
-          {liveUrl ? (
-            <a href={liveUrl} target="_blank" rel="noreferrer" className="bsp-btn-primary">
-              Mở link Thiệp Online sống ({liveUrl}) ↗
-            </a>
-          ) : (
-            <button type="button" className="bsp-btn-primary" disabled={busy} onClick={onPublish}>
-              {busy ? 'Đang xuất bản...' : 'Xuất bản & Tạo link /i/... ngay ✦'}
-            </button>
-          )}
+          <button type="button" className="bsp-btn-primary" disabled={busy} onClick={onCheckout}>
+            Thanh toán demo để lấy link
+          </button>
           {editorUrl ? (
             <a href={editorUrl} className="bsp-btn-secondary">
               Mở trình chỉnh sửa chi tiết →

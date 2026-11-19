@@ -3,6 +3,7 @@ import {
   InvitationContentSchema,
   type BespokeDesignBlueprint,
   type InvitationFamilies,
+  type InvitationDemoPaymentDetails,
   type InvitationPhotos,
   type InvitationScheduleItem,
   type InvitationTemplateConfig,
@@ -10,6 +11,7 @@ import {
   type SaveInvitationDraft,
 } from '@mori/contracts'
 import { getPrismaClient } from '@mori/database'
+import { invitationDemoPaymentDetails } from './invitation-demo-payment.js'
 import { InvitationService } from './invitation.service.js'
 
 export interface InvitationEditorDraft {
@@ -20,6 +22,7 @@ export interface InvitationEditorDraft {
   eventTitle: string
   greeting: string
   published: boolean
+  demoPayment: InvitationDemoPaymentDetails | null
   rsvpMode: 'OFF' | 'OPEN' | 'GUEST_LIST'
   moderationState: 'ACTIVE' | 'SUSPENDED'
   moderationReason: string | null
@@ -45,7 +48,12 @@ export class InvitationEditorService {
   async read(ownerUserId: string, invitationId: string): Promise<InvitationEditorDraft> {
     const invitation = await getPrismaClient().invitation.findFirst({
       where: { id: invitationId, project: { ownerUserId } },
-      include: { draft: true, handles: { where: { revokedAt: null }, take: 1 } },
+      include: {
+        draft: true,
+        handles: { where: { revokedAt: null }, take: 1 },
+        publishedRevision: { select: { payload: true } },
+        demoPayment: true,
+      },
     })
     if (!invitation?.draft) throw new NotFoundException()
     const content = InvitationContentSchema.parse(invitation.draft.payload)
@@ -57,6 +65,7 @@ export class InvitationEditorService {
       eventTitle: content.eventTitle,
       greeting: content.greeting ?? '',
       published: invitation.status === 'PUBLISHED',
+      demoPayment: invitationDemoPaymentDetails(content, invitation.publishedRevision?.payload, invitation.demoPayment),
       rsvpMode: invitation.rsvpMode,
       moderationState: invitation.moderationState,
       moderationReason: invitation.moderationReason,

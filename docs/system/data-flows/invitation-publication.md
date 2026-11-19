@@ -13,6 +13,14 @@
 7. Return stable URL + revision. Never return editor URL as share URL.
 8. Interrupted/retried publish returns existing result using idempotency key. Two concurrent first publishes cannot consume two quotas.
 
+## AI Invitation Demo Checkout
+
+1. The customer previews the AI-generated design and saves it as a private draft. The checkout action opens `/checkout/invitations/{id}` for that draft.
+2. The owner confirms the simulated payment. The API records a receipt scoped to that invitation and returns the same receipt on subsequent confirmations.
+3. The owner publishes from the editor. The publish API returns HTTP `402` for an unpaid AI design that requires checkout. Successful publication makes the AI version available at the guest link, subject to its privacy settings.
+
+Existing published AI versions remain accessible under their configured privacy settings. Standard self-service templates follow the pilot publishing policy. [Demo checkout rules](../business-rules/commercial-no-payment.md#demo-checkout-for-ai-invitations) · [Pilot publishing policy](../../MORI_PROJECT_PLAN.md#23-explicit-additions-beyond-the-brief)
+
 ## Link & Privacy Modes
 
 **Public URL:** `https://invite.mori.example/i/<label>-<slug>` (slug unique, not secret)

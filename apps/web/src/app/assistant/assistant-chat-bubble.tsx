@@ -147,7 +147,8 @@ export function AssistantChatBubble({ message, sessionPhotoUrl }: ChatBubbleProp
         {message.proposedActions && message.proposedActions.length > 0 ? (
           <div className="agent-actions-stack">
             {message.proposedActions.map((act, idx) => (
-              <AssistantActionCard key={`${act.type}-${idx}`} action={act} sessionPhotoUrl={sessionPhotoUrl} />
+              <AssistantActionCard key={`${act.type}-${idx}`} action={act} sessionPhotoUrl={sessionPhotoUrl}
+                draftKey={`assistant-design-${message.id}-${idx}`} />
             ))}
           </div>
         ) : null}

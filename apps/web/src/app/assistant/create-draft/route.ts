@@ -32,7 +32,6 @@ interface DraftRequestBody {
   scheduleItems?: InvitationScheduleItem[]
   photos?: InvitationPhotos
   customDesign?: BespokeDesignBlueprint
-  publishNow?: boolean
 }
 
 export async function POST(request: Request) {
@@ -42,10 +41,11 @@ export async function POST(request: Request) {
   const body = (await request.json().catch(() => ({}))) as DraftRequestBody
   const cookie = (await cookies()).toString()
   const headers = { cookie, origin: originCheck.upstreamOrigin }
+  const draftKey = request.headers.get('idempotency-key')?.trim()
 
   const createRes = await fetch(`${apiOrigin()}/api/v1/invitations/mine`, {
     method: 'POST',
-    headers: { ...headers, 'idempotency-key': crypto.randomUUID() },
+    headers: { ...headers, 'idempotency-key': draftKey || crypto.randomUUID() },
     cache: 'no-store',
   })
 
@@ -62,7 +62,7 @@ export async function POST(request: Request) {
     )
   }
 
-  const created = (await createRes.json()) as { invitationId?: string; slug?: string }
+  const created = (await createRes.json()) as { invitationId?: string }
   if (!created.invitationId) {
     return NextResponse.json(
       { ok: false, message: 'Không nhận được mã thiệp sau khi tạo.' },
@@ -99,35 +99,19 @@ export async function POST(request: Request) {
     cache: 'no-store',
   })
 
-  if (!patchRes.ok) {
+  // A retry may find a draft that this action already initialized or that the owner has edited.
+  if (!patchRes.ok && !(draftKey && patchRes.status === 409)) {
     return NextResponse.json(
       { ok: false, message: 'Đã tạo thiệp nhưng chưa lưu được nội dung thiết kế.' },
       { status: patchRes.status, headers: { 'cache-control': 'private, no-store' } },
     )
   }
 
-  const patched = (await patchRes.json().catch(() => ({}))) as { version?: number; slug?: string }
-  const slug = patched.slug || created.slug || ''
-  let published = false
-
-  if (body.publishNow) {
-    const pubRes = await fetch(`${apiOrigin()}/api/v1/invitations/${created.invitationId}/publish`, {
-      method: 'POST',
-      headers: { ...headers, 'content-type': 'application/json', 'idempotency-key': crypto.randomUUID() },
-      body: JSON.stringify({ expectedVersion: patched.version ?? 1 }),
-      cache: 'no-store',
-    })
-    published = pubRes.ok
-  }
-
   return NextResponse.json(
     {
       ok: true,
       invitationId: created.invitationId,
-      slug,
-      published,
       editorUrl: `/invitations/${created.invitationId}`,
-      ...(published && slug ? { liveUrl: `/i/${slug}` } : {}),
     },
     { status: 201, headers: { 'cache-control': 'private, no-store' } },
   )

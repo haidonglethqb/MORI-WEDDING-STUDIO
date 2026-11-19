@@ -8,12 +8,13 @@ import type { AgentProposedAction } from './assistant-types'
 
 interface Props {
   action: AgentProposedAction
+  draftKey: string
   sessionPhotoUrl?: string | undefined
 }
 
-export function AssistantActionCard({ action, sessionPhotoUrl }: Props) {
+export function AssistantActionCard({ action, draftKey, sessionPhotoUrl }: Props) {
   if (action.type === 'BESPOKE_DESIGN_PREVIEW') {
-    return <AssistantBespokeCard action={action} sessionPhotoUrl={sessionPhotoUrl} />
+    return <AssistantBespokeCard action={action} draftKey={draftKey} sessionPhotoUrl={sessionPhotoUrl} />
   }
   return <StandardActionCard action={action} />
 }

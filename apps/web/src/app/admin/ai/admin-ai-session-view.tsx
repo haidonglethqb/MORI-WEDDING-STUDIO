@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import type { AiConversationSession } from './admin-ai-types'
+import { AdminBespokePreview } from './admin-bespoke-preview'
 import { AdminSessionBrief } from './admin-session-brief'
 import { AdminTurnToolInspector } from './admin-turn-tool-inspector'
 
@@ -129,6 +130,11 @@ export function AdminAiSessionView({
                 proposedActions={turn.proposedActions}
               />
               <div className="turn-reply-content">{turn.assistantReply}</div>
+              {turn.proposedActions?.map((action, index) => (
+                action.type === 'BESPOKE_DESIGN_PREVIEW'
+                  ? <AdminBespokePreview key={index} action={action} />
+                  : null
+              ))}
             </div>
           </div>
         ))}

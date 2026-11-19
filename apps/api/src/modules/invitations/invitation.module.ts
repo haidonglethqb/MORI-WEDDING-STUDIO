@@ -8,6 +8,8 @@ import { GuestRsvpService } from './guest-rsvp.service.js'
 import { GuestSessionController } from './guest-session.controller.js'
 import { EventRetireService } from './event-retire.service.js'
 import { InvitationEventController } from './invitation-event.controller.js'
+import { InvitationDemoPaymentController } from './invitation-demo-payment.controller.js'
+import { InvitationDemoPaymentService } from './invitation-demo-payment.js'
 import { InvitationEditorController } from './invitation-editor.controller.js'
 import { OwnerRsvpController } from './owner-rsvp.controller.js'
 import { OwnerRsvpService } from './owner-rsvp.service.js'
@@ -45,6 +47,7 @@ import { PublicInvitationController } from './public-invitation.controller.js'
     RotateHandleController,
     OwnerRsvpController,
     InvitationEditorController,
+    InvitationDemoPaymentController,
     RsvpListController,
     RsvpExportController,
   ],
@@ -65,6 +68,7 @@ import { PublicInvitationController } from './public-invitation.controller.js'
     RotateHandleService,
     OwnerRsvpService,
     InvitationEditorService,
+    InvitationDemoPaymentService,
     InvitationListService,
   ],
   exports: [InvitationService],
