@@ -72,9 +72,11 @@ export class AgentLoopService {
     let fallbackTier = 1
     let finalReply = ''
 
+    const emitStatus = (message: string) => onEvent?.({ type: 'status', message })
+
     try {
       for (let step = 0; step < MAX_STEPS; step++) {
-        const res = await this.gateway.executeToolStep(messages, AGENT_TOOLS)
+        const res = await this.gateway.executeToolStep(messages, AGENT_TOOLS, emitStatus)
         modelUsed = res.modelUsed
         fallbackTier = res.fallbackTier
         if (res.toolCalls.length === 0) {
@@ -95,12 +97,7 @@ export class AgentLoopService {
           const parsedArgs = parseToolArgs(call.function.arguments)
           const outcome = await this.executor.execute(toolName, parsedArgs, catalog, req.attachments)
           const doneTrace: AgentToolTraceItem = {
-            ...runningTrace,
-            status: 'done',
-            summary: outcome.summary,
-            durationMs: Date.now() - t0,
-            input: parsedArgs,
-            output: outcome.output,
+            ...runningTrace, status: 'done', summary: outcome.summary, durationMs: Date.now() - t0, input: parsedArgs, output: outcome.output,
           }
           traces.push(doneTrace)
           onEvent?.({ type: 'tool_done', trace: doneTrace })
@@ -115,11 +112,18 @@ export class AgentLoopService {
       }
 
       if (!finalReply) {
-        onEvent?.({ type: 'status', message: 'Đang tổng hợp phản hồi cho bạn...' })
-        const closing = await this.gateway.executeToolStep(messages, [])
-        modelUsed = closing.modelUsed
-        fallbackTier = closing.fallbackTier
-        finalReply = closing.content.trim()
+        emitStatus('Đang hoàn thiện lời giới thiệu cho mẫu thiết kế...')
+        try {
+          const closing = await this.gateway.executeToolStep(messages, [], emitStatus)
+          modelUsed = closing.modelUsed
+          fallbackTier = closing.fallbackTier
+          finalReply = closing.content.trim()
+        } catch {
+          const bespoke = actions.find((a) => a.type === 'BESPOKE_DESIGN_PREVIEW')
+          finalReply = bespoke
+            ? `MORI đã thiết kế xong mẫu **${bespoke.conceptName}** dành riêng cho bạn — bạn xem trực tiếp ngay bên dưới và nhắn mình nếu muốn tinh chỉnh thêm màu sắc, hiệu ứng hay bố cục nhé!`
+            : 'MORI đã hoàn tất chuẩn bị các thao tác phù hợp ngay bên dưới cho bạn.'
+        }
       }
 
       const { reply: replyNoTag, inlineFollowUps } = extractInlineFollowUps(finalReply)
@@ -147,6 +151,23 @@ export class AgentLoopService {
         meta: { modelUsed, fallbackTier, latencyMs: Date.now() - start, groundedProductCount: catalog.length },
       }
     } catch {
+      if (actions.length > 0) {
+        const bespoke = actions.find((a) => a.type === 'BESPOKE_DESIGN_PREVIEW')
+        const fallbackText = bespoke
+          ? `MORI đã hoàn thiện mẫu **${bespoke.conceptName}** dành riêng cho bạn — bạn xem trực tiếp ngay bên dưới và nhắn mình nếu muốn tinh chỉnh thêm nhé!`
+          : 'MORI đã chuẩn bị sẵn đề xuất ngay bên dưới cho bạn.'
+        this.emitProgressiveText(fallbackText, onEvent)
+        return {
+          reply: fallbackText,
+          updatedBrief: brief,
+          suggestedProducts: [],
+          estimatedBudget,
+          quickFollowUps: buildSmartFollowUps({ inlineFollowUps: [], actions, brief, history: req.history ?? [], lastUserMessage: req.message }),
+          toolTraces: traces,
+          proposedActions: actions,
+          meta: { modelUsed, fallbackTier, latencyMs: Date.now() - start, groundedProductCount: catalog.length },
+        }
+      }
       const fb = await runAgentDeterministicFallback(
         req,
         catalog,

@@ -1,3 +1,4 @@
+import { parseOpenAiSseStream } from './agent-stream-parser.js'
 import type { LlmToolCall, LlmToolMessage, LlmToolStepResult } from './agent-types.js'
 
 export interface CandidateSpec {
@@ -6,6 +7,8 @@ export interface CandidateSpec {
   apiKey: string
   timeoutMs: number
 }
+
+const STREAM_IDLE_TIMEOUT_MS = 180_000
 
 function stripImagesFromMessages(messages: LlmToolMessage[]): LlmToolMessage[] {
   return messages.map((msg) => {
@@ -23,14 +26,19 @@ export async function callToolCompletion(
   messages: LlmToolMessage[],
   tools: unknown[],
   temperature: number,
+  onProgress?: (message: string) => void,
 ): Promise<Omit<LlmToolStepResult, 'modelUsed' | 'fallbackTier'>> {
   const hasMultimodal = messages.some((m) => Array.isArray(m.content))
 
   try {
-    return await postChatCompletions(candidate, messages, tools, temperature)
+    return await postChatCompletions(candidate, messages, tools, temperature, true, onProgress)
   } catch (err) {
-    if (hasMultimodal && err instanceof Error && err.message.startsWith('HTTP 400')) {
-      return await postChatCompletions(candidate, stripImagesFromMessages(messages), tools, temperature)
+    const msg = err instanceof Error ? err.message : ''
+    if (hasMultimodal && msg.startsWith('HTTP 400')) {
+      return await postChatCompletions(candidate, stripImagesFromMessages(messages), tools, temperature, true, onProgress)
+    }
+    if (msg.startsWith('HTTP 400')) {
+      return await postChatCompletions(candidate, messages, tools, temperature, false, onProgress)
     }
     throw err
   }
@@ -41,32 +49,54 @@ async function postChatCompletions(
   messages: LlmToolMessage[],
   tools: unknown[],
   temperature: number,
+  useStream: boolean,
+  onProgress?: (message: string) => void,
 ): Promise<Omit<LlmToolStepResult, 'modelUsed' | 'fallbackTier'>> {
   const controller = new AbortController()
-  const effectiveTimeout = Math.max(candidate.timeoutMs, 45_000)
-  const timer = setTimeout(() => controller.abort(), effectiveTimeout)
+  const idleMs = Math.max(candidate.timeoutMs, STREAM_IDLE_TIMEOUT_MS)
+  let timer = setTimeout(() => controller.abort(), idleMs)
+  const resetWatchdog = () => {
+    clearTimeout(timer)
+    timer = setTimeout(() => controller.abort(), idleMs)
+  }
   const start = Date.now()
 
   try {
+    const payload: Record<string, unknown> = {
+      model: candidate.id,
+      messages,
+      temperature,
+      ...(useStream ? { stream: true } : {}),
+    }
+    if (tools.length > 0) {
+      payload['tools'] = tools
+      payload['tool_choice'] = 'auto'
+    }
+
     const response = await fetch(candidate.endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${candidate.apiKey}`,
       },
-      body: JSON.stringify({
-        model: candidate.id,
-        messages,
-        tools,
-        tool_choice: 'auto',
-        temperature,
-      }),
+      body: JSON.stringify(payload),
       signal: controller.signal,
     })
 
     if (!response.ok) {
       const errText = await response.text()
       throw new Error(`HTTP ${response.status}: ${errText.slice(0, 180)}`)
+    }
+
+    const contentType = response.headers.get('content-type') ?? ''
+    if (useStream && contentType.includes('text/event-stream') && response.body) {
+      resetWatchdog()
+      const streamed = await parseOpenAiSseStream(response.body, onProgress, resetWatchdog)
+      return {
+        content: streamed.content,
+        toolCalls: streamed.toolCalls,
+        latencyMs: Date.now() - start,
+      }
     }
 
     const json = (await response.json()) as {

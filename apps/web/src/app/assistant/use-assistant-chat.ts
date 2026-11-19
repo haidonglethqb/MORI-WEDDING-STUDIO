@@ -3,14 +3,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { compressImageFileToDataUrl } from '../../features/digital-templates/photo-upload-helper'
 import {
-  DEFAULT_BRIEF,
-  INITIAL_GREETING,
-  QUICK_STARTERS,
-  createAssistantSessionId,
-  loadOrCreateChatStorage,
-  persistChatStorage,
-  postHumanEscalation,
-  resetChatStorage,
+  DEFAULT_BRIEF, INITIAL_GREETING, QUICK_STARTERS, createAssistantSessionId,
+  loadOrCreateChatStorage, persistChatStorage, postHumanEscalation, resetChatStorage,
 } from './assistant-chat-api'
 import { extractEscalatedFlag, extractStaffReplies, mergeSyncedStaffMessages } from './assistant-session-sync'
 import { streamAssistantTurn } from './assistant-stream-client'
@@ -23,6 +17,7 @@ export function useAssistantChat(isLoggedIn = false) {
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [activeStatus, setActiveStatus] = useState('')
+  const [statusLog, setStatusLog] = useState<string[]>([])
   const [activeTraces, setActiveTraces] = useState<AgentToolTraceItem[]>([])
   const [streamingText, setStreamingText] = useState('')
   const [attachment, setAttachment] = useState<AgentAttachment | null>(null)
@@ -97,6 +92,7 @@ export function useAssistantChat(isLoggedIn = false) {
     setAttachment(null)
     setLoading(true)
     setActiveStatus('MORI Agent đang kết nối...')
+    setStatusLog(['MORI Agent đang kết nối...'])
     setActiveTraces([])
     setStreamingText('')
 
@@ -107,7 +103,14 @@ export function useAssistantChat(isLoggedIn = false) {
       sessionId || createAssistantSessionId(),
       currentAttach ? [currentAttach] : [],
       {
-        onStatus: setActiveStatus,
+        onStatus: (msg) => {
+          setActiveStatus(msg)
+          setStatusLog((prev) => {
+            const base = msg.replace(/\s*\([\d.]+\s*KB\)/, '')
+            const last = prev[prev.length - 1]
+            return last && last.replace(/\s*\([\d.]+\s*KB\)/, '') === base ? [...prev.slice(0, -1), msg] : [...prev.slice(-5), msg]
+          })
+        },
         onToolStart: (t) => setActiveTraces((prev) => [...prev, t]),
         onToolDone: (t) => setActiveTraces((prev) => prev.map((x) => (x.id === t.id ? t : x))),
         onDelta: (chunk) => setStreamingText((prev) => prev + chunk),
@@ -116,6 +119,7 @@ export function useAssistantChat(isLoggedIn = false) {
 
     setLoading(false)
     setActiveStatus('')
+    setStatusLog([])
     setActiveTraces([])
     setStreamingText('')
 
@@ -141,12 +145,8 @@ export function useAssistantChat(isLoggedIn = false) {
     setMessages((prev) => [
       ...prev,
       {
-        id: `a-${Date.now()}`,
-        role: 'assistant',
-        senderType: 'ai',
-        content: result.data.reply,
-        products: result.data.suggestedProducts,
-        budget: result.data.estimatedBudget,
+        id: `a-${Date.now()}`, role: 'assistant', senderType: 'ai', content: result.data.reply,
+        products: result.data.suggestedProducts, budget: result.data.estimatedBudget,
         ...(result.data.toolTraces ? { toolTraces: result.data.toolTraces } : {}),
         ...(result.data.proposedActions ? { proposedActions: result.data.proposedActions } : {}),
       },
@@ -189,7 +189,7 @@ export function useAssistantChat(isLoggedIn = false) {
   const latestUserPhoto = [...messages].reverse().find((m) => m.role === 'user' && m.attachmentDataUrl)?.attachmentDataUrl
 
   return {
-    messages, brief, input, setInput, loading, activeStatus, activeTraces,
+    messages, brief, input, setInput, loading, activeStatus, statusLog, activeTraces,
     streamingText, attachment, setAttachment, attachMoodboardImage, latestUserPhoto, quotaExceeded,
     escalated, escalating, escalateError, quickOptions, scrollAnchorRef,
     sendMessage, escalateToHuman, handleReset,

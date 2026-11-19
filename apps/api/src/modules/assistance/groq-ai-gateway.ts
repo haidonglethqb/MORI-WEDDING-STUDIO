@@ -68,6 +68,7 @@ export class GroqAiGateway {
   async executeToolStep(
     messages: LlmToolMessage[],
     tools: unknown[],
+    onProgress?: (message: string) => void,
   ): Promise<LlmToolStepResult> {
     const config = this.config.getConfig()
     if (config.provider === 'LOCAL_ONLY') {
@@ -83,8 +84,9 @@ export class GroqAiGateway {
     for (let tier = 0; tier < candidates.length; tier++) {
       const candidate = candidates[tier]
       if (!candidate) continue
+      if (tier > 0) onProgress?.('Đang thử lại bằng mô hình AI dự phòng...')
       try {
-        const res = await callToolCompletion(candidate, messages, tools, config.temperature)
+        const res = await callToolCompletion(candidate, messages, tools, config.temperature, onProgress)
         return { ...res, modelUsed: candidate.id, fallbackTier: tier + 1 }
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err)

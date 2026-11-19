@@ -11,7 +11,7 @@ export function AssistantForm({ isLoggedIn = false }: { isLoggedIn?: boolean }) 
   const [showEscalate, setShowEscalate] = useState(false)
   const [draggingPhoto, setDraggingPhoto] = useState(false)
   const {
-    messages, brief, input, setInput, loading, activeStatus, activeTraces,
+    messages, brief, input, setInput, loading, activeStatus, statusLog, activeTraces,
     streamingText, attachment, setAttachment, attachMoodboardImage, latestUserPhoto, quotaExceeded,
     escalated, escalating, escalateError, quickOptions, scrollAnchorRef,
     sendMessage, escalateToHuman, handleReset,
@@ -93,7 +93,7 @@ export function AssistantForm({ isLoggedIn = false }: { isLoggedIn?: boolean }) 
                     <span className="atelier-name">MORI Atelier Agent</span>
                     <span className="atelier-role">Đang thiết kế</span>
                   </div>
-                  <AssistantToolTrace traces={activeTraces} live statusText={activeStatus} />
+                  <AssistantToolTrace traces={activeTraces} live statusText={activeStatus} statusLog={statusLog} />
                   {streamingText ? (
                     <div className="assistant-bubble-content">
                       <div className="bubble-text-flow">
